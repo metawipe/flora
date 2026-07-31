@@ -1,0 +1,413 @@
+{
+  "site": {
+    "name": "UZFLORA",
+    "tagline": "Цветы и букеты с доставкой в Ташкенте",
+    "phone": "+998 (90) 808 34 37",
+    "phoneHref": "tel:+998908083437",
+    "email": "info@uzflora.com",
+    "supportNote": "поддержка 24/7",
+    "about": "Uzflora — подари родным радость. Онлайн-доставка цветов по Ташкенту и Узбекистану: розы, пионы, тюльпаны, хризантемы, гортензии, эустомы и комнатные растения.",
+    "socials": [
+      { "name": "Telegram", "href": "https://t.me/+998908083437" },
+      { "name": "WhatsApp", "href": "https://wa.me/998908083437" },
+      { "name": "Instagram", "href": "https://www.instagram.com/uzfloraflowers/" },
+      { "name": "Facebook", "href": "https://www.facebook.com/uzflora/" }
+    ]
+  },
+  "payments": [
+    {
+      "name": "Visa",
+      "src": "https://uzflora.com/wp-content/uploads/2024/05/visa_plata.svg"
+    },
+    {
+      "name": "Uzcard",
+      "src": "https://uzflora.com/wp-content/uploads/2024/05/uzcard_plata.svg"
+    },
+    {
+      "name": "PayPal",
+      "src": "https://uzflora.com/wp-content/uploads/2024/05/paypal_plata.svg"
+    },
+    {
+      "name": "Mir",
+      "src": "https://uzflora.com/wp-content/uploads/2024/05/mir_plata.svg"
+    },
+    {
+      "name": "Mastercard",
+      "src": "https://uzflora.com/wp-content/uploads/2024/05/master_plata.svg"
+    },
+    {
+      "name": "Humo",
+      "src": "https://uzflora.com/wp-content/uploads/2024/05/humo_plata.svg"
+    }
+  ],
+  "nav": [
+    { "label": "Главная", "href": "/" },
+    { "label": "Букеты", "href": "/catalog/bukety" },
+    { "label": "VIP", "href": "/catalog/vip" },
+    { "label": "Композиции", "href": "/catalog/kompozicii" },
+    { "label": "Подарки", "href": "/catalog/podarki" }
+  ],
+  "ticker": [
+    "БЕСПЛАТНАЯ ДОСТАВКА ПО ТАШКЕНТУ",
+    "ПОДДЕРЖКА 24/7",
+    "СВЕЖИЕ ЦВЕТЫ",
+    "+998 (90) 808 34 37",
+    "ДОСТАВКА В ДЕНЬ ЗАКАЗА"
+  ],
+  "hero": [
+    {
+      "id": "h1",
+      "title": "ЦВЕТЫ НА 8 МАРТА",
+      "image": "https://uzflora.com/wp-content/uploads/2026/02/cvety-na-8-marta-tashkent.jpg-2.png",
+      "href": "/catalog/8-marta"
+    },
+    {
+      "id": "h2",
+      "title": "БУКЕТЫ С ДОСТАВКОЙ",
+      "image": "https://uzflora.com/wp-content/uploads/2024/07/default_a_vibrant_and_lush_flower_bouquet_overflowing_with_a_d_3.jpg",
+      "href": "/catalog/bukety"
+    },
+    {
+      "id": "h3",
+      "title": "VIP БУКЕТЫ",
+      "image": "https://uzflora.com/wp-content/uploads/2024/07/default_a_luxurious_exquisite_vip_flower_bouquet_featuring_a_m_0.jpg",
+      "href": "/catalog/vip"
+    },
+    {
+      "id": "h4",
+      "title": "14 ФЕВРАЛЯ",
+      "image": "https://uzflora.com/wp-content/uploads/2026/01/14-fevralya.png",
+      "href": "/catalog/14-fevralya"
+    }
+  ],
+  "categories": [
+    {
+      "id": "c1",
+      "name": "Букеты",
+      "image": "https://uzflora.com/wp-content/uploads/2024/07/default_a_vibrant_and_lush_flower_bouquet_overflowing_with_a_d_3.jpg",
+      "href": "/catalog/bukety"
+    },
+    {
+      "id": "c2",
+      "name": "VIP букеты",
+      "image": "https://uzflora.com/wp-content/uploads/2024/07/default_a_luxurious_exquisite_vip_flower_bouquet_featuring_a_m_0.jpg",
+      "href": "/catalog/vip"
+    },
+    {
+      "id": "c3",
+      "name": "Композиции",
+      "image": "https://uzflora.com/wp-content/uploads/2024/07/pikaso_texttoimage_beatiful-flower-arrangment-in-basket.jpeg",
+      "href": "/catalog/kompozicii"
+    },
+    {
+      "id": "c4",
+      "name": "Подарки",
+      "image": "https://uzflora.com/wp-content/uploads/2024/07/default_a_beautifully_wrapped_present_with_intricate_swirling_2.jpg",
+      "href": "/catalog/podarki"
+    },
+    {
+      "id": "c5",
+      "name": "Шары",
+      "image": "https://uzflora.com/wp-content/uploads/2024/07/default_a_vibrant_colorful_balloon_intricately_designed_with_s_1.jpg",
+      "href": "/catalog/shary"
+    },
+    {
+      "id": "c6",
+      "name": "Комнатные",
+      "image": "https://uzflora.com/wp-content/uploads/2024/07/default_a_vibrant_and_lush_arrangement_of_diverse_plants_overf_1.jpg",
+      "href": "/catalog/rasteniya"
+    },
+    {
+      "id": "c7",
+      "name": "К букету",
+      "image": "https://uzflora.com/wp-content/uploads/2024/08/10_1707309073.jpeg",
+      "href": "/catalog/k-buketu"
+    },
+    {
+      "id": "c8",
+      "name": "8 марта",
+      "image": "https://uzflora.com/wp-content/uploads/2026/02/cvety-na-8-marta-tashkent.jpg-2.png",
+      "href": "/catalog/8-marta"
+    },
+    {
+      "id": "c9",
+      "name": "14 февраля",
+      "image": "https://uzflora.com/wp-content/uploads/2026/01/14-fevralya.png",
+      "href": "/catalog/14-fevralya"
+    },
+    {
+      "id": "c10",
+      "name": "Сезонные",
+      "image": "https://uzflora.com/wp-content/uploads/2024/08/f10.jpg",
+      "href": "/catalog/sezonnye"
+    }
+  ],
+  "bouquets": [
+    {
+      "id": "560",
+      "name": "Нежное сердце",
+      "price": 827200,
+      "badge": "HIT",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f1.jpg"],
+      "category": "bukety"
+    },
+    {
+      "id": "567",
+      "name": "Всплеск эмоций",
+      "price": 734850,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f2.jpg"],
+      "category": "bukety"
+    },
+    {
+      "id": "571",
+      "name": "Совершенство",
+      "price": 409688,
+      "badge": "NEW",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f3.jpg"],
+      "category": "bukety"
+    },
+    {
+      "id": "576",
+      "name": "Эмоциональный вызов",
+      "price": 698139,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f5.jpg"],
+      "category": "bukety"
+    },
+    {
+      "id": "589",
+      "name": "Красная симфония",
+      "price": 775710,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f9.jpg"],
+      "category": "bukety"
+    },
+    {
+      "id": "591",
+      "name": "Бал цветов",
+      "price": 1483500,
+      "badge": "VIP",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f10.jpg"],
+      "category": "bukety"
+    },
+    {
+      "id": "595",
+      "name": "Улыбка фортуны",
+      "price": 642600,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f12.jpg"],
+      "category": "bukety"
+    },
+    {
+      "id": "598",
+      "name": "ДНК страсти",
+      "price": 497250,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f13.jpg"],
+      "category": "bukety"
+    }
+  ],
+  "gifts": [
+    {
+      "id": "841",
+      "name": "Приятная забота",
+      "price": 402500,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f115.jpg"],
+      "category": "podarki"
+    },
+    {
+      "id": "853",
+      "name": "Праздничное настроение",
+      "price": 908500,
+      "badge": "HIT",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f119.jpg"],
+      "category": "podarki"
+    },
+    {
+      "id": "856",
+      "name": "Мужской каприз",
+      "price": 517500,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f120.jpg"],
+      "category": "podarki"
+    },
+    {
+      "id": "859",
+      "name": "Сладкая феерия",
+      "price": 494500,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f121.jpg"],
+      "category": "podarki"
+    },
+    {
+      "id": "862",
+      "name": "Сладкое свидание",
+      "price": 483000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f122.jpg"],
+      "category": "podarki"
+    },
+    {
+      "id": "866",
+      "name": "Приятный сюрприз",
+      "price": 488750,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f123.jpg"],
+      "category": "podarki"
+    },
+    {
+      "id": "844",
+      "name": "Milka",
+      "price": 805000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f116.jpg"],
+      "category": "podarki"
+    },
+    {
+      "id": "847",
+      "name": "Сладкий набор",
+      "price": 839500,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f117.jpg"],
+      "category": "podarki"
+    }
+  ],
+  "plants": [
+    {
+      "id": "975",
+      "name": "Азалия",
+      "price": 460000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f187.jpg"],
+      "category": "rasteniya"
+    },
+    {
+      "id": "989",
+      "name": "Орхидея фаленопсис",
+      "price": 517500,
+      "badge": "HIT",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f182.jpg"],
+      "category": "rasteniya"
+    },
+    {
+      "id": "992",
+      "name": "Спатифиллум",
+      "price": 483000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f185.jpg"],
+      "category": "rasteniya"
+    },
+    {
+      "id": "995",
+      "name": "Гортензия",
+      "price": 747500,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f188.jpg"],
+      "category": "rasteniya"
+    },
+    {
+      "id": "998",
+      "name": "Замиокулькас",
+      "price": 460000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f189.jpg"],
+      "category": "rasteniya"
+    },
+    {
+      "id": "980",
+      "name": "Бромелия",
+      "price": 460000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f186.jpg"],
+      "category": "rasteniya"
+    },
+    {
+      "id": "983",
+      "name": "Антуриум",
+      "price": 460000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f184.jpg"],
+      "category": "rasteniya"
+    },
+    {
+      "id": "986",
+      "name": "Одноголовая орхидея",
+      "price": 460000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/09/f183.jpg"],
+      "category": "rasteniya"
+    }
+  ],
+  "vip": [
+    {
+      "id": "604",
+      "name": "Аура",
+      "price": 1483500,
+      "badge": "VIP",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f16.jpg"],
+      "category": "vip"
+    },
+    {
+      "id": "659",
+      "name": "Терра инкогнито",
+      "price": 2205000,
+      "badge": "VIP",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f42.jpg"],
+      "category": "vip"
+    },
+    {
+      "id": "673",
+      "name": "Малая Вселенная",
+      "price": 1573775,
+      "badge": "VIP",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f49.jpg"],
+      "category": "vip"
+    },
+    {
+      "id": "689",
+      "name": "Летний фейерверк",
+      "price": 1950113,
+      "badge": "VIP",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f57.jpg"],
+      "category": "vip"
+    },
+    {
+      "id": "703",
+      "name": "Тёплые мгновения",
+      "price": 1528615,
+      "badge": "VIP",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f61.jpg"],
+      "category": "vip"
+    },
+    {
+      "id": "716",
+      "name": "Приключения",
+      "price": 4037075,
+      "badge": "LAST ONE",
+      "oldPrice": 4500000,
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f67.jpg"],
+      "category": "vip"
+    },
+    {
+      "id": "728",
+      "name": "Вне канонов",
+      "price": 9233377,
+      "badge": "PREMIUM",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f71.jpg"],
+      "category": "vip"
+    },
+    {
+      "id": "591v",
+      "name": "Бал цветов",
+      "price": 1483500,
+      "badge": "VIP",
+      "images": ["https://uzflora.com/wp-content/uploads/2024/08/f10.jpg"],
+      "category": "vip"
+    }
+  ],
+  "footer": {
+    "categories": [
+      { "label": "Букеты", "href": "/catalog/bukety" },
+      { "label": "VIP букеты", "href": "/catalog/vip" },
+      { "label": "Композиции", "href": "/catalog/kompozicii" },
+      { "label": "Подарки", "href": "/catalog/podarki" },
+      { "label": "Комнатные растения", "href": "/catalog/rasteniya" },
+      { "label": "Воздушные шары", "href": "/catalog/shary" },
+      { "label": "К букету", "href": "/catalog/k-buketu" }
+    ],
+    "pages": [
+      { "label": "О нас", "href": "/about" },
+      { "label": "Доставка", "href": "/delivery" },
+      { "label": "Оплата", "href": "/payment" },
+      { "label": "Оферта", "href": "/offer" },
+      { "label": "Контакты", "href": "/contacts" },
+      { "label": "Вопросы и ответы", "href": "/faq" },
+      { "label": "Блог", "href": "/blog" },
+      { "label": "Корпоративные букеты", "href": "/corporate" },
+      { "label": "Мой аккаунт", "href": "/account" }
+    ]
+  }
+}
