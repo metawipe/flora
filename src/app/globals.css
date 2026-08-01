@@ -23,6 +23,10 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -32,6 +36,71 @@ body {
   color: var(--fg);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 100dvh;
+  max-width: 100%;
+  position: relative;
+}
+
+a,
+button,
+[role="button"],
+input,
+textarea,
+select,
+label,
+summary {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus,
+summary:focus {
+  outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+a,
+button,
+.icon-btn,
+.burger,
+.btn,
+.sale-badge,
+.nav__link,
+.product-card,
+.hero__arrow,
+.hero__dot,
+.pdp__shot,
+.pdp__album-dot,
+.pay-option {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 a {
@@ -136,6 +205,8 @@ ul {
   align-items: center;
   justify-content: flex-end;
   gap: 18px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .header__phone {
@@ -170,8 +241,8 @@ ul {
 
 .icon-btn__count {
   position: absolute;
-  top: -4px;
-  right: -8px;
+  top: -2px;
+  right: -2px;
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
@@ -183,6 +254,7 @@ ul {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
 .burger {
@@ -984,11 +1056,38 @@ ul {
   }
 
   .header__inner {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    min-width: 0;
   }
 
   .header .logo {
     justify-self: center;
+    font-size: 20px;
+    letter-spacing: 0.06em;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header__actions {
+    gap: 4px;
+    justify-self: end;
+  }
+
+  .header__actions .icon-btn {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .header__actions .icon-btn__count {
+    top: 2px;
+    right: 2px;
   }
 
   .hero__title {
@@ -1054,7 +1153,13 @@ ul {
   }
 
   .collections-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .product-grid {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .hero {
@@ -2205,6 +2310,75 @@ ul {
 
 /* ========== MOBILE FINAL OVERRIDES (must be last) ========== */
 @media (max-width: 900px) {
+  html,
+  body {
+    overflow-x: clip !important;
+    max-width: 100% !important;
+    overscroll-behavior-x: none;
+  }
+
+  body > * {
+    max-width: 100%;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    overflow-x: clip;
+  }
+
+  .header,
+  .ticker,
+  .page-main,
+  .footer,
+  .hero {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .header {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .header__inner.container,
+  .header .container {
+    overflow: visible;
+  }
+
+  .header__actions {
+    gap: 2px !important;
+    margin-right: 0;
+  }
+
+  .header__cart {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header__cart .icon-btn__count {
+    right: 0;
+    top: 0;
+  }
+
+  @media (max-width: 380px) {
+    .header__account {
+      display: none;
+    }
+  }
+
+  a:active,
+  button:active,
+  .icon-btn:active,
+  .btn:active,
+  .sale-badge:active,
+  .product-card:active {
+    opacity: 0.72;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   .cart-layout,
   .checkout-layout {
     display: flex !important;
@@ -2213,6 +2387,8 @@ ul {
     gap: 16px;
     align-items: stretch !important;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .cart-list,
