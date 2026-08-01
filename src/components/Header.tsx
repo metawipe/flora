@@ -84,7 +84,11 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
                 <span className="icon-btn__count">{favCount}</span>
               )}
             </Link>
-            <Link href="/cart" className="icon-btn" aria-label="Корзина">
+            <Link
+              href="/cart"
+              className="icon-btn header__cart"
+              aria-label="Корзина"
+            >
               <BagIcon />
               {cartCount > 0 && (
                 <span className="icon-btn__count">{cartCount}</span>
