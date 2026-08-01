@@ -5,6 +5,7 @@ import { useStore } from "@/context/StoreContext";
 import { CookieBanner } from "./CookieBanner";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
+import { ScrollToTop } from "./ScrollToTop";
 import { SearchOverlay } from "./SearchOverlay";
 import { Ticker } from "./Ticker";
 
@@ -14,6 +15,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <>
+      <ScrollToTop />
       <Header
         onSearch={() => setSearchOpen(true)}
         cartCount={cartCount}

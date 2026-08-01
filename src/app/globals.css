@@ -22,7 +22,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Keep auto so route changes always land at the true top (smooth breaks this). */
+  scroll-behavior: auto;
   overflow-x: clip;
   overscroll-behavior-x: none;
   -webkit-text-size-adjust: 100%;
