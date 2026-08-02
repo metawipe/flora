@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { Breadcrumbs } from "./Breadcrumbs";
-import { ArrowRightIcon, HeartIcon } from "./Icons";
+import {
+  ArrowRightIcon,
+  HeartIcon,
+  HelpIcon,
+  OrdersIcon,
+  ProfileEditIcon,
+} from "./Icons";
 
 type Mode = "login" | "register";
 
@@ -105,6 +111,10 @@ export function AccountPage() {
             ]}
           />
           <h1 className="page-title">Личный кабинет</h1>
+          <p className="cabinet-lead">
+            Данные сохранены на этом устройстве. Заказы оформляются через
+            корзину — менеджер свяжется для подтверждения.
+          </p>
 
           <div className="cabinet-grid">
             <Link href="/account/profile" className="cabinet-card cabinet-card--wide">
@@ -120,7 +130,7 @@ export function AccountPage() {
                   <p>{user.login}</p>
                   <p>{user.phone}</p>
                 </div>
-                <span className="btn btn--ghost btn--xs">Сменить пароль</span>
+                <span className="btn btn--ghost btn--xs">Изменить</span>
               </div>
             </Link>
 
@@ -132,25 +142,36 @@ export function AccountPage() {
               <p className="cabinet-tile__sub">Сохранённые букеты</p>
             </Link>
             <Link href="/account/orders" className="cabinet-tile">
-              <div className="cabinet-tile__icon">☰</div>
+              <div className="cabinet-tile__icon">
+                <OrdersIcon />
+              </div>
               <p className="cabinet-tile__title">Заказы</p>
-              <p className="cabinet-tile__sub">История покупок</p>
+              <p className="cabinet-tile__sub">Статус после оформления</p>
             </Link>
             <Link href="/account/profile" className="cabinet-tile">
-              <div className="cabinet-tile__icon">✎</div>
+              <div className="cabinet-tile__icon">
+                <ProfileEditIcon />
+              </div>
               <p className="cabinet-tile__title">Профиль</p>
               <p className="cabinet-tile__sub">Имя и контакты</p>
             </Link>
             <Link href="/faq" className="cabinet-tile">
-              <div className="cabinet-tile__icon">?</div>
+              <div className="cabinet-tile__icon">
+                <HelpIcon />
+              </div>
               <p className="cabinet-tile__title">Помощь</p>
-              <p className="cabinet-tile__sub">Вопросы и ответы</p>
+              <p className="cabinet-tile__sub">Доставка и оплата</p>
             </Link>
           </div>
 
-          <button type="button" className="link-quiet" style={{ marginTop: 24 }} onClick={logout}>
-            Выйти
-          </button>
+          <div className="cabinet-cta">
+            <Link href="/catalog/bouquets" className="btn btn--primary">
+              Смотреть букеты
+            </Link>
+            <button type="button" className="link-quiet" onClick={logout}>
+              Выйти
+            </button>
+          </div>
         </div>
       </main>
     );
@@ -293,18 +314,15 @@ export function AccountPage() {
             </form>
           )}
 
-          <div className="auth-social">
-            <p>Войти с помощью</p>
-            <div className="auth-social__grid">
-              <button type="button">Telegram</button>
-              <button type="button">Google</button>
-              <button type="button">Apple</button>
-            </div>
-          </div>
+          <p className="auth-hint">
+            Вход сохраняет профиль на устройстве, чтобы быстрее оформлять
+            заказы. Также можно сразу{" "}
+            <Link href="/catalog/bouquets">выбрать букет</Link> без регистрации.
+          </p>
 
           <p className="auth-legal">
             Продолжая, вы соглашаетесь с{" "}
-            <Link href="/offer">политикой конфиденциальности</Link>
+            <Link href="/privacy">политикой конфиденциальности</Link>
           </p>
         </div>
       </div>

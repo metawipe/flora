@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Golos_Text, Outfit } from "next/font/google";
+import { Golos_Text } from "next/font/google";
 import { SiteShell } from "@/components/SiteShell";
 import { StoreProvider } from "@/context/StoreContext";
 import "./globals.css";
@@ -10,20 +10,21 @@ const golos = Golos_Text({
   display: "swap",
 });
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Доставка цветов в Ташкенте | Love Flowers",
+  title: "Доставка цветов в Ташкенте | Zamin Gullari",
   description:
-    "Заказать свежие букеты, розы, корзины, коробки и подарки с круглосуточной доставкой по Ташкенту. Love Flowers — бесплатная доставка, работаем 24/7.",
+    "Заказать свежие букеты, розы, корзины, коробки и подарки с круглосуточной доставкой по Ташкенту. Zamin Gullari — бесплатная доставка, работаем 24/7.",
+  icons: {
+    icon: [
+      { url: "/favicon.png", sizes: "48x48", type: "image/png" },
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Love Flowers",
+    title: "Zamin Gullari",
   },
   formatDetection: {
     telephone: false,
@@ -38,8 +39,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: "cover",
   themeColor: "#ffffff",
 };
@@ -50,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${golos.variable} ${outfit.variable}`}>
+    <html lang="ru" className={golos.variable}>
       <body>
         <StoreProvider>
           <SiteShell>{children}</SiteShell>

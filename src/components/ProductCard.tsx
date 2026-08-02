@@ -18,7 +18,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const favorited = isFavorite(product.id);
 
   return (
-    <article className="product-card">
+    <article className="product-card product-card--motion">
       <div className="product-card__media">
         <Link href={`/product/${product.id}`} className="product-card__link">
           <Image

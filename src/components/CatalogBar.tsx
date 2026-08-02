@@ -5,7 +5,11 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { nav } from "@/data/products";
 
-export function CatalogBar() {
+type CatalogBarProps = {
+  className?: string;
+};
+
+export function CatalogBar({ className = "" }: CatalogBarProps) {
   const pathname = usePathname();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
@@ -20,7 +24,10 @@ export function CatalogBar() {
   }, [pathname]);
 
   return (
-    <nav className="catalog-bar" aria-label="Каталог">
+    <nav
+      className={`catalog-bar${className ? ` ${className}` : ""}`}
+      aria-label="Каталог"
+    >
       <div className="catalog-bar__scroller" ref={scrollerRef}>
         <div className="catalog-bar__inner">
           {nav.map((item) => {

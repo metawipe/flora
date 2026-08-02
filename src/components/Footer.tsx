@@ -1,6 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
-import { footerLinks, paymentsImage, site } from "@/data/products";
+import { footerLinks, site } from "@/data/products";
 
 export function Footer() {
   return (
@@ -67,24 +66,18 @@ export function Footer() {
         </div>
 
         <div className="footer__info">
-          <div className="footer__methods">
-            <p className="footer__title">Методы оплаты</p>
-            <div className="footer__methods-img">
-              <Image
-                src={paymentsImage}
-                alt="Методы оплаты"
-                width={280}
-                height={120}
-                unoptimized
-              />
-            </div>
-          </div>
-
           <div className="footer__contacts" id="contacts">
             <p className="footer__title">Наши контакты</p>
             <ul className="footer__contacts-list">
               <li>
-                <span>Адрес:</span> {site.address}
+                <span>Адрес:</span>{" "}
+                <a
+                  href={site.addressMapHref}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {site.address}
+                </a>
               </li>
               <li>
                 <span>Телефон:</span>{" "}
@@ -106,12 +99,12 @@ export function Footer() {
             <p className="footer__legal">{site.name}</p>
             <p className="footer__legal">{site.tagline}</p>
             <p className="footer__copy">
-              © {new Date().getFullYear()} Служба доставки цветов «Love Flowers»
-              в Ташкенте, 2008–{new Date().getFullYear()}
+              © {new Date().getFullYear()} Служба доставки цветов «Zamin Gullari»
+              в Ташкенте
             </p>
           </div>
           <div className="footer__socials">
-            {site.socials.slice(0, 3).map((item) => (
+            {site.socials.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
