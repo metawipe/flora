@@ -6,14 +6,14 @@ export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const accepted = window.localStorage.getItem("uzflora-cookies");
+    const accepted = window.localStorage.getItem("loveflowers-cookies");
     if (!accepted) setVisible(true);
   }, []);
 
   if (!visible) return null;
 
   const accept = () => {
-    window.localStorage.setItem("uzflora-cookies", "1");
+    window.localStorage.setItem("loveflowers-cookies", "1");
     setVisible(false);
   };
 

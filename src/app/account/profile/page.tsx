@@ -13,7 +13,7 @@ type Profile = {
   email?: string;
 };
 
-const USER_KEY = "uzflora-user";
+const USER_KEY = "loveflowers-user";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);

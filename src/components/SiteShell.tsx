@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { useStore } from "@/context/StoreContext";
+import { CatalogBar } from "./CatalogBar";
 import { CookieBanner } from "./CookieBanner";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
@@ -11,16 +12,17 @@ import { Ticker } from "./Ticker";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
-  const { cartCount, favCount } = useStore();
+  const { cartCount, favCount, hydrated } = useStore();
 
   return (
     <>
       <ScrollToTop />
       <Header
         onSearch={() => setSearchOpen(true)}
-        cartCount={cartCount}
-        favCount={favCount}
+        cartCount={hydrated ? cartCount : 0}
+        favCount={hydrated ? favCount : 0}
       />
+      <CatalogBar />
       <Ticker />
       {children}
       <Footer />

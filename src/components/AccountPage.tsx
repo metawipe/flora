@@ -13,7 +13,7 @@ type UserProfile = {
   name?: string;
 };
 
-const USER_KEY = "uzflora-user";
+const USER_KEY = "loveflowers-user";
 
 function loadUser(): UserProfile | null {
   if (typeof window === "undefined") return null;

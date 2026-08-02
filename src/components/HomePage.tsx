@@ -2,40 +2,40 @@ import {
   bouquets,
   collections,
   gifts,
-  heroSlides,
   plants,
   vipProducts,
 } from "@/data/products";
 import { Collections } from "./Collections";
 import { Hero } from "./Hero";
+import { Partners } from "./Partners";
 import { ProductSection } from "./ProductSection";
 
 export function HomePage() {
   return (
     <main>
-      <Hero slides={heroSlides} />
+      <Hero />
       <ProductSection
         title="Букеты"
-        href="/catalog/bukety"
+        href="/catalog/bouquets"
         products={bouquets}
       />
-      <Collections title="Категории" href="/catalog/bukety" items={collections} />
+      <Collections title="Магазин" href="/catalog/shop" items={collections} />
       <ProductSection
         title="Подарки"
-        href="/catalog/podarki"
+        href="/catalog/gifts"
         products={gifts}
       />
       <ProductSection
-        title="Комнатные растения"
-        href="/catalog/rasteniya"
+        title="Тюльпаны и орхидеи"
+        href="/catalog/tulips"
         products={plants}
       />
       <ProductSection
-        title="VIP букеты"
-        href="/catalog/vip"
+        title="Розы и акции"
+        href="/catalog/roses"
         products={vipProducts}
-        bottomPad
       />
+      <Partners />
     </main>
   );
 }

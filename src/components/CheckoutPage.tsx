@@ -24,7 +24,7 @@ export function CheckoutPage() {
           <div className="empty-state">
             <p className="empty-state__title">Корзина пуста</p>
             <p className="empty-state__desc">
-              <Link href="/catalog/bukety">Перейти в каталог</Link>
+              <Link href="/catalog/shop">Перейти в каталог</Link>
             </p>
           </div>
         </div>

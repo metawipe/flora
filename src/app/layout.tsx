@@ -17,13 +17,13 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Цветы и букеты с доставкой в Ташкенте | Uzflora",
+  title: "Доставка цветов в Ташкенте | Love Flowers",
   description:
-    "Заказать свежие букеты, VIP-композиции, подарки и комнатные растения с доставкой по Ташкенту. Uzflora — поддержка 24/7.",
+    "Заказать свежие букеты, розы, корзины, коробки и подарки с круглосуточной доставкой по Ташкенту. Love Flowers — бесплатная доставка, работаем 24/7.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Uzflora",
+    title: "Love Flowers",
   },
   formatDetection: {
     telephone: false,
