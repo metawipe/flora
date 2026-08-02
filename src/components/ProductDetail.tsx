@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type UIEvent } from "react";
 import { useStore } from "@/context/StoreContext";
 import {
@@ -20,9 +19,11 @@ import {
 } from "@/data/products";
 import type { Locale } from "@/i18n/config";
 import { useLocale } from "@/i18n/LocaleProvider";
-import { Breadcrumbs } from "./Breadcrumbs";
-import { HeartIcon } from "./Icons";
+import { sampleBottomLuma, toneFromLuma } from "@/lib/imageLuma";
+import { AppBackBar } from "./AppBackBar";
+import { ChevronLeftIcon, HeartIcon } from "./Icons";
 import { ProductCard } from "./ProductCard";
+import { StickyBar } from "./StickyBar";
 
 function getInfoSections(
   t: (key: string, vars?: Record<string, string | number>) => string,
@@ -91,13 +92,13 @@ function getInfoSections(
 }
 
 export function ProductDetail({ product }: { product: Product }) {
-  const router = useRouter();
   const { addToCart, toggleFavorite, isFavorite } = useStore();
   const { locale, t } = useLocale();
   const flower = isFlowerProduct(product);
   const [packId, setPackId] = useState<string>("none");
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
+  const [dotTone, setDotTone] = useState<"light" | "dark">("light");
   const [added, setAdded] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>("delivery");
   const [infoSections, setInfoSections] = useState(() =>
@@ -110,30 +111,55 @@ export function ProductDetail({ product }: { product: Product }) {
   const categories = productCategories(product, locale);
   const packs = packagingOptions(locale);
   const packaging = packs.find((p) => p.id === packId) ?? packs[0];
+  const images = product.images.length ? product.images : [""];
+  const gallery = images.length >= 2 ? images : [images[0], images[0]];
 
   useEffect(() => {
     setInfoSections(getInfoSections(t, locale, new Date()));
   }, [t, locale]);
 
+  useEffect(() => {
+    const album = albumRef.current;
+    if (!album) return;
+
+    let cancelled = false;
+    const shot = album.children[activeImg] as HTMLElement | undefined;
+    const img = shot?.querySelector("img");
+    if (!img) return;
+
+    const analyze = () => {
+      if (cancelled || !img.naturalWidth) return;
+      try {
+        setDotTone(toneFromLuma(sampleBottomLuma(img)));
+      } catch {
+        // Tainted canvas / decode race — prefer dark dots on light pages
+        if (!cancelled) setDotTone("light");
+      }
+    };
+
+    if (img.complete) analyze();
+    else img.addEventListener("load", analyze);
+
+    return () => {
+      cancelled = true;
+      img.removeEventListener("load", analyze);
+    };
+  }, [activeImg, product.id, gallery]);
+
+  const unavailable = product.available === false;
   const unitPrice = useMemo(
     () => product.price + (flower ? packaging.price : 0),
     [product.price, flower, packaging.price],
   );
   const totalPrice = unitPrice * qty;
   const favorited = isFavorite(product.id);
-  const images = product.images.length ? product.images : [""];
-  const gallery = images.length >= 2 ? images : [images[0], images[0]];
   const optionKey = flower ? packaging.label : "—";
 
   const onAdd = () => {
+    if (unavailable) return;
     addToCart({ ...product, price: unitPrice }, optionKey, qty);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
-  };
-
-  const onBuyOneClick = () => {
-    addToCart({ ...product, price: unitPrice }, optionKey, qty);
-    router.push("/checkout");
   };
 
   const onAlbumScroll = (e: UIEvent<HTMLDivElement>) => {
@@ -150,52 +176,77 @@ export function ProductDetail({ product }: { product: Product }) {
     el.scrollTo({ left: index * el.clientWidth, behavior: "smooth" });
   };
 
+  const backHref = categoryPath(product.category);
+  const backTitle = categoryLabel(product.category, locale);
+
   return (
-    <main className="page-main">
-      <div className="container">
-        <Breadcrumbs
-          items={[
-            { label: t("common.home"), href: "/" },
-            { label: t("common.shop"), href: "/catalog/shop" },
-            {
-              label: categoryLabel(product.category, locale),
-              href: categoryPath(product.category),
-            },
-            { label: name },
-          ]}
-        />
+    <main className="page-main page-main--pdp">
+      <div className="container pdp-container">
+        <div className="pdp-desk-back">
+          <AppBackBar
+            href={backHref}
+            title={backTitle}
+            backLabel={t("common.shop")}
+          />
+        </div>
 
         <div className="pdp">
-          <div className="pdp__gallery">
-            <div className="pdp__album" ref={albumRef} onScroll={onAlbumScroll}>
-              {gallery.map((src, i) => (
-                <button
-                  key={`${src}-${i}`}
-                  type="button"
-                  className={`pdp__shot${activeImg === i ? " is-active" : ""}`}
-                  onClick={() => goToSlide(i)}
-                >
-                  <Image
-                    src={src}
-                    alt={`${name} ${i + 1}`}
-                    fill
-                    className="pdp__img"
-                    sizes="(max-width: 900px) 100vw, 55vw"
-                    priority={i === 0}
+          <div className="pdp-bleed">
+            <div className="pdp__gallery">
+              <div
+                className="pdp__album"
+                ref={albumRef}
+                onScroll={onAlbumScroll}
+              >
+                {gallery.map((src, i) => (
+                  <button
+                    key={`${src}-${i}`}
+                    type="button"
+                    className={`pdp__shot${activeImg === i ? " is-active" : ""}`}
+                    onClick={() => goToSlide(i)}
+                  >
+                    <span className="img-skeleton pdp__skeleton" aria-hidden />
+                    <Image
+                      src={src}
+                      alt={`${name} ${i + 1}`}
+                      fill
+                      className="pdp__img"
+                      sizes="(max-width: 900px) 100vw, 55vw"
+                      priority={i === 0}
+                    />
+                  </button>
+                ))}
+              </div>
+              <Link
+                href={backHref}
+                className="pdp-bleed__back"
+                aria-label={backTitle}
+              >
+                <ChevronLeftIcon />
+              </Link>
+              <button
+                type="button"
+                className={`pdp-bleed__fav${favorited ? " is-active" : ""}`}
+                aria-label={favorited ? t("pdp.favorited") : t("pdp.favorite")}
+                onClick={() => toggleFavorite(product.id)}
+              >
+                <HeartIcon filled={favorited} />
+              </button>
+              <div
+                className={`pdp__album-dots is-on-${dotTone}`}
+                data-tone={dotTone}
+                aria-hidden={gallery.length < 2}
+              >
+                {gallery.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`pdp__album-dot${activeImg === i ? " is-active" : ""}`}
+                    aria-label={t("pdp.photoN", { n: i + 1 })}
+                    onClick={() => goToSlide(i)}
                   />
-                </button>
-              ))}
-            </div>
-            <div className="pdp__album-dots" aria-hidden={gallery.length < 2}>
-              {gallery.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`pdp__album-dot${activeImg === i ? " is-active" : ""}`}
-                  aria-label={t("pdp.photoN", { n: i + 1 })}
-                  onClick={() => goToSlide(i)}
-                />
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
@@ -205,7 +256,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 <h1 className="pdp__title">{name}</h1>
                 <button
                   type="button"
-                  className={`pdp__fav${favorited ? " is-active" : ""}`}
+                  className={`pdp__fav pdp__fav--desk${favorited ? " is-active" : ""}`}
                   aria-label={favorited ? t("pdp.favorited") : t("pdp.favorite")}
                   onClick={() => toggleFavorite(product.id)}
                 >
@@ -221,6 +272,9 @@ export function ProductDetail({ product }: { product: Product }) {
                   </p>
                 )}
               </div>
+              {unavailable && (
+                <p className="pdp__notice">{t("badge.outOfStock")}</p>
+              )}
               {flower && packaging.price > 0 && (
                 <p className="pdp__price-note">
                   {t("pdp.priceNote", {
@@ -284,20 +338,18 @@ export function ProductDetail({ product }: { product: Product }) {
                 </button>
               </div>
 
-              <div className="pdp__actions">
+              <div className="pdp__actions pdp__actions--inline">
                 <button
                   type="button"
                   className="btn btn--primary btn--wide"
                   onClick={onAdd}
+                  disabled={unavailable}
                 >
-                  {added ? t("pdp.added") : t("pdp.add")}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn--ghost btn--wide"
-                  onClick={onBuyOneClick}
-                >
-                  {t("pdp.buyOneClick")}
+                  {unavailable
+                    ? t("badge.outOfStock")
+                    : added
+                      ? t("pdp.added")
+                      : t("pdp.add")}
                 </button>
               </div>
 
@@ -380,6 +432,27 @@ export function ProductDetail({ product }: { product: Product }) {
           </section>
         )}
       </div>
+
+      <StickyBar className="pdp-sticky">
+        <div className="app-sticky-bar__meta">
+          <span className="app-sticky-bar__label">{t("header.total")}</span>
+          <strong className="app-sticky-bar__price">
+            {formatPrice(totalPrice, locale)}
+          </strong>
+        </div>
+        <button
+          type="button"
+          className="btn btn--primary"
+          onClick={onAdd}
+          disabled={unavailable}
+        >
+          {unavailable
+            ? t("badge.outOfStock")
+            : added
+              ? t("pdp.added")
+              : t("pdp.add")}
+        </button>
+      </StickyBar>
     </main>
   );
 }

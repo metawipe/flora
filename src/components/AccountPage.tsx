@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { useT } from "@/i18n/LocaleProvider";
+import {
+  loadUserProfile,
+  saveUserProfile,
+  USER_KEY,
+  type UserProfile,
+} from "@/lib/userProfile";
 import { Breadcrumbs } from "./Breadcrumbs";
 import {
   ArrowRightIcon,
@@ -14,24 +20,6 @@ import {
 
 type Mode = "login" | "register";
 
-type UserProfile = {
-  login: string;
-  phone: string;
-  name?: string;
-};
-
-const USER_KEY = "loveflowers-user";
-
-function loadUser(): UserProfile | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(USER_KEY);
-    return raw ? (JSON.parse(raw) as UserProfile) : null;
-  } catch {
-    return null;
-  }
-}
-
 export function AccountPage() {
   const t = useT();
   const [mode, setMode] = useState<Mode>("login");
@@ -40,7 +28,7 @@ export function AccountPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setUser(loadUser());
+    setUser(loadUserProfile());
     setReady(true);
   }, []);
 
@@ -55,7 +43,7 @@ export function AccountPage() {
       return;
     }
     const next = { login, phone: login.startsWith("+") ? login : "+998" };
-    window.localStorage.setItem(USER_KEY, JSON.stringify(next));
+    saveUserProfile(next);
     setUser(next);
   };
 
@@ -90,7 +78,7 @@ export function AccountPage() {
       phone: phone.replace(/[\s()-]/g, ""),
       name: login,
     };
-    window.localStorage.setItem(USER_KEY, JSON.stringify(next));
+    saveUserProfile(next);
     setUser(next);
   };
 

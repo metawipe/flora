@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { ProductDetail } from "@/components/ProductDetail";
 import { allProducts, getProductById } from "@/data/products";
 
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return allProducts.map((p) => ({ id: p.id }));
 }

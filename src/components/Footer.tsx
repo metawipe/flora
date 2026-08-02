@@ -2,14 +2,31 @@
 
 import Link from "next/link";
 import { footerLinks, site } from "@/data/products";
-import {
-  tCategoryByHref,
-  tFooterPage,
-} from "@/i18n/catalog";
+import { tCategoryByHref, tFooterPage } from "@/i18n/catalog";
 import { useLocale } from "@/i18n/LocaleProvider";
 
-export function Footer() {
+export function Footer({ compact = false }: { compact?: boolean }) {
   const { locale, t } = useLocale();
+
+  if (compact) {
+    return (
+      <footer className="footer footer--compact">
+        <div className="container footer__compact">
+          <a href={site.phoneHref} className="footer__compact-phone">
+            {site.phone}
+          </a>
+          <p className="footer__copy">
+            {t("footer.copyright", { year: new Date().getFullYear() })}
+          </p>
+          <div className="footer__compact-links">
+            <Link href="/faq">{t("footer.faq")}</Link>
+            <Link href="/offer">{t("footer.offer")}</Link>
+            <Link href="/privacy">{t("footer.privacy")}</Link>
+          </div>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer className="footer">
@@ -67,7 +84,9 @@ export function Footer() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {item.name === "Карта" || item.name === "Map" || item.name === "Xarita"
+                  {item.name === "Карта" ||
+                  item.name === "Map" ||
+                  item.name === "Xarita"
                     ? t("site.map")
                     : item.name}
                 </a>
@@ -121,7 +140,9 @@ export function Footer() {
                 target="_blank"
                 rel="noreferrer"
               >
-                {item.name === "Карта" || item.name === "Map" || item.name === "Xarita"
+                {item.name === "Карта" ||
+                item.name === "Map" ||
+                item.name === "Xarita"
                   ? t("site.map")
                   : item.name}
               </a>

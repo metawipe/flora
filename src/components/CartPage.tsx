@@ -2,40 +2,34 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useStore } from "@/context/StoreContext";
 import { formatPrice, localizeProductName } from "@/data/products";
 import { localizePackSize } from "@/i18n/catalog";
 import { useLocale } from "@/i18n/LocaleProvider";
+import { PROMO_CODES } from "@/lib/promo";
 import { HeartIcon, TrashIcon } from "./Icons";
-
-const PROMO_CODES: Record<string, { labelKey: string; percent: number }> = {
-  LOVE10: { labelKey: "cart.promoLove10", percent: 10 },
-  FLOWERS: { labelKey: "cart.promoFlowers", percent: 5 },
-};
+import { StickyBar } from "./StickyBar";
 
 export function CartPage() {
   const {
     cart,
     cartTotal,
+    promoCode,
+    promoDiscount,
+    payableTotal,
     setQty,
     removeFromCart,
     clearCart,
+    setPromoCode,
     toggleFavorite,
     isFavorite,
   } = useStore();
   const { locale, t } = useLocale();
-  const [promoInput, setPromoInput] = useState("");
-  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [promoInput, setPromoInput] = useState(promoCode ?? "");
   const [promoError, setPromoError] = useState("");
   const nonePack = localizePackSize(locale, "none");
-
-  const promo = appliedCode ? PROMO_CODES[appliedCode] : null;
-  const discount = useMemo(() => {
-    if (!promo) return 0;
-    return Math.round((cartTotal * promo.percent) / 100);
-  }, [cartTotal, promo]);
-  const payable = Math.max(0, cartTotal - discount);
+  const promo = promoCode ? PROMO_CODES[promoCode] : null;
 
   const applyPromo = () => {
     const code = promoInput.trim().toUpperCase();
@@ -44,11 +38,12 @@ export function CartPage() {
       return;
     }
     if (!PROMO_CODES[code]) {
-      setAppliedCode(null);
+      setPromoCode(null);
       setPromoError(t("cart.promoInvalid"));
       return;
     }
-    setAppliedCode(code);
+    setPromoCode(code);
+    setPromoInput(code);
     setPromoError("");
   };
 
@@ -57,27 +52,26 @@ export function CartPage() {
       <main className="page-main">
         <div className="container">
           <h1 className="page-title">{t("cart.title")}</h1>
-          <div className="empty-state">
+          <div className="empty-state empty-state--alive">
             <div className="empty-state__icon" aria-hidden>
               <svg width="72" height="64" viewBox="0 0 72 64" fill="none">
                 <path
                   d="M8 16h56l-4 40H12L8 16z"
-                  stroke="#bababa"
+                  stroke="currentColor"
                   strokeWidth="2"
                 />
                 <path
                   d="M24 16V12a12 12 0 0124 0v4"
-                  stroke="#bababa"
+                  stroke="currentColor"
                   strokeWidth="2"
                 />
               </svg>
             </div>
             <p className="empty-state__title">{t("cart.empty")}</p>
-            <p className="empty-state__desc">
-              <Link href="/catalog/bouquets">{t("common.seeBouquets")}</Link>
-              {" · "}
-              <Link href="/">{t("cart.backHome")}</Link>
-            </p>
+            <p className="empty-state__desc">{t("cart.emptyHint")}</p>
+            <Link href="/catalog/shop" className="btn btn--primary empty-state__cta">
+              {t("cart.cta")}
+            </Link>
           </div>
         </div>
       </main>
@@ -85,7 +79,7 @@ export function CartPage() {
   }
 
   return (
-    <main className="page-main">
+    <main className="page-main page-main--cart">
       <div className="container cart-page">
         <h1 className="page-title">{t("cart.title")}</h1>
 
@@ -109,7 +103,13 @@ export function CartPage() {
                     href={`/product/${item.productId}`}
                     className="basket-card__img"
                   >
-                    <Image src={item.image} alt={name} fill sizes="96px" />
+                    <Image
+                      src={item.image}
+                      alt={name}
+                      fill
+                      sizes="88px"
+                      style={{ objectFit: "cover" }}
+                    />
                   </Link>
 
                   <div className="basket-card__body">
@@ -147,7 +147,7 @@ export function CartPage() {
                     </div>
 
                     <div className="basket-card__bottom">
-                      <div>
+                      <div className="basket-card__meta">
                         <div className="qty qty--round">
                           <button
                             type="button"
@@ -190,13 +190,13 @@ export function CartPage() {
               {promo && (
                 <div className="cart-summary__line">
                   <span>{t(promo.labelKey)}</span>
-                  <strong>−{formatPrice(discount, locale)}</strong>
+                  <strong>−{formatPrice(promoDiscount, locale)}</strong>
                 </div>
               )}
 
               <div className="cart-summary__total">
                 <span>{t("cart.total")}</span>
-                <strong>{formatPrice(payable, locale)}</strong>
+                <strong>{formatPrice(payableTotal, locale)}</strong>
               </div>
 
               <label className="promo-field">
@@ -210,17 +210,20 @@ export function CartPage() {
                   aria-label={t("cart.promo")}
                 />
                 <button type="button" onClick={applyPromo}>
-                  OK
+                  {t("cart.promoApply")}
                 </button>
               </label>
               {promoError && <p className="form-error">{promoError}</p>}
               {promo && !promoError && (
                 <p className="cart-promo-ok">
-                  {t("cart.promoOk", { code: appliedCode ?? "" })}
+                  {t("cart.promoOk", { code: promoCode ?? "" })}
                 </p>
               )}
 
-              <Link href="/checkout" className="btn btn--primary btn--wide">
+              <Link
+                href="/checkout"
+                className="btn btn--primary btn--wide cart-summary__cta"
+              >
                 {t("cart.checkout")}
               </Link>
             </div>
@@ -231,6 +234,18 @@ export function CartPage() {
           </aside>
         </div>
       </div>
+
+      <StickyBar className="cart-sticky">
+        <div className="app-sticky-bar__meta">
+          <span className="app-sticky-bar__label">{t("cart.total")}</span>
+          <strong className="app-sticky-bar__price">
+            {formatPrice(payableTotal, locale)}
+          </strong>
+        </div>
+        <Link href="/checkout" className="btn btn--primary">
+          {t("cart.checkout")}
+        </Link>
+      </StickyBar>
     </main>
   );
 }

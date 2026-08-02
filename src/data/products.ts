@@ -17,6 +17,8 @@ export type Product = {
   images: string[];
   category?: string;
   description?: string;
+  /** false = out of stock / hidden from shop */
+  available?: boolean;
 };
 
 export type Collection = {
@@ -71,47 +73,71 @@ export const allProducts: Product[] = [
   ...flowerBaskets,
 ];
 
-const tulipProducts = [
-  ...plants.filter((p) => p.name.toLowerCase().includes("тюльпан")),
-  ...flowerBaskets.filter((p) => p.name.toLowerCase().includes("тюльпан")),
-];
+/** Live catalog from admin store on the server; falls back to mock on client. */
+export function getCatalogProducts(opts?: {
+  includeUnavailable?: boolean;
+}): Product[] {
+  if (typeof window === "undefined") {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { listProducts } = require("@/lib/store/catalogDb") as typeof import("@/lib/store/catalogDb");
+      return listProducts({
+        includeUnavailable: opts?.includeUnavailable ?? false,
+      });
+    } catch {
+      /* fall through */
+    }
+  }
+  const list = allProducts;
+  if (opts?.includeUnavailable) return list;
+  return list.filter((p) => p.available !== false);
+}
 
-const CATEGORY_MAP: Record<string, { title: string; products: Product[] }> = {
-  bouquets: { title: "Букеты", products: bouquets },
-  roses: { title: "Розы", products: vipProducts },
-  tulips: { title: "Тюльпаны", products: tulipProducts },
-  mixed: {
-    title: "Цветы разные",
-    products: [
-      ...plants.filter((p) => !p.name.toLowerCase().includes("тюльпан")),
-      ...bouquets.slice(4, 10),
-    ],
-  },
-  plants: {
-    title: "Цветы разные",
-    products: plants,
-  },
-  boxes: { title: "Цветы в коробке", products: flowerBoxes },
-  baskets: { title: "Корзины с цветами", products: flowerBaskets },
-  popular: {
-    title: "Популярное",
-    products: [
-      ...bouquets.slice(0, 6),
-      ...vipProducts.slice(0, 4),
-      ...flowerBaskets.slice(0, 4),
-      ...flowerBoxes.slice(0, 4),
-    ],
-  },
-  sale: {
-    title: "Акции",
-    products: allProducts.filter((p) => p.oldPrice || p.badge === "SALE"),
-  },
-  shop: { title: "Магазин", products: allProducts },
-  catalog: { title: "Магазин", products: allProducts },
-};
+function buildCategoryMap(
+  products: Product[],
+): Record<string, { title: string; products: Product[] }> {
+  const byCat = (cat: string) =>
+    products.filter((p) => (p.category || "bouquets") === cat);
+  const tulips = products.filter((p) =>
+    p.name.toLowerCase().includes("тюльпан"),
+  );
+  const mixed = products.filter(
+    (p) =>
+      (p.category === "plants" || p.category === "mixed") &&
+      !p.name.toLowerCase().includes("тюльпан"),
+  );
+  return {
+    bouquets: { title: "Букеты", products: byCat("bouquets") },
+    roses: { title: "Розы", products: byCat("roses") },
+    tulips: { title: "Тюльпаны", products: tulips },
+    mixed: {
+      title: "Цветы разные",
+      products: mixed.length ? mixed : byCat("plants"),
+    },
+    plants: { title: "Цветы разные", products: byCat("plants") },
+    boxes: { title: "Цветы в коробке", products: byCat("boxes") },
+    baskets: { title: "Корзины с цветами", products: byCat("baskets") },
+    popular: {
+      title: "Популярное",
+      products: [
+        ...byCat("bouquets").slice(0, 6),
+        ...byCat("roses").slice(0, 4),
+        ...byCat("baskets").slice(0, 4),
+        ...byCat("boxes").slice(0, 4),
+      ],
+    },
+    sale: {
+      title: "Акции",
+      products: products.filter((p) => p.oldPrice || p.badge === "SALE"),
+    },
+    shop: { title: "Магазин", products },
+    catalog: { title: "Магазин", products },
+  };
+}
 
 export function getCategory(slug: string) {
-  return CATEGORY_MAP[slug] ?? null;
+  const map = buildCategoryMap(getCatalogProducts());
+  return map[slug] ?? null;
 }
 
 export function getCategoryLocalized(slug: string, locale: Locale) {
@@ -131,6 +157,16 @@ export function localizeProductName(
 }
 
 export function getProductById(id: string): Product | undefined {
+  if (typeof window === "undefined") {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { getStoreProduct } = require("@/lib/store/catalogDb") as typeof import("@/lib/store/catalogDb");
+      const live = getStoreProduct(id);
+      if (live) return live;
+    } catch {
+      /* fall through */
+    }
+  }
   return allProducts.find((p) => p.id === id);
 }
 
@@ -174,7 +210,8 @@ function scoreRelatedPair(base: Product, candidate: Product): number {
 }
 
 export function getRelated(product: Product, limit = 4): Product[] {
-  const ranked = allProducts
+  const pool = getCatalogProducts().filter((p) => p.available !== false);
+  const ranked = pool
     .map((candidate) => ({
       candidate,
       score: scoreRelatedPair(product, candidate),

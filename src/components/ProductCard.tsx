@@ -2,43 +2,100 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState, type MouseEvent, type TouchEvent } from "react";
 import { useStore } from "@/context/StoreContext";
 import {
   formatPrice,
+  isFlowerProduct,
   localizeProductName,
+  packagingOptions,
   type Product,
 } from "@/data/products";
 import { useLocale } from "@/i18n/LocaleProvider";
-import { HeartIcon } from "./Icons";
+import { HeartIcon, PlusIcon } from "./Icons";
 
 type ProductCardProps = {
   product: Product;
+  compact?: boolean;
 };
 
-export function ProductCard({ product }: ProductCardProps) {
-  const { isFavorite, toggleFavorite } = useStore();
+function localizeBadge(badge: string, t: (key: string) => string): string {
+  const key = `badge.${badge}`;
+  const label = t(key);
+  return label === key ? badge : label;
+}
+
+export function ProductCard({ product, compact = false }: ProductCardProps) {
+  const { isFavorite, toggleFavorite, addToCart } = useStore();
   const { locale, t } = useLocale();
   const [imgIndex, setImgIndex] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
+  const touchX = useRef<number | null>(null);
   const images = product.images.length ? product.images : [""];
   const favorited = isFavorite(product.id);
   const name = localizeProductName(product, locale);
+  const unavailable = product.available === false;
+
+  const onQuickAdd = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (unavailable) return;
+    const flower = isFlowerProduct(product);
+    const pack = packagingOptions(locale)[0];
+    const size = flower ? pack.label : "—";
+    addToCart(product, size, 1);
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 1200);
+  };
+
+  const onTouchStart = (e: TouchEvent) => {
+    touchX.current = e.changedTouches[0]?.clientX ?? null;
+  };
+
+  const onTouchEnd = (e: TouchEvent) => {
+    if (touchX.current == null || images.length < 2) return;
+    const x = e.changedTouches[0]?.clientX ?? touchX.current;
+    const dx = x - touchX.current;
+    touchX.current = null;
+    if (Math.abs(dx) < 36) return;
+    setImgIndex((i) =>
+      dx < 0
+        ? Math.min(images.length - 1, i + 1)
+        : Math.max(0, i - 1),
+    );
+    setLoaded(false);
+  };
 
   return (
-    <article className="product-card product-card--motion">
-      <div className="product-card__media">
+    <article
+      className={`product-card product-card--motion${compact ? " product-card--compact" : ""}${unavailable ? " is-unavailable" : ""}`}
+    >
+      <div
+        className="product-card__media"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
+        {!loaded && <span className="img-skeleton" aria-hidden />}
         <Link href={`/product/${product.id}`} className="product-card__link">
           <Image
             src={images[imgIndex]}
             alt={name}
             fill
-            className="product-card__img"
-            sizes="(max-width: 700px) 50vw, 25vw"
+            className={`product-card__img${loaded ? " is-loaded" : ""}`}
+            sizes={compact ? "160px" : "(max-width: 700px) 50vw, 25vw"}
+            onLoad={() => setLoaded(true)}
           />
         </Link>
 
-        {product.badge && (
-          <span className="product-card__badge">{product.badge}</span>
+        {unavailable && (
+          <span className="product-card__stock">{t("badge.outOfStock")}</span>
+        )}
+
+        {product.badge && !unavailable && (
+          <span className="product-card__badge">
+            {localizeBadge(product.badge, t)}
+          </span>
         )}
 
         <button
@@ -53,7 +110,18 @@ export function ProductCard({ product }: ProductCardProps) {
           <HeartIcon filled={favorited} />
         </button>
 
-        {images.length > 1 && (
+        {!unavailable && (
+          <button
+            type="button"
+            className={`product-card__add${justAdded ? " is-added" : ""}`}
+            aria-label={t("pdp.add")}
+            onClick={onQuickAdd}
+          >
+            <PlusIcon />
+          </button>
+        )}
+
+        {!compact && images.length > 1 && (
           <div className="product-card__dots">
             {images.map((_, i) => (
               <button
@@ -61,8 +129,10 @@ export function ProductCard({ product }: ProductCardProps) {
                 type="button"
                 className={`product-card__dot${i === imgIndex ? " is-active" : ""}`}
                 aria-label={t("pdp.photoN", { n: i + 1 })}
-                onMouseEnter={() => setImgIndex(i)}
-                onClick={() => setImgIndex(i)}
+                onClick={() => {
+                  setImgIndex(i);
+                  setLoaded(false);
+                }}
               />
             ))}
           </div>

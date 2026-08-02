@@ -62,6 +62,7 @@ export const metadata: Metadata = {
     email: false,
     address: false,
   },
+  manifest: "/manifest.webmanifest",
   other: {
     "mobile-web-app-capable": "yes",
   },

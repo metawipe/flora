@@ -121,3 +121,23 @@ export function TrashIcon() {
     </svg>
   );
 }
+
+export function PlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+      <path
+        d="M4 10.5 12 4l8 6.5V20a1 1 0 01-1 1h-5.5v-6h-3v6H5a1 1 0 01-1-1v-9.5z"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+

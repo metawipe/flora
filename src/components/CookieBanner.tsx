@@ -20,23 +20,12 @@ export function CookieBanner() {
   };
 
   return (
-    <div className="cookie" role="dialog" aria-label="Cookies">
-      <div className="cookie__top">
-        <p className="cookie__title">{t("cookie.title")}</p>
-        <button
-          className="cookie__close"
-          aria-label={t("common.close")}
-          onClick={accept}
-        >
-          ×
-        </button>
-      </div>
-      <p className="cookie__text">
-        {t("cookie.bodyBefore")}{" "}
-        <a href="/privacy">{t("cookie.policy")}</a> {t("cookie.bodyMid")}{" "}
-        <a href="/privacy">{t("cookie.cookies")}</a>.
+    <div className="cookie cookie--strip" role="dialog" aria-label="Cookies">
+      <p className="cookie__strip-text">
+        {t("cookie.title")}.{" "}
+        <a href="/privacy">{t("cookie.policy")}</a>
       </p>
-      <button type="button" className="cookie__ok" onClick={accept}>
+      <button type="button" className="cookie__strip-ok" onClick={accept}>
         {t("cookie.ok")}
       </button>
     </div>

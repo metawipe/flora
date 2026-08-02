@@ -8,6 +8,8 @@ type ProductSectionProps = {
   href?: string;
   products: Product[];
   bottomPad?: boolean;
+  /** Horizontal snap shelf on mobile (app-style) */
+  shelf?: boolean;
 };
 
 export function ProductSection({
@@ -15,9 +17,14 @@ export function ProductSection({
   href,
   products,
   bottomPad,
+  shelf = false,
 }: ProductSectionProps) {
+  const list = shelf ? products.slice(0, 12) : products;
+
   return (
-    <section className={`section${bottomPad ? " section--bottom" : ""}`}>
+    <section
+      className={`section${bottomPad ? " section--bottom" : ""}${shelf ? " section--shelf" : ""}`}
+    >
       <div className="container">
         {href ? (
           <Link href={href} className="section__head">
@@ -32,9 +39,13 @@ export function ProductSection({
           </div>
         )}
 
-        <div className="product-grid">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+        <div className={shelf ? "product-shelf" : "product-grid"}>
+          {list.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              compact={shelf}
+            />
           ))}
         </div>
       </div>

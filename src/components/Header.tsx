@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 import { cartItemLabel, useStore } from "@/context/StoreContext";
 import { formatPrice, site } from "@/data/products";
 import { useLocale } from "@/i18n/LocaleProvider";
+import { badgeCount } from "@/lib/badgeCount";
 import { BagIcon, HeartIcon, SearchIcon, UserIcon } from "./Icons";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Logo } from "./Logo";
-import { ToastStack } from "./ToastStack";
 
 type HeaderProps = {
   onSearch: () => void;
@@ -25,6 +25,8 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
   const [miniOpen, setMiniOpen] = useState(false);
   const onCartPage = pathname === "/cart" || pathname.startsWith("/cart/");
   const showMini = hydrated && cartCount > 0 && !onCartPage;
+  const cartLabel = badgeCount(cartCount);
+  const favLabel = badgeCount(favCount);
 
   useEffect(() => {
     setMiniOpen(false);
@@ -53,7 +55,7 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
             {site.phone}
           </a>
           <button
-            className="icon-btn"
+            className="icon-btn header__search-desk"
             aria-label={t("header.search")}
             onClick={onSearch}
           >
@@ -68,12 +70,12 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
           </Link>
           <Link
             href="/favorites"
-            className="icon-btn"
+            className="icon-btn header__fav"
             aria-label={t("header.favorites")}
           >
             <HeartIcon />
-            {favCount > 0 && (
-              <span className="icon-btn__count">{favCount}</span>
+            {favLabel && (
+              <span className="icon-btn__count">{favLabel}</span>
             )}
           </Link>
 
@@ -92,8 +94,8 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
                 aria-expanded={miniOpen && showMini}
               >
                 <BagIcon />
-                {cartCount > 0 && (
-                  <span className="icon-btn__count">{cartCount}</span>
+                {cartLabel && (
+                  <span className="icon-btn__count">{cartLabel}</span>
                 )}
               </Link>
 
@@ -142,8 +144,6 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
                 </div>
               )}
             </div>
-
-            <ToastStack />
           </div>
         </div>
       </div>

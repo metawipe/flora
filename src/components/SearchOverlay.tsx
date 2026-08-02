@@ -143,11 +143,22 @@ function discountPercent(price: number, oldPrice?: number) {
 export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
+  const [catalog, setCatalog] = useState<Product[]>(allProducts);
   const { locale, t } = useLocale();
 
   useEffect(() => {
     if (!open) return;
     setQuery("");
+    void fetch("/api/products")
+      .then((r) => r.json())
+      .then((data: { products?: Product[] }) => {
+        if (Array.isArray(data.products) && data.products.length) {
+          setCatalog(data.products);
+        }
+      })
+      .catch(() => {
+        /* keep mock fallback */
+      });
     const timer = window.setTimeout(() => inputRef.current?.focus(), 30);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -164,10 +175,10 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   const results = useMemo(() => {
     const q = query.trim();
     if (q.length < 1) return [];
-    return allProducts
+    return catalog
       .filter((p) => productMatches(p, q, locale))
       .slice(0, 40);
-  }, [query, locale]);
+  }, [query, locale, catalog]);
 
   if (!open) return null;
 

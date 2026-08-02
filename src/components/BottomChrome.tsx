@@ -3,36 +3,48 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useT } from "@/i18n/LocaleProvider";
-import { CatalogBar } from "./CatalogBar";
-import { BagIcon, CatalogIcon, SearchIcon, UserIcon } from "./Icons";
+import { badgeCount } from "@/lib/badgeCount";
+import {
+  BagIcon,
+  CatalogIcon,
+  HeartIcon,
+  HomeIcon,
+  UserIcon,
+} from "./Icons";
 
 type BottomChromeProps = {
-  visible: boolean;
   cartCount?: number;
-  onSearch: () => void;
+  favCount?: number;
 };
 
 export function BottomChrome({
-  visible,
   cartCount = 0,
-  onSearch,
+  favCount = 0,
 }: BottomChromeProps) {
   const pathname = usePathname();
   const t = useT();
-  const onCatalog =
-    pathname === "/catalog/shop" || pathname.startsWith("/catalog/shop/");
+  const onHome = pathname === "/";
+  const onCatalog = pathname.startsWith("/catalog");
+  const onFavorites = pathname.startsWith("/favorites");
   const onCart = pathname === "/cart" || pathname.startsWith("/cart/");
   const onAccount =
     pathname === "/account" || pathname.startsWith("/account/");
+  const cartLabel = badgeCount(cartCount);
+  const favLabel = badgeCount(favCount);
 
   return (
-    <div
-      className={`bottom-chrome${visible ? " is-visible" : ""}`}
-      aria-hidden={!visible}
-      {...(!visible ? { inert: true } : {})}
-    >
-      <CatalogBar className="catalog-bar--dock" />
-      <nav className="bottom-nav" aria-label={t("bottomNav.aria")}>
+    <div className="bottom-chrome is-visible" aria-hidden={false}>
+      <nav className="bottom-nav bottom-nav--5" aria-label={t("bottomNav.aria")}>
+        <Link
+          href="/"
+          className={`bottom-nav__tab${onHome ? " is-active" : ""}`}
+        >
+          <span className="bottom-nav__icon">
+            <HomeIcon />
+          </span>
+          <span className="bottom-nav__label">{t("bottomNav.home")}</span>
+        </Link>
+
         <Link
           href="/catalog/shop"
           className={`bottom-nav__tab${onCatalog ? " is-active" : ""}`}
@@ -49,23 +61,25 @@ export function BottomChrome({
         >
           <span className="bottom-nav__icon">
             <BagIcon />
-            {cartCount > 0 && (
-              <span className="bottom-nav__count">{cartCount}</span>
+            {cartLabel && (
+              <span className="bottom-nav__count">{cartLabel}</span>
             )}
           </span>
           <span className="bottom-nav__label">{t("bottomNav.cart")}</span>
         </Link>
 
-        <button
-          type="button"
-          className="bottom-nav__tab"
-          onClick={onSearch}
+        <Link
+          href="/favorites"
+          className={`bottom-nav__tab${onFavorites ? " is-active" : ""}`}
         >
           <span className="bottom-nav__icon">
-            <SearchIcon />
+            <HeartIcon />
+            {favLabel && (
+              <span className="bottom-nav__count">{favLabel}</span>
+            )}
           </span>
-          <span className="bottom-nav__label">{t("bottomNav.search")}</span>
-        </button>
+          <span className="bottom-nav__label">{t("bottomNav.favorites")}</span>
+        </Link>
 
         <Link
           href="/account"

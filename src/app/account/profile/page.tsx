@@ -5,30 +5,20 @@ import { useEffect, useState, type FormEvent } from "react";
 import { AccountSidebar } from "@/components/AccountSidebar";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useT } from "@/i18n/LocaleProvider";
-
-type Profile = {
-  login: string;
-  phone: string;
-  name?: string;
-  lastName?: string;
-  email?: string;
-};
-
-const USER_KEY = "loveflowers-user";
+import {
+  loadUserProfile,
+  saveUserProfile,
+  type UserProfile,
+} from "@/lib/userProfile";
 
 export default function ProfilePage() {
   const t = useT();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [ready, setReady] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(USER_KEY);
-      setProfile(raw ? (JSON.parse(raw) as Profile) : null);
-    } catch {
-      setProfile(null);
-    }
+    setProfile(loadUserProfile());
     setReady(true);
   }, []);
 
@@ -67,14 +57,15 @@ export default function ProfilePage() {
   const onSave = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const next: Profile = {
+    const next: UserProfile = {
       login: profile.login,
       name: String(data.get("name") || ""),
       lastName: String(data.get("lastName") || ""),
       email: String(data.get("email") || ""),
       phone: String(data.get("phone") || "").replace(/[\s()-]/g, ""),
+      address: String(data.get("address") || ""),
     };
-    window.localStorage.setItem(USER_KEY, JSON.stringify(next));
+    saveUserProfile(next);
     setProfile(next);
     setSaved(true);
     window.setTimeout(() => setSaved(false), 2000);
@@ -138,6 +129,14 @@ export default function ProfilePage() {
                   type="tel"
                   defaultValue={profile.phone || "+998"}
                   placeholder="+998901234567"
+                />
+              </label>
+              <label className="field">
+                <span>{t("profile.address")}</span>
+                <input
+                  name="address"
+                  defaultValue={profile.address || ""}
+                  placeholder={t("profile.addressPh")}
                 />
               </label>
               {saved && <p className="form-success">{t("profile.saved")}</p>}
