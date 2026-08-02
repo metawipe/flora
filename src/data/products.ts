@@ -30,25 +30,23 @@ export type NavItem = {
   href: string;
 };
 
-export type PaymentMethod = {
-  name: string;
-  src: string;
-};
-
-export type Partner = {
-  name: string;
-  src: string;
-};
-
 export const BOUQUET_SIZES = ["S", "M", "L"] as const;
 
 export const site = mock.site;
-export const payments: PaymentMethod[] = mock.payments;
-export const paymentsImage: string = mock.paymentsImage;
-export const partners: Partner[] = mock.partners;
 export const nav: NavItem[] = mock.nav;
 export const tickerItems: string[] = mock.ticker;
 export const heroSlides: HeroSlide[] = mock.hero;
+
+/** Seasonal full-bleed product shot — swap image/product when the season changes */
+export const seasonalHero = {
+  image: "/hero/seasonal.jpg",
+  alt: "Букет «Кремовый шик»",
+  productHref: "/product/lf-kremovyy-shik",
+  line: "Букеты с доставкой по Ташкенту",
+  note: "Бесплатная доставка по городу · 24/7",
+  ctaLabel: "Смотреть букеты",
+  ctaHref: "/catalog/bouquets",
+};
 export const collections: Collection[] = mock.categories;
 export const bouquets: Product[] = mock.bouquets;
 export const gifts: Product[] = mock.gifts;
@@ -119,14 +117,122 @@ export function getProductById(id: string): Product | undefined {
   return allProducts.find((p) => p.id === id);
 }
 
-export function getRelated(product: Product, limit = 4): Product[] {
-  // Like Love Flowers: flower PDPs cross-sell gifts; gifts stay in gifts.
-  if (isFlowerProduct(product)) {
-    return gifts.filter((p) => p.id !== product.id).slice(0, limit);
+function hashSeed(input: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
   }
-  return gifts
-    .filter((p) => p.id !== product.id)
-    .slice(0, limit);
+  return h >>> 0;
+}
+
+function giftKind(product: Product): string {
+  if (/торт|конфет|шоколад|киндер|raffaello|ferrero|merci|коркунов/i.test(product.name)) {
+    return "sweet";
+  }
+  if (/шар/i.test(product.name)) return "balloon";
+  if (/мишка|зайк|кот|toys|игруш/i.test(product.name)) return "toy";
+  return "other";
+}
+
+function relatedBucket(product: Product): string {
+  return isFlowerProduct(product)
+    ? `flower:${product.category || "bouquets"}`
+    : `gift:${giftKind(product)}`;
+}
+
+/** Score how well `candidate` pairs with `base` for “bought together”. */
+function scoreRelatedPair(base: Product, candidate: Product): number {
+  if (candidate.id === base.id) return Number.NEGATIVE_INFINITY;
+
+  const ratio = candidate.price / Math.max(base.price, 1);
+  const priceCloseness = Math.max(0, 28 - Math.abs(Math.log(ratio || 1)) * 18);
+  let score = 0;
+
+  if (isFlowerProduct(base)) {
+    if (!isFlowerProduct(candidate)) {
+      // Cross-sell gifts: prefer affordable add-ons, not another VIP bouquet
+      score += 48;
+      if (ratio >= 0.04 && ratio <= 0.5) score += 36;
+      else if (ratio <= 0.85) score += 18;
+      else score += 4;
+
+      const kinds = ["sweet", "balloon", "toy", "other"] as const;
+      const prefer = kinds[hashSeed(base.id) % kinds.length];
+      const kind = giftKind(candidate);
+      if (kind === prefer) score += 22;
+      else if (kind !== "other") score += 10;
+    } else {
+      // Similar flowers: same category + close price
+      score += 18;
+      if (candidate.category === base.category) score += 28;
+      else if (
+        (base.category === "bouquets" && candidate.category === "boxes") ||
+        (base.category === "boxes" && candidate.category === "bouquets") ||
+        (base.category === "roses" && candidate.category === "bouquets")
+      ) {
+        score += 16;
+      }
+      score += priceCloseness;
+      if (candidate.badge === "HIT") score += 6;
+      if (candidate.oldPrice) score += 4;
+    }
+  } else {
+    if (!isFlowerProduct(candidate)) {
+      score += 30;
+      if (giftKind(candidate) === giftKind(base)) score += 34;
+      else score += 12;
+      score += priceCloseness;
+    } else {
+      // Pair gift with a bouquet in a sensible price band
+      score += 40;
+      if (candidate.category === "bouquets" || candidate.category === "boxes") {
+        score += 14;
+      }
+      if (ratio >= 1.1 && ratio <= 5) score += 28;
+      else if (ratio >= 0.7) score += 12;
+      if (candidate.badge === "HIT") score += 6;
+    }
+  }
+
+  // Stable per-product jitter so rankings differ across PDPs
+  score += (hashSeed(`${base.id}::${candidate.id}`) % 1000) / 1000 * 14;
+  return score;
+}
+
+export function getRelated(product: Product, limit = 4): Product[] {
+  const ranked = allProducts
+    .map((candidate) => ({
+      candidate,
+      score: scoreRelatedPair(product, candidate),
+    }))
+    .filter((row) => Number.isFinite(row.score))
+    .sort((a, b) => b.score - a.score);
+
+  const picked: Product[] = [];
+  const seenBuckets = new Set<string>();
+
+  // Pass 1: diversify buckets (sweet / balloon / toy / flower category…)
+  for (const { candidate } of ranked) {
+    if (picked.length >= limit) break;
+    const bucket = relatedBucket(candidate);
+    if (seenBuckets.has(bucket) && seenBuckets.size < Math.min(3, limit)) {
+      continue;
+    }
+    picked.push(candidate);
+    seenBuckets.add(bucket);
+  }
+
+  // Pass 2: fill remaining slots by score
+  if (picked.length < limit) {
+    for (const { candidate } of ranked) {
+      if (picked.length >= limit) break;
+      if (picked.some((p) => p.id === candidate.id)) continue;
+      picked.push(candidate);
+    }
+  }
+
+  return picked;
 }
 
 export function categoryPath(category?: string): string {
@@ -238,7 +344,7 @@ export function getProductDetails(product: Product) {
         product.description ||
         (lines.length
           ? lines.join("\n")
-          : `${product.name} — подарок от Love Flowers с доставкой по Ташкенту.`),
+          : `${product.name} — подарок от Zamin Gullari с доставкой по Ташкенту.`),
       notice: null as string | null,
     };
   }
@@ -247,7 +353,7 @@ export function getProductDetails(product: Product) {
     isFlower: true as const,
     description:
       product.description ||
-      `${product.name} — свежая композиция от Love Flowers. Собираем в день заказа.`,
+      `${product.name} — свежая композиция от Zamin Gullari. Собираем в день заказа.`,
     notice:
       product.category === "roses" || /51|101|vip/i.test(product.name)
         ? "Внимание! На фотографии изображен VIP размер букета."

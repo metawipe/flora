@@ -2,10 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useStore } from "@/context/StoreContext";
 import { formatPrice } from "@/data/products";
 import { HeartIcon, TrashIcon } from "./Icons";
+
+const PROMO_CODES: Record<string, { label: string; percent: number }> = {
+  LOVE10: { label: "Скидка 10%", percent: 10 },
+  FLOWERS: { label: "Скидка 5%", percent: 5 },
+};
 
 export function CartPage() {
   const {
@@ -17,7 +22,31 @@ export function CartPage() {
     toggleFavorite,
     isFavorite,
   } = useStore();
-  const [promo, setPromo] = useState("");
+  const [promoInput, setPromoInput] = useState("");
+  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [promoError, setPromoError] = useState("");
+
+  const promo = appliedCode ? PROMO_CODES[appliedCode] : null;
+  const discount = useMemo(() => {
+    if (!promo) return 0;
+    return Math.round((cartTotal * promo.percent) / 100);
+  }, [cartTotal, promo]);
+  const payable = Math.max(0, cartTotal - discount);
+
+  const applyPromo = () => {
+    const code = promoInput.trim().toUpperCase();
+    if (!code) {
+      setPromoError("Введите промокод");
+      return;
+    }
+    if (!PROMO_CODES[code]) {
+      setAppliedCode(null);
+      setPromoError("Промокод не найден. Попробуйте LOVE10");
+      return;
+    }
+    setAppliedCode(code);
+    setPromoError("");
+  };
 
   if (cart.length === 0) {
     return (
@@ -41,7 +70,8 @@ export function CartPage() {
             </div>
             <p className="empty-state__title">Ваша корзина пуста</p>
             <p className="empty-state__desc">
-              <Link href="/">Нажмите здесь</Link>, чтобы продолжить покупки
+              <Link href="/catalog/bouquets">Смотреть букеты</Link> или{" "}
+              <Link href="/">вернуться на главную</Link>
             </p>
           </div>
         </div>
@@ -141,20 +171,43 @@ export function CartPage() {
           <aside className="cart-summary">
             <div className="cart-summary__inner">
               <div className="cart-summary__total">
-                <span>Итого</span>
+                <span>Сумма</span>
                 <strong>{formatPrice(cartTotal)}</strong>
+              </div>
+
+              {promo && (
+                <div className="cart-summary__line">
+                  <span>{promo.label}</span>
+                  <strong>−{formatPrice(discount)}</strong>
+                </div>
+              )}
+
+              <div className="cart-summary__total">
+                <span>Итого</span>
+                <strong>{formatPrice(payable)}</strong>
               </div>
 
               <label className="promo-field">
                 <input
-                  value={promo}
-                  onChange={(e) => setPromo(e.target.value)}
-                  placeholder="Есть промокод или сертификат?"
+                  value={promoInput}
+                  onChange={(e) => {
+                    setPromoInput(e.target.value);
+                    setPromoError("");
+                  }}
+                  placeholder="Промокод"
+                  aria-label="Промокод"
                 />
-                <button type="button" aria-label="Применить">
-                  →
+                <button type="button" onClick={applyPromo}>
+                  OK
                 </button>
               </label>
+              {promoError && <p className="form-error">{promoError}</p>}
+              {promo && !promoError && (
+                <p className="cart-promo-ok">
+                  Применён {appliedCode}. Скидка учтена в итоге на сайте;
+                  менеджер подтвердит при оформлении.
+                </p>
+              )}
 
               <Link href="/checkout" className="btn btn--primary btn--wide">
                 Перейти к оформлению

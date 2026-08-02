@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AccountSidebar } from "@/components/AccountSidebar";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 
@@ -18,7 +19,17 @@ export default function OrdersPage() {
             <AccountSidebar />
           </div>
           <div className="account-content">
-            <div className="alert">У вас пока нет заказов</div>
+            <div className="empty-state empty-state--compact">
+              <p className="empty-state__title">Пока нет заказов</p>
+              <p className="empty-state__desc">
+                Оформите букет в корзине — менеджер подтвердит заказ по телефону
+                или в мессенджере. История на сайте появится после подключения
+                личного кабинета к системе заказов.
+              </p>
+              <Link href="/catalog/bouquets" className="btn btn--primary">
+                Смотреть букеты
+              </Link>
+            </div>
           </div>
         </div>
       </div>

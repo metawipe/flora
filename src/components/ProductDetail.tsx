@@ -59,11 +59,10 @@ function getInfoSections(now?: Date) {
         {
           title: "",
           items: [
-            "Оплата заказа с помощью платежной системы «АльфаБанк»",
-            "Оплата картой Visa;",
-            "Оплата картой Mastercard;",
-            "Оплата картой МИР.",
-            "Также принимаем UzCard, HUMO, Payme, CLICK и др.",
+            "Карты Uzcard и Humo",
+            "Visa и Mastercard",
+            "Payme и Click",
+            "Наличными курьеру при получении",
           ],
         },
       ],
