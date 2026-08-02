@@ -79,7 +79,11 @@ export function CartPage() {
                       >
                         {item.name}
                       </Link>
-                      <span className="basket-card__size">{item.size}</span>
+                      {item.size &&
+                        item.size !== "—" &&
+                        item.size !== "Без упаковки" && (
+                          <span className="basket-card__size">{item.size}</span>
+                        )}
                     </div>
                     <div className="basket-card__actions">
                       <button

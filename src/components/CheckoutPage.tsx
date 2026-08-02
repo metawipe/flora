@@ -2,14 +2,19 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useStore } from "@/context/StoreContext";
 import { formatPrice } from "@/data/products";
+import { scrollToTopInstant } from "./ScrollToTop";
 
 export function CheckoutPage() {
   const { cart, cartTotal, clearCart } = useStore();
   const router = useRouter();
   const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (done) scrollToTopInstant();
+  }, [done]);
 
   if (cart.length === 0 && !done) {
     return (
@@ -19,7 +24,7 @@ export function CheckoutPage() {
           <div className="empty-state">
             <p className="empty-state__title">Корзина пуста</p>
             <p className="empty-state__desc">
-              <Link href="/catalog/bukety">Перейти в каталог</Link>
+              <Link href="/catalog/shop">Перейти в каталог</Link>
             </p>
           </div>
         </div>
@@ -51,6 +56,7 @@ export function CheckoutPage() {
     e.preventDefault();
     clearCart();
     setDone(true);
+    scrollToTopInstant();
     router.refresh();
   };
 

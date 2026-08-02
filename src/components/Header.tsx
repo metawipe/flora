@@ -1,9 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { nav, site } from "@/data/products";
-import { BagIcon, BoltIcon, HeartIcon, SearchIcon, UserIcon } from "./Icons";
+import { useStore } from "@/context/StoreContext";
+import { formatPrice, site } from "@/data/products";
+import { BagIcon, HeartIcon, SearchIcon, UserIcon } from "./Icons";
+import { ToastStack } from "./ToastStack";
 
 type HeaderProps = {
   onSearch: () => void;
@@ -12,7 +15,10 @@ type HeaderProps = {
 };
 
 export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
+  const { cart, cartTotal, hydrated } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [miniOpen, setMiniOpen] = useState(false);
+  const showMini = hydrated && cartCount > 0;
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -23,7 +29,10 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setMiniOpen(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -47,18 +56,6 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
           <Link href="/" className="logo">
             {site.name}
           </Link>
-
-          <nav className="nav">
-            {nav.map((item) => (
-              <Link key={item.href} href={item.href} className="nav__link">
-                {item.label}
-              </Link>
-            ))}
-            <Link href="/catalog/sale" className="sale-badge">
-              <BoltIcon />
-              SALE
-            </Link>
-          </nav>
 
           <div className="header__actions">
             <a
@@ -84,16 +81,76 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
                 <span className="icon-btn__count">{favCount}</span>
               )}
             </Link>
-            <Link
-              href="/cart"
-              className="icon-btn header__cart"
-              aria-label="Корзина"
-            >
-              <BagIcon />
-              {cartCount > 0 && (
-                <span className="icon-btn__count">{cartCount}</span>
-              )}
-            </Link>
+
+            <div className="header__cart-wrap">
+              <div
+                className={`header__cart-hover${miniOpen && showMini ? " is-open" : ""}`}
+                onMouseEnter={() => {
+                  if (showMini) setMiniOpen(true);
+                }}
+                onMouseLeave={() => setMiniOpen(false)}
+              >
+                <Link
+                  href="/cart"
+                  className="icon-btn header__cart"
+                  aria-label="Корзина"
+                  aria-expanded={miniOpen && showMini}
+                >
+                  <BagIcon />
+                  {cartCount > 0 && (
+                    <span className="icon-btn__count">{cartCount}</span>
+                  )}
+                </Link>
+
+                {showMini && (
+                  <div className="mini-cart" role="dialog" aria-label="Мини-корзина">
+                    <ul className="mini-cart__list">
+                      {cart.map((item) => (
+                        <li key={item.id} className="mini-cart__item">
+                          <Link
+                            href={`/product/${item.productId}`}
+                            className="mini-cart__thumb"
+                          >
+                            <Image
+                              src={item.image}
+                              alt=""
+                              fill
+                              sizes="64px"
+                            />
+                          </Link>
+                          <div className="mini-cart__meta">
+                            <p className="mini-cart__price">
+                              {formatPrice(item.price * item.qty)}
+                            </p>
+                            <Link
+                              href={`/product/${item.productId}`}
+                              className="mini-cart__name"
+                            >
+                              {item.name}
+                              {item.size &&
+                              item.size !== "—" &&
+                              item.size !== "Без упаковки"
+                                ? ` - ${item.size}`
+                                : ""}
+                              {item.qty > 1 ? ` × ${item.qty}` : ""}
+                            </Link>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mini-cart__total">
+                      <span>Итого</span>
+                      <strong>{formatPrice(cartTotal)}</strong>
+                    </div>
+                    <Link href="/cart" className="btn btn--primary btn--wide">
+                      Перейти в корзину
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <ToastStack />
+            </div>
           </div>
         </div>
       </header>
@@ -121,38 +178,48 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
             ×
           </button>
         </div>
-        <nav className="mobile-menu__nav">
-          {nav.map((item, i) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              style={{ transitionDelay: menuOpen ? `${80 + i * 40}ms` : "0ms" }}
-              onClick={() => setMenuOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <Link
-            href="/catalog/sale"
-            className="sale-badge"
-            style={{
-              width: "fit-content",
-              transitionDelay: menuOpen ? "280ms" : "0ms",
-            }}
-            onClick={() => setMenuOpen(false)}
-          >
-            <BoltIcon />
-            SALE
-          </Link>
-          <a
-            href={site.phoneHref}
-            className="mobile-menu__phone"
-            style={{ transitionDelay: menuOpen ? "320ms" : "0ms" }}
-          >
-            {site.phone}
-            <span>{site.supportNote}</span>
-          </a>
-        </nav>
+
+        <div className="mobile-menu__contacts">
+          <h2 className="mobile-menu__contacts-title">Наши контакты</h2>
+          <dl className="mobile-menu__contacts-list">
+            <div>
+              <dt>Адрес</dt>
+              <dd>{site.address}</dd>
+            </div>
+            <div>
+              <dt>Телефоны</dt>
+              <dd>
+                <a href={site.phoneHref}>{site.phone}</a>
+              </dd>
+            </div>
+            <div>
+              <dt>E-mail</dt>
+              <dd>
+                <a href={`mailto:${site.email}`}>{site.email}</a>
+              </dd>
+            </div>
+            <div>
+              <dt>Режим работы</dt>
+              <dd>
+                {site.hours === "круглосуточно" ? "Круглосуточно" : site.hours}
+              </dd>
+            </div>
+          </dl>
+
+          <div className="mobile-menu__contacts-actions">
+            {site.socials.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn--ghost"
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );
