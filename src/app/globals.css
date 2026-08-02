@@ -2625,7 +2625,7 @@ html.app-ready .hero__media {
   }
 
   .pdp__actions--inline {
-    display: none;
+    display: none !important;
   }
 
   .pdp-desk-back {
@@ -4554,8 +4554,12 @@ html.app-ready .hero__media {
 .catalog-list {
   display: flex;
   flex-direction: column;
-  margin: 0 -4px;
-  border-top: 1px solid var(--border);
+  margin: 0;
+  padding: 4px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  overflow: hidden;
 }
 
 .catalog-list__row {
@@ -4563,7 +4567,7 @@ html.app-ready .hero__media {
   align-items: center;
   gap: 14px;
   min-height: 76px;
-  padding: 12px 4px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   color: inherit;
   text-decoration: none;
@@ -4571,12 +4575,18 @@ html.app-ready .hero__media {
   -webkit-tap-highlight-color: transparent;
 }
 
+.catalog-list__row:last-child {
+  border-bottom: 0;
+}
+
 .catalog-list__row:active {
   background: rgba(0, 0, 0, 0.04);
 }
 
 @media (hover: hover) {
-  
+  .catalog-list__row:hover {
+    background: #faf8f9;
+  }
 }
 
 .catalog-list__thumb {
@@ -4633,14 +4643,12 @@ html.app-ready .hero__media {
   }
 
   .catalog-list {
-    margin-left: -16px;
-    margin-right: -16px;
-    border-top-color: rgba(0, 0, 0, 0.08);
+    margin: 0;
   }
 
   .catalog-list__row {
     min-height: 72px;
-    padding: 10px 16px;
+    padding: 10px 14px;
     gap: 12px;
   }
 
@@ -4793,7 +4801,8 @@ html.app-ready .hero__media {
   }
 
   .cart-panel__cta,
-  .checkout-form__cta {
+  .checkout-form__cta,
+  .pdp__actions--inline {
     display: none !important;
   }
 
@@ -5008,6 +5017,28 @@ html.app-ready .hero__media {
   height: 36px;
   width: 112px;
   border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.skel--chip {
+  height: 22px;
+  width: 72px;
+  border-radius: 6px;
+}
+
+.skel--input {
+  height: 44px;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.basket-card--skel .basket-card__prices {
+  width: 42%;
+  max-width: 140px;
+}
+
+.basket-card--skel .basket-card__prices .skel--line {
+  margin-left: auto;
 }
 
 @keyframes skel-shimmer {

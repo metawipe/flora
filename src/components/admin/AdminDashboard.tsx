@@ -20,7 +20,7 @@ export function AdminDashboard() {
       fetch("/api/admin/products"),
     ]);
     if (oRes.status === 401 || pRes.status === 401) {
-      window.location.href = "/admin/login";
+      window.location.href = "/account";
       return;
     }
     if (!oRes.ok || !pRes.ok) {
@@ -38,8 +38,8 @@ export function AdminDashboard() {
   }, [load]);
 
   const logout = async () => {
-    await fetch("/api/admin/logout", { method: "POST" });
-    window.location.href = "/admin/login";
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/account";
   };
 
   const setStatus = async (id: string, status: StoreOrder["status"]) => {

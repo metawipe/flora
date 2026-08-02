@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
-import {
-  listProducts,
-  upsertProduct,
-} from "@/lib/store/catalogDb";
+import { listProducts, upsertProduct } from "@/lib/store/catalogDb";
 import type { StoreProduct } from "@/lib/store/types";
 
 export const runtime = "nodejs";
@@ -12,7 +9,9 @@ export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  return NextResponse.json({ products: listProducts({ includeUnavailable: true }) });
+  return NextResponse.json({
+    products: await listProducts({ includeUnavailable: true }),
+  });
 }
 
 export async function POST(req: Request) {
@@ -21,7 +20,10 @@ export async function POST(req: Request) {
   }
   const body = (await req.json()) as Partial<StoreProduct>;
   if (!body.name || body.price == null) {
-    return NextResponse.json({ error: "name and price required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "name and price required" },
+      { status: 400 },
+    );
   }
   const product: StoreProduct = {
     id: body.id?.trim() || `p-${Date.now().toString(36)}`,
@@ -37,6 +39,6 @@ export async function POST(req: Request) {
     description: body.description || undefined,
     available: body.available !== false,
   };
-  upsertProduct(product);
+  await upsertProduct(product);
   return NextResponse.json({ product });
 }

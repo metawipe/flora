@@ -74,9 +74,17 @@ export function BasketItemSkeleton() {
         <Skeleton className="skel--fill skel--media" />
       </div>
       <div className="basket-card__body">
-        <Skeleton className="skel--line skel--w70" />
-        <Skeleton className="skel--line skel--w40 skel--mt" />
-        <Skeleton className="skel--pill skel--mt" />
+        <div className="basket-card__info">
+          <Skeleton className="skel--line skel--w70 skel--h18" />
+          <Skeleton className="skel--chip skel--mt" />
+        </div>
+        <div className="basket-card__bottom">
+          <Skeleton className="skel--pill" />
+          <div className="basket-card__prices">
+            <Skeleton className="skel--line skel--w45 skel--h18" />
+            <Skeleton className="skel--line skel--w35 skel--mt" />
+          </div>
+        </div>
       </div>
     </article>
   );
@@ -168,20 +176,169 @@ export function CartSkeleton() {
       <div className="container cart-page">
         <div className="cart-layout">
           <div className="cart-panel">
-            <Skeleton className="skel--line skel--w30 skel--h22" />
-            <div className="cart-list" style={{ marginTop: 16 }}>
+            <header className="cart-panel__head">
+              <Skeleton className="skel--line skel--w30 skel--h22" />
+              <Skeleton className="skel--line skel--w25" style={{ height: 14 }} />
+            </header>
+            <div className="cart-list">
+              <BasketItemSkeleton />
               <BasketItemSkeleton />
               <BasketItemSkeleton />
             </div>
           </div>
           <aside className="cart-summary">
             <div className="cart-summary__inner">
-              <Skeleton className="skel--line skel--w60" />
-              <Skeleton className="skel--line skel--w45 skel--mt" />
-              <Skeleton className="skel--line skel--w70 skel--mt" />
+              <div className="cart-summary__row">
+                <Skeleton className="skel--line skel--w25" />
+                <Skeleton className="skel--line skel--w40" />
+              </div>
+              <div className="cart-summary__row">
+                <Skeleton className="skel--line skel--w30" />
+                <Skeleton className="skel--line skel--w25" />
+              </div>
+              <div className="cart-summary__total">
+                <Skeleton className="skel--line skel--w30 skel--h20" />
+                <Skeleton className="skel--line skel--w45 skel--h20" />
+              </div>
+              <Skeleton className="skel--block" style={{ height: 44 }} />
             </div>
           </aside>
         </div>
+      </div>
+    </main>
+  );
+}
+
+function FieldSkeleton({ wideLabel = false }: { wideLabel?: boolean }) {
+  return (
+    <div className="field" aria-hidden>
+      <Skeleton
+        className={`skel--line ${wideLabel ? "skel--w45" : "skel--w30"}`}
+        style={{ height: 12 }}
+      />
+      <Skeleton className="skel--input skel--mt" />
+    </div>
+  );
+}
+
+export function FavoritesSkeleton() {
+  return (
+    <main className="page-main" aria-busy="true">
+      <div className="container">
+        <Skeleton className="skel--line skel--w35" style={{ height: 14 }} />
+        <Skeleton className="skel--line skel--w40 skel--h22 skel--mt-lg" />
+        <div className="account-layout" style={{ marginTop: 20 }}>
+          <div className="account-content">
+            <ProductGridSkeleton count={4} />
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export function ProfileSkeleton() {
+  return (
+    <main className="page-main" aria-busy="true">
+      <div className="container">
+        <Skeleton className="skel--line skel--w35" style={{ height: 14 }} />
+        <Skeleton className="skel--line skel--w40 skel--h22 skel--mt-lg" />
+        <div className="account-layout" style={{ marginTop: 20 }}>
+          <div className="account-content">
+            <div className="profile-form">
+              <div className="profile-form__grid">
+                <FieldSkeleton />
+                <FieldSkeleton />
+              </div>
+              <FieldSkeleton wideLabel />
+              <FieldSkeleton />
+              <FieldSkeleton />
+              <FieldSkeleton wideLabel />
+              <Skeleton className="skel--btn skel--mt-lg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export function AccountSkeleton() {
+  return (
+    <main className="page-main" aria-busy="true">
+      <div className="container">
+        <Skeleton className="skel--line skel--w25" style={{ height: 14 }} />
+        <Skeleton className="skel--line skel--w35 skel--h22 skel--mt-lg" />
+        <Skeleton
+          className="skel--line skel--w60 skel--mt"
+          style={{ height: 14, maxWidth: 280 }}
+        />
+        <div className="cabinet-grid" style={{ marginTop: 24 }}>
+          <div className="cabinet-card cabinet-card--wide" aria-hidden>
+            <Skeleton className="skel--line skel--w25" style={{ height: 12 }} />
+            <Skeleton
+              className="skel--line skel--w40 skel--mt-lg"
+              style={{ height: 28 }}
+            />
+            <div className="cabinet-card__bottom">
+              <div style={{ width: "45%" }}>
+                <Skeleton className="skel--line skel--w80" />
+                <Skeleton className="skel--line skel--w60 skel--mt" />
+              </div>
+              <Skeleton className="skel--pill" style={{ width: 72, height: 30 }} />
+            </div>
+          </div>
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className="cabinet-tile" aria-hidden>
+              <Skeleton
+                className="skel--mt"
+                style={{ width: 40, height: 40, borderRadius: 10 }}
+              />
+              <Skeleton
+                className="skel--line skel--w70"
+                style={{ marginTop: "auto", height: 14 }}
+              />
+              <Skeleton className="skel--line skel--w50 skel--mt" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function LegalSectionSkeleton({ lines = 3 }: { lines?: number }) {
+  return (
+    <section className="legal__section" aria-hidden>
+      <Skeleton className="skel--line skel--w40 skel--h18" />
+      {Array.from({ length: lines }, (_, i) => (
+        <Skeleton
+          key={i}
+          className={`skel--line skel--mt ${i === lines - 1 ? "skel--w60" : "skel--w80"}`}
+          style={{ height: 12 }}
+        />
+      ))}
+    </section>
+  );
+}
+
+export function PrivacySkeleton() {
+  return (
+    <main className="page-main" aria-busy="true">
+      <div className="container legal">
+        <Skeleton className="skel--line skel--w35" style={{ height: 14 }} />
+        <Skeleton className="skel--line skel--w55 skel--h22 skel--mt-lg" />
+        <div className="legal__lead">
+          <Skeleton className="skel--line skel--w80" style={{ height: 12 }} />
+          <Skeleton
+            className="skel--line skel--w70 skel--mt"
+            style={{ height: 12 }}
+          />
+        </div>
+        <LegalSectionSkeleton lines={3} />
+        <LegalSectionSkeleton lines={5} />
+        <LegalSectionSkeleton lines={2} />
+        <LegalSectionSkeleton lines={3} />
       </div>
     </main>
   );

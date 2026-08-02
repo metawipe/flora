@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import { CatalogPage } from "@/components/CatalogPage";
-import { getCategory, getCategoryLocalized } from "@/data/products";
+import {
+  getCategoryAsync,
+  getCategoryLocalizedAsync,
+} from "@/data/products";
 import { DEFAULT_LOCALE } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
@@ -33,8 +36,8 @@ export default async function Page({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const category = getCategory(slug);
-  const localized = getCategoryLocalized(slug, DEFAULT_LOCALE);
+  const category = await getCategoryAsync(slug);
+  const localized = await getCategoryLocalizedAsync(slug, DEFAULT_LOCALE);
 
   return (
     <Suspense fallback={<main className="page-main" />}>

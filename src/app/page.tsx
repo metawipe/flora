@@ -1,9 +1,9 @@
 import { HomePage } from "@/components/HomePage";
-import { getCatalogProducts } from "@/data/products";
+import { getCatalogProductsAsync } from "@/data/products";
 
 export const dynamic = "force-dynamic";
 
-export default function Page() {
-  const products = getCatalogProducts();
+export default async function Page() {
+  const products = await getCatalogProductsAsync();
   return <HomePage products={products} />;
 }

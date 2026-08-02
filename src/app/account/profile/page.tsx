@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { AccountSidebar } from "@/components/AccountSidebar";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ProfileSkeleton } from "@/components/Skeleton";
 import { useT } from "@/i18n/LocaleProvider";
 import {
   loadUserProfile,
+  refreshSessionProfile,
   saveUserProfile,
   type UserProfile,
 } from "@/lib/userProfile";
@@ -18,11 +20,14 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    setProfile(loadUserProfile());
-    setReady(true);
+    void (async () => {
+      const next = (await refreshSessionProfile()) ?? loadUserProfile();
+      setProfile(next);
+      setReady(true);
+    })();
   }, []);
 
-  if (!ready) return null;
+  if (!ready) return <ProfileSkeleton />;
 
   if (!profile) {
     return (
@@ -54,7 +59,7 @@ export default function ProfilePage() {
     );
   }
 
-  const onSave = (e: FormEvent<HTMLFormElement>) => {
+  const onSave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const next: UserProfile = {
@@ -64,9 +69,28 @@ export default function ProfilePage() {
       email: String(data.get("email") || ""),
       phone: String(data.get("phone") || "").replace(/[\s()-]/g, ""),
       address: String(data.get("address") || ""),
+      role: profile.role,
     };
-    saveUserProfile(next);
-    setProfile(next);
+
+    try {
+      const res = await fetch("/api/auth/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(next),
+      });
+      if (res.ok) {
+        const json = (await res.json()) as { profile: UserProfile };
+        saveUserProfile(json.profile);
+        setProfile(json.profile);
+      } else {
+        saveUserProfile(next);
+        setProfile(next);
+      }
+    } catch {
+      saveUserProfile(next);
+      setProfile(next);
+    }
+
     setSaved(true);
     window.setTimeout(() => setSaved(false), 2000);
   };

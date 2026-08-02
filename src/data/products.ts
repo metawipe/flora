@@ -73,24 +73,31 @@ export const allProducts: Product[] = [
   ...flowerBaskets,
 ];
 
-/** Live catalog from admin store on the server; falls back to mock on client. */
+function filterMock(opts?: { includeUnavailable?: boolean }): Product[] {
+  if (opts?.includeUnavailable) return allProducts;
+  return allProducts.filter((p) => p.available !== false);
+}
+
+/** Client / sync fallback — mock catalog. Prefer getCatalogProductsAsync on server. */
 export function getCatalogProducts(opts?: {
   includeUnavailable?: boolean;
 }): Product[] {
-  if (typeof window === "undefined") {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { listProducts } = require("@/lib/store/catalogDb") as typeof import("@/lib/store/catalogDb");
-      return listProducts({
-        includeUnavailable: opts?.includeUnavailable ?? false,
-      });
-    } catch {
-      /* fall through */
-    }
+  return filterMock(opts);
+}
+
+/** Live catalog from Supabase / FS store on the server. */
+export async function getCatalogProductsAsync(opts?: {
+  includeUnavailable?: boolean;
+}): Promise<Product[]> {
+  if (typeof window !== "undefined") return filterMock(opts);
+  try {
+    const { listProducts } = await import("@/lib/store/catalogDb");
+    return await listProducts({
+      includeUnavailable: opts?.includeUnavailable ?? false,
+    });
+  } catch {
+    return filterMock(opts);
   }
-  const list = allProducts;
-  if (opts?.includeUnavailable) return list;
-  return list.filter((p) => p.available !== false);
 }
 
 function uniqueProducts(list: Product[]): Product[] {
@@ -207,8 +214,22 @@ export function getCategory(slug: string) {
   return map[slug] ?? null;
 }
 
+export async function getCategoryAsync(slug: string) {
+  const map = buildCategoryMap(await getCatalogProductsAsync());
+  return map[slug] ?? null;
+}
+
 export function getCategoryLocalized(slug: string, locale: Locale) {
   const cat = getCategory(slug);
+  if (!cat) return null;
+  return {
+    ...cat,
+    title: tCategorySlug(locale, slug, cat.title),
+  };
+}
+
+export async function getCategoryLocalizedAsync(slug: string, locale: Locale) {
+  const cat = await getCategoryAsync(slug);
   if (!cat) return null;
   return {
     ...cat,
@@ -224,11 +245,16 @@ export function localizeProductName(
 }
 
 export function getProductById(id: string): Product | undefined {
+  return allProducts.find((p) => p.id === id);
+}
+
+export async function getProductByIdAsync(
+  id: string,
+): Promise<Product | undefined> {
   if (typeof window === "undefined") {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { getStoreProduct } = require("@/lib/store/catalogDb") as typeof import("@/lib/store/catalogDb");
-      const live = getStoreProduct(id);
+      const { getStoreProduct } = await import("@/lib/store/catalogDb");
+      const live = await getStoreProduct(id);
       if (live) return live;
     } catch {
       /* fall through */
