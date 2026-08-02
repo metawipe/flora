@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useStore } from "@/context/StoreContext";
 import { formatPrice, localizeProductName } from "@/data/products";
+import type { Locale } from "@/i18n/config";
 import { localizePackSize } from "@/i18n/catalog";
 import { useLocale } from "@/i18n/LocaleProvider";
-import { PROMO_CODES } from "@/lib/promo";
 import { HeartIcon, TrashIcon } from "./Icons";
+import { CartSkeleton, Skeleton } from "./Skeleton";
 import { StickyBar } from "./StickyBar";
 
 export function CartPage() {
@@ -21,31 +22,39 @@ export function CartPage() {
     setQty,
     removeFromCart,
     clearCart,
-    setPromoCode,
+    applyPromoCode,
     toggleFavorite,
     isFavorite,
+    hydrated,
   } = useStore();
   const { locale, t } = useLocale();
   const [promoInput, setPromoInput] = useState(promoCode ?? "");
   const [promoError, setPromoError] = useState("");
   const nonePack = localizePackSize(locale, "none");
-  const promo = promoCode ? PROMO_CODES[promoCode] : null;
 
-  const applyPromo = () => {
+  const applyPromo = async () => {
     const code = promoInput.trim().toUpperCase();
     if (!code) {
       setPromoError(t("cart.promoEmpty"));
       return;
     }
-    if (!PROMO_CODES[code]) {
-      setPromoCode(null);
+    const ok = await applyPromoCode(code);
+    if (!ok) {
       setPromoError(t("cart.promoInvalid"));
       return;
     }
-    setPromoCode(code);
     setPromoInput(code);
     setPromoError("");
   };
+
+  const handleClearCart = () => {
+    if (!window.confirm(t("cart.clearConfirm"))) return;
+    clearCart();
+  };
+
+  if (!hydrated) {
+    return <CartSkeleton />;
+  }
 
   if (cart.length === 0) {
     return (
@@ -85,99 +94,19 @@ export function CartPage() {
 
         <div className="cart-layout">
           <div className="cart-list">
-            {cart.map((item) => {
-              const name = localizeProductName(
-                { id: item.productId, name: item.name },
-                locale,
-              );
-              const sizeLabel = localizePackSize(locale, item.size);
-              const showSize =
-                item.size &&
-                item.size !== "—" &&
-                item.size !== "Без упаковки" &&
-                sizeLabel !== nonePack;
-
-              return (
-                <article key={item.id} className="basket-card">
-                  <Link
-                    href={`/product/${item.productId}`}
-                    className="basket-card__img"
-                  >
-                    <Image
-                      src={item.image}
-                      alt={name}
-                      fill
-                      sizes="88px"
-                      style={{ objectFit: "cover" }}
-                    />
-                  </Link>
-
-                  <div className="basket-card__body">
-                    <div className="basket-card__top">
-                      <div>
-                        <Link
-                          href={`/product/${item.productId}`}
-                          className="basket-card__name"
-                        >
-                          {name}
-                        </Link>
-                        {showSize && (
-                          <span className="basket-card__size">{sizeLabel}</span>
-                        )}
-                      </div>
-                      <div className="basket-card__actions">
-                        <button
-                          type="button"
-                          aria-label={t("cart.remove")}
-                          onClick={() => removeFromCart(item.id)}
-                        >
-                          <TrashIcon />
-                        </button>
-                        <button
-                          type="button"
-                          aria-label={t("cart.toFavorites")}
-                          className={
-                            isFavorite(item.productId) ? "is-active" : undefined
-                          }
-                          onClick={() => toggleFavorite(item.productId)}
-                        >
-                          <HeartIcon filled={isFavorite(item.productId)} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="basket-card__bottom">
-                      <div className="basket-card__meta">
-                        <div className="qty qty--round">
-                          <button
-                            type="button"
-                            onClick={() => setQty(item.id, item.qty - 1)}
-                            aria-label={t("cart.less")}
-                          >
-                            −
-                          </button>
-                          <span>{item.qty}</span>
-                          <button
-                            type="button"
-                            onClick={() => setQty(item.id, item.qty + 1)}
-                            aria-label={t("cart.more")}
-                          >
-                            +
-                          </button>
-                        </div>
-                        <p className="basket-card__unit">
-                          {formatPrice(item.price, locale)}
-                          {t("cart.perItem")}
-                        </p>
-                      </div>
-                      <p className="basket-card__sum">
-                        {formatPrice(item.price * item.qty, locale)}
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+            {cart.map((item) => (
+              <CartItemCard
+                key={item.id}
+                item={item}
+                locale={locale}
+                t={t}
+                nonePack={nonePack}
+                isFavorite={isFavorite}
+                toggleFavorite={toggleFavorite}
+                removeFromCart={removeFromCart}
+                setQty={setQty}
+              />
+            ))}
           </div>
 
           <aside className="cart-summary">
@@ -187,12 +116,12 @@ export function CartPage() {
                 <strong>{formatPrice(cartTotal, locale)}</strong>
               </div>
 
-              {promo && (
+              {promoCode ? (
                 <div className="cart-summary__line">
-                  <span>{t(promo.labelKey)}</span>
+                  <span>{promoCode}</span>
                   <strong>−{formatPrice(promoDiscount, locale)}</strong>
                 </div>
-              )}
+              ) : null}
 
               <div className="cart-summary__total">
                 <span>{t("cart.total")}</span>
@@ -214,11 +143,11 @@ export function CartPage() {
                 </button>
               </label>
               {promoError && <p className="form-error">{promoError}</p>}
-              {promo && !promoError && (
+              {promoCode && !promoError ? (
                 <p className="cart-promo-ok">
-                  {t("cart.promoOk", { code: promoCode ?? "" })}
+                  {t("cart.promoApplied", { code: promoCode })}
                 </p>
-              )}
+              ) : null}
 
               <Link
                 href="/checkout"
@@ -228,7 +157,7 @@ export function CartPage() {
               </Link>
             </div>
 
-            <button type="button" className="cart-clear" onClick={clearCart}>
+            <button type="button" className="cart-clear" onClick={handleClearCart}>
               {t("cart.clear")}
             </button>
           </aside>
@@ -247,5 +176,124 @@ export function CartPage() {
         </Link>
       </StickyBar>
     </main>
+  );
+}
+
+function CartItemCard({
+  item,
+  locale,
+  t,
+  nonePack,
+  isFavorite,
+  toggleFavorite,
+  removeFromCart,
+  setQty,
+}: {
+  item: {
+    id: string;
+    productId: string;
+    name: string;
+    image: string;
+    price: number;
+    qty: number;
+    size: string;
+  };
+  locale: Locale;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  nonePack: string;
+  isFavorite: (id: string) => boolean;
+  toggleFavorite: (id: string) => void;
+  removeFromCart: (id: string) => void;
+  setQty: (id: string, qty: number) => void;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const name = localizeProductName(
+    { id: item.productId, name: item.name },
+    locale,
+  );
+  const sizeLabel = localizePackSize(locale, item.size);
+  const showSize =
+    !!item.size &&
+    item.size !== "—" &&
+    item.size !== "Без упаковки" &&
+    sizeLabel !== nonePack;
+
+  return (
+    <article className="basket-card">
+      <Link href={`/product/${item.productId}`} className="basket-card__img">
+        {!loaded && <Skeleton className="skel--fill skel--media" />}
+        <Image
+          src={item.image}
+          alt={name}
+          fill
+          sizes="88px"
+          className={`basket-card__photo${loaded ? " is-loaded" : ""}`}
+          style={{ objectFit: "cover" }}
+          onLoad={() => setLoaded(true)}
+        />
+      </Link>
+
+      <div className="basket-card__body">
+        <div className="basket-card__top">
+          <div>
+            <Link
+              href={`/product/${item.productId}`}
+              className="basket-card__name"
+            >
+              {name}
+            </Link>
+            {showSize && (
+              <span className="basket-card__size">{sizeLabel}</span>
+            )}
+          </div>
+          <div className="basket-card__actions">
+            <button
+              type="button"
+              aria-label={t("cart.remove")}
+              onClick={() => removeFromCart(item.id)}
+            >
+              <TrashIcon />
+            </button>
+            <button
+              type="button"
+              aria-label={t("cart.toFavorites")}
+              className={isFavorite(item.productId) ? "is-active" : undefined}
+              onClick={() => toggleFavorite(item.productId)}
+            >
+              <HeartIcon filled={isFavorite(item.productId)} />
+            </button>
+          </div>
+        </div>
+
+        <div className="basket-card__bottom">
+          <div className="basket-card__meta">
+            <div className="qty qty--round">
+              <button
+                type="button"
+                onClick={() => setQty(item.id, item.qty - 1)}
+                aria-label={t("cart.less")}
+              >
+                −
+              </button>
+              <span>{item.qty}</span>
+              <button
+                type="button"
+                onClick={() => setQty(item.id, item.qty + 1)}
+                aria-label={t("cart.more")}
+              >
+                +
+              </button>
+            </div>
+            <p className="basket-card__unit">
+              {formatPrice(item.price, locale)}
+              {t("cart.perItem")}
+            </p>
+          </div>
+          <p className="basket-card__sum">
+            {formatPrice(item.price * item.qty, locale)}
+          </p>
+        </div>
+      </div>
+    </article>
   );
 }

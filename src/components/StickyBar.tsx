@@ -10,18 +10,21 @@ type StickyBarProps = {
 
 /** Renders fixed chrome on document.body so ancestor transforms can't trap it. */
 export function StickyBar({ className, children }: StickyBarProps) {
-  const [mounted, setMounted] = useState(false);
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    setPortalRoot(document.body);
   }, []);
 
-  if (!mounted) return null;
-
-  return createPortal(
+  const bar = (
     <div className={["app-sticky-bar", className].filter(Boolean).join(" ")}>
       {children}
-    </div>,
-    document.body,
+    </div>
   );
+
+  if (portalRoot) {
+    return createPortal(bar, portalRoot);
+  }
+
+  return bar;
 }

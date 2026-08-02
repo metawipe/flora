@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { useT } from "@/i18n/LocaleProvider";
 import {
+  clearUserSession,
   loadUserProfile,
-  saveUserProfile,
-  USER_KEY,
+  loginAccount,
+  registerAccount,
   type UserProfile,
 } from "@/lib/userProfile";
 import { Breadcrumbs } from "./Breadcrumbs";
@@ -32,7 +33,7 @@ export function AccountPage() {
     setReady(true);
   }, []);
 
-  const onLogin = (e: FormEvent<HTMLFormElement>) => {
+  const onLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     const data = new FormData(e.currentTarget);
@@ -42,12 +43,15 @@ export function AccountPage() {
       setError(t("auth.errLoginPass"));
       return;
     }
-    const next = { login, phone: login.startsWith("+") ? login : "+998" };
-    saveUserProfile(next);
-    setUser(next);
+    const result = await loginAccount(login, password);
+    if (!result.ok) {
+      setError(t("auth.errBadCreds"));
+      return;
+    }
+    setUser(result.profile);
   };
 
-  const onRegister = (e: FormEvent<HTMLFormElement>) => {
+  const onRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     const data = new FormData(e.currentTarget);
@@ -73,22 +77,38 @@ export function AccountPage() {
       return;
     }
 
-    const next = {
-      login,
-      phone: phone.replace(/[\s()-]/g, ""),
-      name: login,
-    };
-    saveUserProfile(next);
-    setUser(next);
+    const result = await registerAccount(
+      {
+        login,
+        phone: phone.replace(/[\s()-]/g, ""),
+        name: login,
+      },
+      password,
+    );
+    if (!result.ok) {
+      setError(
+        result.error === "exists" ? t("auth.errExists") : t("auth.errPassMin"),
+      );
+      return;
+    }
+    setUser(loadUserProfile());
   };
 
   const logout = () => {
-    window.localStorage.removeItem(USER_KEY);
+    clearUserSession();
     setUser(null);
     setMode("login");
   };
 
-  if (!ready) return null;
+  if (!ready) {
+    return (
+      <main className="page-main">
+        <div className="container">
+          <div className="skel skel--line skel--w40" style={{ height: 28 }} />
+        </div>
+      </main>
+    );
+  }
 
   if (user) {
     return (

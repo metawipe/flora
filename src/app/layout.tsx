@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Golos_Text } from "next/font/google";
+import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import { SiteShell } from "@/components/SiteShell";
 import { StoreProvider } from "@/context/StoreContext";
@@ -13,9 +13,11 @@ import {
 import { LocaleProvider } from "@/i18n/LocaleProvider";
 import "./globals.css";
 
-const golos = Golos_Text({
+/* SF Pro isn't licensed for web embedding; Inter is the cross-platform stand-in.
+   Apple devices resolve -apple-system / BlinkMacSystemFont to real SF Pro. */
+const inter = Inter({
   subsets: ["latin", "cyrillic"],
-  variable: "--font-golos",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -87,7 +89,7 @@ export default async function RootLayout({
     : DEFAULT_LOCALE;
 
   return (
-    <html lang={htmlLang(initialLocale)} className={golos.variable}>
+    <html lang={htmlLang(initialLocale)} className={inter.variable}>
       <body>
         <LocaleProvider initialLocale={initialLocale}>
           <StoreProvider>

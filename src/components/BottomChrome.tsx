@@ -46,7 +46,7 @@ export function BottomChrome({
         </Link>
 
         <Link
-          href="/catalog/shop"
+          href="/catalog/bouquets"
           className={`bottom-nav__tab${onCatalog ? " is-active" : ""}`}
         >
           <span className="bottom-nav__icon">

@@ -93,42 +93,109 @@ export function getCatalogProducts(opts?: {
   return list.filter((p) => p.available !== false);
 }
 
+function uniqueProducts(list: Product[]): Product[] {
+  const seen = new Set<string>();
+  return list.filter((p) => {
+    if (seen.has(p.id)) return false;
+    seen.add(p.id);
+    return true;
+  });
+}
+
 function buildCategoryMap(
   products: Product[],
 ): Record<string, { title: string; products: Product[] }> {
   const byCat = (cat: string) =>
     products.filter((p) => (p.category || "bouquets") === cat);
   const tulips = products.filter((p) =>
-    p.name.toLowerCase().includes("тюльпан"),
+    /тюльпан|tulip|lola/i.test(p.name),
   );
   const mixed = products.filter(
     (p) =>
       (p.category === "plants" || p.category === "mixed") &&
-      !p.name.toLowerCase().includes("тюльпан"),
+      !/тюльпан|tulip|lola/i.test(p.name),
   );
+  const bouquets = byCat("bouquets");
+  const roses = byCat("roses");
+  const boxes = byCat("boxes");
+  const baskets = byCat("baskets");
+  const plants = byCat("plants");
+  const hits = products.filter((p) => p.badge === "HIT" || p.badge === "VIP");
+  const saleItems = products.filter((p) => p.oldPrice || p.badge === "SALE");
+
   return {
-    bouquets: { title: "Букеты", products: byCat("bouquets") },
-    roses: { title: "Розы", products: byCat("roses") },
+    bouquets: { title: "Букеты", products: bouquets },
+    roses: { title: "Розы", products: roses },
     tulips: { title: "Тюльпаны", products: tulips },
     mixed: {
       title: "Цветы разные",
-      products: mixed.length ? mixed : byCat("plants"),
+      products: mixed.length ? mixed : plants,
     },
-    plants: { title: "Цветы разные", products: byCat("plants") },
-    boxes: { title: "Цветы в коробке", products: byCat("boxes") },
-    baskets: { title: "Корзины с цветами", products: byCat("baskets") },
+    plants: { title: "Растения", products: plants },
+    boxes: { title: "Цветы в коробке", products: boxes },
+    baskets: { title: "Корзины с цветами", products: baskets },
     popular: {
       title: "Популярное",
-      products: [
-        ...byCat("bouquets").slice(0, 6),
-        ...byCat("roses").slice(0, 4),
-        ...byCat("baskets").slice(0, 4),
-        ...byCat("boxes").slice(0, 4),
-      ],
+      products: uniqueProducts([
+        ...bouquets.slice(0, 6),
+        ...roses.slice(0, 4),
+        ...baskets.slice(0, 4),
+        ...boxes.slice(0, 4),
+      ]),
     },
     sale: {
       title: "Акции",
-      products: products.filter((p) => p.oldPrice || p.badge === "SALE"),
+      products: saleItems,
+    },
+    /** Occasion catalogs — curated mixes, not aliases of flower types */
+    "occasion-birthday": {
+      title: "День рождения",
+      products: uniqueProducts([
+        ...hits,
+        ...bouquets.slice(0, 8),
+        ...boxes.slice(0, 4),
+        ...baskets.slice(0, 3),
+      ]),
+    },
+    "occasion-love": {
+      title: "Любимой",
+      products: uniqueProducts([
+        ...roses,
+        ...boxes.slice(0, 5),
+        ...bouquets.filter((_, i) => i % 2 === 0).slice(0, 6),
+      ]),
+    },
+    "occasion-sorry": {
+      title: "Извинения",
+      products: uniqueProducts([
+        ...tulips,
+        ...mixed.slice(0, 6),
+        ...bouquets.slice(2, 8),
+        ...plants.slice(0, 4),
+      ]),
+    },
+    "occasion-date": {
+      title: "Свидание",
+      products: uniqueProducts([
+        ...boxes,
+        ...roses.slice(0, 6),
+        ...bouquets.slice(0, 5),
+      ]),
+    },
+    "occasion-thanks": {
+      title: "Спасибо",
+      products: uniqueProducts([
+        ...baskets,
+        ...plants.slice(0, 6),
+        ...boxes.slice(0, 4),
+        ...bouquets.slice(4, 10),
+      ]),
+    },
+    "occasion-sale": {
+      title: "Акции",
+      products: saleItems.length
+        ? saleItems
+        : uniqueProducts([...hits, ...roses.slice(0, 4), ...bouquets.slice(0, 4)]),
     },
     shop: { title: "Магазин", products },
     catalog: { title: "Магазин", products },

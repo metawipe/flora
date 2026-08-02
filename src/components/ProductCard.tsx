@@ -42,7 +42,9 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
     e.stopPropagation();
     if (unavailable) return;
     const flower = isFlowerProduct(product);
-    const pack = packagingOptions(locale)[0];
+    const pack =
+      packagingOptions(locale).find((p) => p.id === "none") ??
+      packagingOptions(locale)[0];
     const size = flower ? pack.label : "—";
     addToCart(product, size, 1);
     setJustAdded(true);
@@ -76,12 +78,19 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        {!loaded && <span className="img-skeleton" aria-hidden />}
-        <Link href={`/product/${product.id}`} className="product-card__link">
+        {!loaded && (
+          <span className="skel skel--fill skel--media" aria-hidden />
+        )}
+        <Link
+          href={`/product/${product.id}`}
+          className="product-card__link"
+          draggable={false}
+        >
           <Image
             src={images[imgIndex]}
             alt={name}
             fill
+            draggable={false}
             className={`product-card__img${loaded ? " is-loaded" : ""}`}
             sizes={compact ? "160px" : "(max-width: 700px) 50vw, 25vw"}
             onLoad={() => setLoaded(true)}

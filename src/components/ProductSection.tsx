@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import type { Product } from "@/data/products";
-import { ArrowRightIcon } from "./Icons";
+import { useDragScroll } from "@/hooks/useDragScroll";
+import { useLocale } from "@/i18n/LocaleProvider";
+import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from "./Icons";
 import { ProductCard } from "./ProductCard";
 
 type ProductSectionProps = {
@@ -19,7 +23,15 @@ export function ProductSection({
   bottomPad,
   shelf = false,
 }: ProductSectionProps) {
+  const { t } = useLocale();
   const list = shelf ? products.slice(0, 12) : products;
+  const shelfRef = useDragScroll<HTMLDivElement>();
+
+  const scrollShelf = (direction: -1 | 1) => {
+    const el = shelfRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * 320, behavior: "smooth" });
+  };
 
   return (
     <section
@@ -39,15 +51,37 @@ export function ProductSection({
           </div>
         )}
 
-        <div className={shelf ? "product-shelf" : "product-grid"}>
-          {list.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              compact={shelf}
-            />
-          ))}
-        </div>
+        {shelf ? (
+          <div className="section__shelf-wrap">
+            <button
+              type="button"
+              className="section__shelf-btn section__shelf-btn--prev"
+              aria-label={t("common.prev")}
+              onClick={() => scrollShelf(-1)}
+            >
+              <ChevronLeftIcon />
+            </button>
+            <div ref={shelfRef} className="product-shelf drag-scroll">
+              {list.map((product) => (
+                <ProductCard key={product.id} product={product} compact />
+              ))}
+            </div>
+            <button
+              type="button"
+              className="section__shelf-btn section__shelf-btn--next"
+              aria-label={t("common.next")}
+              onClick={() => scrollShelf(1)}
+            >
+              <ChevronRightIcon />
+            </button>
+          </div>
+        ) : (
+          <div className="product-grid">
+            {list.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

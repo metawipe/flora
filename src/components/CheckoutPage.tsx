@@ -11,7 +11,6 @@ import {
   isValidUzPhone,
   normalizeUzPhone,
 } from "@/lib/phone";
-import { PROMO_CODES } from "@/lib/promo";
 import { loadUserProfile, saveUserProfile } from "@/lib/userProfile";
 import type { StoredOrder } from "@/lib/orders";
 import { ChevronLeftIcon } from "./Icons";
@@ -20,22 +19,94 @@ import { StickyBar } from "./StickyBar";
 
 const SLOTS = ["slotMorning", "slotDay", "slotEvening"] as const;
 
-function socialHref(name: string) {
-  return site.socials.find((s) => s.name.toLowerCase().includes(name))?.href;
+type TFn = (key: string, vars?: Record<string, string | number>) => string;
+
+function shareT(
+  t: TFn,
+  key: string,
+  vars: Record<string, string | number> | undefined,
+  fallback: string,
+) {
+  const value = t(key, vars);
+  return value === key ? fallback : value;
 }
 
-function orderShareText(order: StoredOrder, locale: string) {
-  const lines = [
-    `Заказ ${order.id}`,
-    `${order.name} · ${order.phone}`,
-    `${order.address}`,
-    `${order.date} · ${order.slot}`,
-    order.recipient ? `Получатель: ${order.recipient}` : "",
-    order.cardText ? `Открытка: ${order.cardText}` : "",
-    ...order.items.map((i) => `• ${i.name} × ${i.qty}`),
-    `Итого: ${order.total.toLocaleString(locale)} сум`,
-  ].filter(Boolean);
-  return lines.join("\n");
+function orderShareText(order: StoredOrder, t: TFn, locale: string) {
+  const slotLabel = t(`checkout.${order.slot}`);
+  const payLabel =
+    order.pay === "cash"
+      ? shareT(t, "checkout.payCash", undefined, "Наличными курьеру")
+      : order.pay === "card"
+        ? shareT(t, "checkout.payCard", undefined, "Картой курьеру")
+        : order.pay;
+
+  return [
+    shareT(t, "checkout.shareTitle", { id: order.id }, `Заказ ${order.id}`),
+    shareT(
+      t,
+      "checkout.shareContacts",
+      { name: order.name, phone: order.phone },
+      `${order.name} · ${order.phone}`,
+    ),
+    shareT(
+      t,
+      "checkout.shareAddress",
+      { address: order.address },
+      order.address,
+    ),
+    shareT(
+      t,
+      "checkout.shareDelivery",
+      { date: order.date, slot: slotLabel },
+      `${order.date} · ${slotLabel}`,
+    ),
+    order.recipient
+      ? shareT(
+          t,
+          "checkout.shareRecipient",
+          { name: order.recipient },
+          `Получатель: ${order.recipient}`,
+        )
+      : "",
+    order.cardText
+      ? shareT(
+          t,
+          "checkout.shareCard",
+          { text: order.cardText },
+          `Открытка: ${order.cardText}`,
+        )
+      : "",
+    order.promoCode
+      ? shareT(
+          t,
+          "checkout.sharePromo",
+          { code: order.promoCode },
+          `Промокод: ${order.promoCode}`,
+        )
+      : "",
+    shareT(t, "checkout.sharePay", { pay: payLabel }, `Оплата: ${payLabel}`),
+    shareT(t, "checkout.shareItems", undefined, "Товары:"),
+    ...order.items.map((i) =>
+      shareT(
+        t,
+        "checkout.shareItem",
+        { name: i.name, qty: i.qty },
+        `• ${i.name} × ${i.qty}`,
+      ),
+    ),
+    shareT(
+      t,
+      "checkout.shareTotal",
+      { total: order.total.toLocaleString(locale) },
+      `Итого: ${order.total.toLocaleString(locale)} сум`,
+    ),
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function socialHref(name: string) {
+  return site.socials.find((s) => s.name.toLowerCase().includes(name))?.href;
 }
 
 export function CheckoutPage() {
@@ -58,7 +129,6 @@ export function CheckoutPage() {
   const [address, setAddress] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const minDate = useMemo(() => new Date().toISOString().slice(0, 10), []);
-  const promo = promoCode ? PROMO_CODES[promoCode] : null;
   const tg = socialHref("telegram");
   const wa = socialHref("whatsapp");
 
@@ -91,7 +161,7 @@ export function CheckoutPage() {
   }
 
   if (doneOrder) {
-    const share = encodeURIComponent(orderShareText(doneOrder, locale));
+    const share = encodeURIComponent(orderShareText(doneOrder, t, locale));
     const waHref = wa
       ? wa.includes("?")
         ? `${wa}&text=${share}`
@@ -152,7 +222,7 @@ export function CheckoutPage() {
       address: String(data.get("address") || "").trim(),
       date: String(data.get("date") || ""),
       slot: String(data.get("slot") || "slotDay"),
-      pay: String(data.get("pay") || "online"),
+      pay: String(data.get("pay") || "cash"),
       comment: String(data.get("comment") || "").trim(),
       recipient: String(data.get("recipient") || "").trim() || undefined,
       cardText: String(data.get("cardText") || "").trim() || undefined,
@@ -297,14 +367,17 @@ export function CheckoutPage() {
                   <input
                     type="radio"
                     name="pay"
-                    value="online"
+                    value="cash"
                     defaultChecked
                   />
-                  <span>{t("checkout.payOnline")}</span>
+                  <span>{t("checkout.payCash")}</span>
                 </label>
                 <label className="pay-option">
-                  <input type="radio" name="pay" value="cash" />
-                  <span>{t("checkout.payCash")}</span>
+                  <input type="radio" name="pay" value="card" />
+                  <span>
+                    {t("checkout.payCard")}
+                    <small className="pay-option__hint">{t("checkout.payHint")}</small>
+                  </span>
                 </label>
               </div>
             </section>
@@ -371,9 +444,9 @@ export function CheckoutPage() {
                 <span>{t("cart.subtotal")}</span>
                 <span>{formatPrice(cartTotal, locale)}</span>
               </div>
-              {promo ? (
+              {promoCode ? (
                 <div className="cart-summary__row">
-                  <span>{t(promo.labelKey)}</span>
+                  <span>{promoCode}</span>
                   <span>−{formatPrice(promoDiscount, locale)}</span>
                 </div>
               ) : null}
