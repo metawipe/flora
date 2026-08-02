@@ -97,6 +97,23 @@ function productMatches(
   );
 }
 
+function SearchHitThumb({ src }: { src: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <span className="search-hit__img">
+      {!loaded && <span className="skel skel--fill skel--media" aria-hidden />}
+      <Image
+        src={src}
+        alt=""
+        fill
+        sizes="56px"
+        className={`search-hit__photo${loaded ? " is-loaded" : ""}`}
+        onLoad={() => setLoaded(true)}
+      />
+    </span>
+  );
+}
+
 function highlightName(name: string, query: string) {
   const qRaw = query.trim();
   if (!qRaw) return <>{name}</>;
@@ -180,10 +197,56 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
       .slice(0, 40);
   }, [query, locale, catalog]);
 
+  const suggestions = useMemo(() => {
+    if (query.trim().length > 0) return [];
+    const hits = catalog.filter((p) => p.badge === "HIT");
+    const rest = catalog.filter((p) => p.badge !== "HIT");
+    return [...hits, ...rest].slice(0, 8);
+  }, [query, catalog]);
+
+  const renderHitList = (items: Product[], highlightQuery = query) => (
+    <ul className="search-results__list">
+      {items.map((product) => {
+        const discount = discountPercent(product.price, product.oldPrice);
+        const name = localizeProductName(product, locale);
+        return (
+          <li key={product.id}>
+            <Link
+              href={`/product/${product.id}`}
+              className="search-hit"
+              onClick={onClose}
+            >
+              <SearchHitThumb src={product.images[0]} />
+              <span className="search-hit__body">
+                <span className="search-hit__name">
+                  {highlightName(name, highlightQuery)}
+                </span>
+                <span className="search-hit__price">
+                  <span>{formatPrice(product.price, locale)}</span>
+                  {product.oldPrice != null && (
+                    <s>{formatPrice(product.oldPrice, locale)}</s>
+                  )}
+                  {discount != null && (
+                    <em className="search-hit__sale">-{discount}%</em>
+                  )}
+                </span>
+              </span>
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
   if (!open) return null;
 
   return (
-    <div className="search-overlay" role="dialog" aria-label={t("search.aria")}>
+    <div
+      className="search-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t("search.aria")}
+    >
       <div className="search-panel">
         <div className="search-box">
           <input
@@ -220,56 +283,20 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
           </button>
         </div>
 
-        {query.trim().length > 0 && (
+        {query.trim().length > 0 ? (
           <div className="search-results">
             {results.length === 0 ? (
               <p className="search-results__empty">{t("search.empty")}</p>
             ) : (
-              <ul className="search-results__list">
-                {results.map((product) => {
-                  const discount = discountPercent(
-                    product.price,
-                    product.oldPrice,
-                  );
-                  const name = localizeProductName(product, locale);
-                  return (
-                    <li key={product.id}>
-                      <Link
-                        href={`/product/${product.id}`}
-                        className="search-hit"
-                        onClick={onClose}
-                      >
-                        <span className="search-hit__img">
-                          <Image
-                            src={product.images[0]}
-                            alt=""
-                            fill
-                            sizes="56px"
-                            className="search-hit__photo"
-                          />
-                        </span>
-                        <span className="search-hit__body">
-                          <span className="search-hit__name">
-                            {highlightName(name, query)}
-                          </span>
-                          <span className="search-hit__price">
-                            <span>{formatPrice(product.price, locale)}</span>
-                            {product.oldPrice != null && (
-                              <s>{formatPrice(product.oldPrice, locale)}</s>
-                            )}
-                            {discount != null && (
-                              <em className="search-hit__sale">-{discount}%</em>
-                            )}
-                          </span>
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+              renderHitList(results)
             )}
           </div>
-        )}
+        ) : suggestions.length > 0 ? (
+          <div className="search-results">
+            <p className="search-results__label">{t("search.suggestions")}</p>
+            {renderHitList(suggestions, "")}
+          </div>
+        ) : null}
       </div>
     </div>
   );

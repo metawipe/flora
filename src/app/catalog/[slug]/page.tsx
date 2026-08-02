@@ -18,6 +18,12 @@ export function generateStaticParams() {
     "boxes",
     "baskets",
     "sale",
+    "occasion-birthday",
+    "occasion-love",
+    "occasion-sorry",
+    "occasion-date",
+    "occasion-thanks",
+    "occasion-sale",
   ].map((slug) => ({ slug }));
 }
 

@@ -23,7 +23,7 @@ import {
   type OrderLine,
   type StoredOrder,
 } from "@/lib/orders";
-import { PROMO_CODES, promoDiscountFor } from "@/lib/promo";
+import { promoDiscountFor, validatePromoCode } from "@/lib/promo";
 
 export type CartItem = {
   id: string;
@@ -76,6 +76,7 @@ type StoreContextValue = {
   favCount: number;
   cartTotal: number;
   promoCode: string | null;
+  promoPercent: number;
   promoDiscount: number;
   payableTotal: number;
   orders: StoredOrder[];
@@ -85,7 +86,8 @@ type StoreContextValue = {
   restoreCartItem: (item: CartItem) => void;
   setQty: (id: string, qty: number) => void;
   clearCart: () => void;
-  setPromoCode: (code: string | null) => void;
+  setPromoCode: (code: string | null, percent?: number) => void;
+  applyPromoCode: (code: string) => Promise<boolean>;
   placeOrder: (input: PlaceOrderInput) => Promise<StoredOrder>;
   toggleFavorite: (id: string) => void;
   isFavorite: (id: string) => boolean;
@@ -95,9 +97,11 @@ type StoreContextValue = {
 
 const StoreContext = createContext<StoreContextValue | null>(null);
 
-const CART_KEY = "loveflowers-cart";
-const FAV_KEY = "loveflowers-favorites";
+const CART_KEY = "zamin-cart";
+const FAV_KEY = "zamin-favorites";
 const PROMO_KEY = "zamin-promo";
+const LEGACY_CART_KEY = "loveflowers-cart";
+const LEGACY_FAV_KEY = "loveflowers-favorites";
 const TOAST_TTL = 5500;
 
 function loadJson<T>(key: string, fallback: T): T {
@@ -107,6 +111,28 @@ function loadJson<T>(key: string, fallback: T): T {
     return raw ? (JSON.parse(raw) as T) : fallback;
   } catch {
     return fallback;
+  }
+}
+
+function migrateLegacyStorage() {
+  if (typeof window === "undefined") return;
+  try {
+    if (!window.localStorage.getItem(CART_KEY)) {
+      const legacy = window.localStorage.getItem(LEGACY_CART_KEY);
+      if (legacy) {
+        window.localStorage.setItem(CART_KEY, legacy);
+        window.localStorage.removeItem(LEGACY_CART_KEY);
+      }
+    }
+    if (!window.localStorage.getItem(FAV_KEY)) {
+      const legacy = window.localStorage.getItem(LEGACY_FAV_KEY);
+      if (legacy) {
+        window.localStorage.setItem(FAV_KEY, legacy);
+        window.localStorage.removeItem(LEGACY_FAV_KEY);
+      }
+    }
+  } catch {
+    /* ignore */
   }
 }
 
@@ -129,6 +155,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [promoCode, setPromoCodeState] = useState<string | null>(null);
+  const [promoPercent, setPromoPercent] = useState(0);
   const [orders, setOrders] = useState<StoredOrder[]>([]);
   const [toasts, setToasts] = useState<StoreToast[]>([]);
   const [hydrated, setHydrated] = useState(false);
@@ -155,11 +182,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
+    migrateLegacyStorage();
     setCart(loadJson<CartItem[]>(CART_KEY, []));
     setFavorites(new Set(loadJson<string[]>(FAV_KEY, [])));
-    const savedPromo = window.localStorage.getItem(PROMO_KEY);
-    if (savedPromo && PROMO_CODES[savedPromo]) {
-      setPromoCodeState(savedPromo);
+    try {
+      const raw = window.localStorage.getItem(PROMO_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { code?: string; percent?: number };
+        if (parsed.code && parsed.percent) {
+          setPromoCodeState(parsed.code);
+          setPromoPercent(parsed.percent);
+        }
+      }
+    } catch {
+      /* ignore */
     }
     setOrders(loadOrders());
     setHydrated(true);
@@ -177,9 +213,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (promoCode) window.localStorage.setItem(PROMO_KEY, promoCode);
-    else window.localStorage.removeItem(PROMO_KEY);
-  }, [promoCode, hydrated]);
+    if (promoCode && promoPercent > 0) {
+      window.localStorage.setItem(
+        PROMO_KEY,
+        JSON.stringify({ code: promoCode, percent: promoPercent }),
+      );
+    } else {
+      window.localStorage.removeItem(PROMO_KEY);
+    }
+  }, [promoCode, promoPercent, hydrated]);
 
   useEffect(() => {
     const map = timers.current;
@@ -270,13 +312,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => setCart([]), []);
 
-  const setPromoCode = useCallback((code: string | null) => {
-    if (!code) {
+  const setPromoCode = useCallback((code: string | null, percent = 0) => {
+    if (!code || percent <= 0) {
       setPromoCodeState(null);
+      setPromoPercent(0);
       return;
     }
-    const normalized = code.trim().toUpperCase();
-    setPromoCodeState(PROMO_CODES[normalized] ? normalized : null);
+    setPromoCodeState(code.trim().toUpperCase());
+    setPromoPercent(percent);
+  }, []);
+
+  const applyPromoCode = useCallback(async (code: string) => {
+    const result = await validatePromoCode(code);
+    if (!result) {
+      setPromoCodeState(null);
+      setPromoPercent(0);
+      return false;
+    }
+    setPromoCodeState(result.code);
+    setPromoPercent(result.percent);
+    return true;
   }, []);
 
   const placeOrder = useCallback(
@@ -285,7 +340,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         (sum, item) => sum + item.price * item.qty,
         0,
       );
-      const discount = promoDiscountFor(cartTotal, promoCode);
+      const discount = promoDiscountFor(cartTotal, promoCode, promoPercent);
       const total = Math.max(0, cartTotal - discount);
       const items: OrderLine[] = cart.map((item) => ({ ...item }));
       const payload = {
@@ -324,9 +379,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
       setCart([]);
       setPromoCodeState(null);
+      setPromoPercent(0);
       return order;
     },
-    [cart, promoCode],
+    [cart, promoCode, promoPercent],
   );
 
   const toggleFavorite = useCallback(
@@ -370,7 +426,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       (sum, item) => sum + item.price * item.qty,
       0,
     );
-    const promoDiscount = promoDiscountFor(cartTotal, promoCode);
+    const promoDiscount = promoDiscountFor(cartTotal, promoCode, promoPercent);
     const payableTotal = Math.max(0, cartTotal - promoDiscount);
     return {
       cart,
@@ -379,6 +435,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       favCount: favorites.size,
       cartTotal,
       promoCode,
+      promoPercent,
       promoDiscount,
       payableTotal,
       orders,
@@ -389,6 +446,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setQty,
       clearCart,
       setPromoCode,
+      applyPromoCode,
       placeOrder,
       toggleFavorite,
       isFavorite,
@@ -399,6 +457,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     cart,
     favorites,
     promoCode,
+    promoPercent,
     orders,
     toasts,
     addToCart,
@@ -407,6 +466,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setQty,
     clearCart,
     setPromoCode,
+    applyPromoCode,
     placeOrder,
     toggleFavorite,
     isFavorite,

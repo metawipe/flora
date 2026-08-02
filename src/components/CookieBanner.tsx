@@ -3,19 +3,30 @@
 import { useEffect, useState } from "react";
 import { useT } from "@/i18n/LocaleProvider";
 
+const COOKIE_KEY = "zamin-cookies";
+const LEGACY_COOKIE_KEY = "loveflowers-cookies";
+
 export function CookieBanner() {
   const t = useT();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const accepted = window.localStorage.getItem("loveflowers-cookies");
-    if (!accepted) setVisible(true);
+    const accepted =
+      window.localStorage.getItem(COOKIE_KEY) ||
+      window.localStorage.getItem(LEGACY_COOKIE_KEY);
+    if (accepted) {
+      if (!window.localStorage.getItem(COOKIE_KEY)) {
+        window.localStorage.setItem(COOKIE_KEY, accepted);
+      }
+      return;
+    }
+    setVisible(true);
   }, []);
 
   if (!visible) return null;
 
   const accept = () => {
-    window.localStorage.setItem("loveflowers-cookies", "1");
+    window.localStorage.setItem(COOKIE_KEY, "1");
     setVisible(false);
   };
 

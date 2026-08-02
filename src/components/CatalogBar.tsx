@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { nav } from "@/data/products";
+import { useDragScroll } from "@/hooks/useDragScroll";
 import { tNavLabel } from "@/i18n/catalog";
 import { useLocale } from "@/i18n/LocaleProvider";
 
@@ -13,12 +14,14 @@ type CatalogBarProps = {
 
 export function CatalogBar({ className = "" }: CatalogBarProps) {
   const pathname = usePathname();
-  const scrollerRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useDragScroll<HTMLDivElement>();
   const { locale, t } = useLocale();
 
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
+    // Occasion catalogs are not in this bar — don't yank scroll
+    if (pathname.includes("/catalog/occasion-")) return;
     const active = el.querySelector<HTMLElement>(".catalog-bar__link.is-active");
     if (!active) return;
     const left =
@@ -31,7 +34,7 @@ export function CatalogBar({ className = "" }: CatalogBarProps) {
       className={`catalog-bar${className ? ` ${className}` : ""}`}
       aria-label={t("catalogBar.aria")}
     >
-      <div className="catalog-bar__scroller" ref={scrollerRef}>
+      <div className="catalog-bar__scroller drag-scroll" ref={scrollerRef}>
         <div className="catalog-bar__inner">
           {nav.map((item) => {
             const active =

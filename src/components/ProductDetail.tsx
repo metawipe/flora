@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type UIEvent } from "react";
+import { useEffect, useMemo, useState, type UIEvent } from "react";
 import { useStore } from "@/context/StoreContext";
+import { useDragScroll } from "@/hooks/useDragScroll";
 import {
   categoryLabel,
   categoryPath,
@@ -64,21 +65,6 @@ function getInfoSections(
       more: { label: t("pdp.morePayment"), href: "/faq#payment" },
     },
     {
-      id: "bonuses",
-      title: t("pdp.bonuses"),
-      blocks: [
-        {
-          title: "",
-          items: [
-            t("pdp.bonus1"),
-            t("pdp.bonus2"),
-            t("pdp.bonus3"),
-            t("pdp.bonus4"),
-          ],
-        },
-      ],
-    },
-    {
       id: "return",
       title: t("pdp.returnTitle"),
       blocks: [
@@ -98,21 +84,22 @@ export function ProductDetail({ product }: { product: Product }) {
   const [packId, setPackId] = useState<string>("none");
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
+  const [loadedImgs, setLoadedImgs] = useState<Record<number, boolean>>({});
   const [dotTone, setDotTone] = useState<"light" | "dark">("light");
   const [added, setAdded] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>("delivery");
   const [infoSections, setInfoSections] = useState(() =>
     getInfoSections(t, locale),
   );
-  const albumRef = useRef<HTMLDivElement>(null);
+  const albumRef = useDragScroll<HTMLDivElement>({ snapPages: true });
   const name = localizeProductName(product, locale);
   const details = getProductDetails(product, locale);
   const related = getRelated(product);
   const categories = productCategories(product, locale);
   const packs = packagingOptions(locale);
   const packaging = packs.find((p) => p.id === packId) ?? packs[0];
-  const images = product.images.length ? product.images : [""];
-  const gallery = images.length >= 2 ? images : [images[0], images[0]];
+  const gallery = product.images.filter(Boolean);
+  const images = gallery.length ? gallery : [""];
 
   useEffect(() => {
     setInfoSections(getInfoSections(t, locale, new Date()));
@@ -144,7 +131,7 @@ export function ProductDetail({ product }: { product: Product }) {
       cancelled = true;
       img.removeEventListener("load", analyze);
     };
-  }, [activeImg, product.id, gallery]);
+  }, [activeImg, product.id, images]);
 
   const unavailable = product.available === false;
   const unitPrice = useMemo(
@@ -173,7 +160,7 @@ export function ProductDetail({ product }: { product: Product }) {
     setActiveImg(index);
     const el = albumRef.current;
     if (!el) return;
-    el.scrollTo({ left: index * el.clientWidth, behavior: "smooth" });
+    el.scrollTo({ left: index * el.clientWidth, behavior: "auto" });
   };
 
   const backHref = categoryPath(product.category);
@@ -194,27 +181,32 @@ export function ProductDetail({ product }: { product: Product }) {
           <div className="pdp-bleed">
             <div className="pdp__gallery">
               <div
-                className="pdp__album"
+                className="pdp__album drag-scroll"
                 ref={albumRef}
                 onScroll={onAlbumScroll}
               >
-                {gallery.map((src, i) => (
-                  <button
+                {images.map((src, i) => (
+                  <div
                     key={`${src}-${i}`}
-                    type="button"
                     className={`pdp__shot${activeImg === i ? " is-active" : ""}`}
-                    onClick={() => goToSlide(i)}
+                    aria-hidden={activeImg !== i}
                   >
-                    <span className="img-skeleton pdp__skeleton" aria-hidden />
+                    {!loadedImgs[i] && (
+                      <span className="skel skel--fill skel--media" aria-hidden />
+                    )}
                     <Image
                       src={src}
                       alt={`${name} ${i + 1}`}
                       fill
-                      className="pdp__img"
+                      draggable={false}
+                      className={`pdp__img${loadedImgs[i] ? " is-loaded" : ""}`}
                       sizes="(max-width: 900px) 100vw, 55vw"
                       priority={i === 0}
+                      onLoad={() =>
+                        setLoadedImgs((prev) => ({ ...prev, [i]: true }))
+                      }
                     />
-                  </button>
+                  </div>
                 ))}
               </div>
               <Link
@@ -232,21 +224,22 @@ export function ProductDetail({ product }: { product: Product }) {
               >
                 <HeartIcon filled={favorited} />
               </button>
-              <div
-                className={`pdp__album-dots is-on-${dotTone}`}
-                data-tone={dotTone}
-                aria-hidden={gallery.length < 2}
-              >
-                {gallery.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={`pdp__album-dot${activeImg === i ? " is-active" : ""}`}
-                    aria-label={t("pdp.photoN", { n: i + 1 })}
-                    onClick={() => goToSlide(i)}
-                  />
-                ))}
-              </div>
+              {images.length >= 2 ? (
+                <div
+                  className={`pdp__album-dots is-on-${dotTone}`}
+                  data-tone={dotTone}
+                >
+                  {images.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`pdp__album-dot${activeImg === i ? " is-active" : ""}`}
+                      aria-label={t("pdp.photoN", { n: i + 1 })}
+                      onClick={() => goToSlide(i)}
+                    />
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -268,7 +261,10 @@ export function ProductDetail({ product }: { product: Product }) {
                 <p className="pdp__price">{formatPrice(totalPrice, locale)}</p>
                 {product.oldPrice != null && (
                   <p className="pdp__old">
-                    {formatPrice(product.oldPrice, locale)}
+                    {formatPrice(
+                      (product.oldPrice + (flower ? packaging.price : 0)) * qty,
+                      locale,
+                    )}
                   </p>
                 )}
               </div>
@@ -382,6 +378,7 @@ export function ProductDetail({ product }: { product: Product }) {
                       <button
                         type="button"
                         className="pdp__acc-head"
+                        aria-expanded={openSection === section.id}
                         onClick={() =>
                           setOpenSection(open ? null : section.id)
                         }

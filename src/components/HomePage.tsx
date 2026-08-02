@@ -3,7 +3,7 @@
 import { collections, type Product } from "@/data/products";
 import { useT } from "@/i18n/LocaleProvider";
 import { Collections } from "./Collections";
-import { Hero } from "./Hero";
+import { HomeOccasions } from "./HomeOccasions";
 import { ProductSection } from "./ProductSection";
 import { Reveal } from "./Reveal";
 
@@ -15,20 +15,23 @@ export function HomePage({ products }: { products: Product[] }) {
 
   return (
     <main className="home-app">
-      <Hero />
+      <h1 className="sr-only">Zamin Gullari</h1>
+      <Reveal eager delay={20}>
+        <HomeOccasions />
+      </Reveal>
+      <Reveal eager delay={60}>
+        <Collections
+          title={t("home.shop")}
+          href="/catalog/shop"
+          items={collections}
+        />
+      </Reveal>
       <Reveal eager delay={80}>
         <ProductSection
           title={t("home.bouquets")}
           href="/catalog/bouquets"
           products={bouquets}
           shelf
-        />
-      </Reveal>
-      <Reveal eager delay={140}>
-        <Collections
-          title={t("home.shop")}
-          href="/catalog/shop"
-          items={collections}
         />
       </Reveal>
       <Reveal delay={40}>

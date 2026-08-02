@@ -10,7 +10,6 @@ import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { MessengerFab } from "./MessengerFab";
 import { PageTransition } from "./PageTransition";
-import { Preloader } from "./Preloader";
 import { ScrollToTop } from "./ScrollToTop";
 import { SearchOverlay } from "./SearchOverlay";
 import { ToastStack } from "./ToastStack";
@@ -24,7 +23,7 @@ function footerModeFor(pathname: string): "full" | "compact" | "hidden" {
     pathname.startsWith("/account") ||
     pathname.startsWith("/favorites")
   ) {
-    return "hidden";
+    return "compact";
   }
   if (pathname.startsWith("/catalog")) return "compact";
   return "full";
@@ -54,7 +53,21 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isAdmin) return;
-    const mq = window.matchMedia("(max-width: 900px)");
+    document.documentElement.classList.add("is-booting");
+    document.documentElement.classList.remove("app-ready");
+    const id = window.requestAnimationFrame(() => {
+      document.documentElement.classList.remove("is-booting");
+      document.documentElement.classList.add("app-ready");
+    });
+    return () => {
+      window.cancelAnimationFrame(id);
+      document.documentElement.classList.remove("is-booting");
+    };
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (isAdmin) return;
+    const mq = window.matchMedia("(max-width: 700px)");
     const sync = () => {
       document.documentElement.classList.toggle("app-dock", mq.matches);
     };
@@ -72,7 +85,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <Preloader />
       <ScrollToTop />
       <div className="shell-top shell-rise">
         <Header
@@ -88,11 +100,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
       >
         <PageTransition>{children}</PageTransition>
       </div>
-      {footerMode !== "hidden" && (
-        <div className="shell-rise shell-rise--late">
-          <Footer compact={footerMode === "compact"} />
-        </div>
-      )}
+      <div className="shell-rise shell-rise--late">
+        <Footer compact={footerMode === "compact"} />
+      </div>
       <BottomChrome
         cartCount={hydrated ? cartCount : 0}
         favCount={favs}

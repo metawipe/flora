@@ -23,6 +23,12 @@ const CATEGORY_BY_HREF: Record<string, string> = {
   "/catalog/popular": "category.popular",
   "/catalog/sale": "category.sale",
   "/catalog/shop": "category.shop",
+  "/catalog/occasion-birthday": "home.occasionBirthday",
+  "/catalog/occasion-love": "home.occasionLove",
+  "/catalog/occasion-sorry": "home.occasionSorry",
+  "/catalog/occasion-date": "home.occasionDate",
+  "/catalog/occasion-thanks": "home.occasionThanks",
+  "/catalog/occasion-sale": "home.occasionSale",
 };
 
 const FOOTER_PAGE_BY_HREF: Record<string, string> = {
@@ -47,13 +53,19 @@ const CATEGORY_SLUG_KEY: Record<string, string> = {
   roses: "category.roses",
   tulips: "category.tulips",
   mixed: "category.mixed",
-  plants: "category.mixed",
+  plants: "category.plants",
   boxes: "category.boxes",
   baskets: "category.baskets",
   popular: "category.popular",
   sale: "category.sale",
   shop: "category.shop",
   catalog: "category.shop",
+  "occasion-birthday": "home.occasionBirthday",
+  "occasion-love": "home.occasionLove",
+  "occasion-sorry": "home.occasionSorry",
+  "occasion-date": "home.occasionDate",
+  "occasion-thanks": "home.occasionThanks",
+  "occasion-sale": "home.occasionSale",
 };
 
 export function tNavLabel(locale: Locale, href: string, fallback: string) {

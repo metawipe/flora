@@ -11,11 +11,27 @@ import { useLocale } from "@/i18n/LocaleProvider";
 import type { StoredOrder } from "@/lib/orders";
 
 export default function OrdersPage() {
-  const { orders, hydrated, restoreCartItem, clearCart } = useStore();
+  const { orders, hydrated, restoreCartItem, clearCart, cart } = useStore();
   const { locale, t } = useLocale();
   const router = useRouter();
 
+  const orderStatusLabel = (order: StoredOrder) => {
+    const status = order.status ?? "new";
+    const key = `orders.status.${status}`;
+    const label = t(key);
+    if (label !== key) return label;
+    if (status === "new") return t("orders.statusNew");
+    const fallbacks: Record<string, string> = {
+      confirmed: "Подтверждён",
+      delivering: "Доставляется",
+      done: "Выполнен",
+      cancelled: "Отменён",
+    };
+    return fallbacks[status] ?? status;
+  };
+
   const repeatOrder = (order: StoredOrder) => {
+    if (cart.length > 0 && !window.confirm(t("orders.repeatConfirm"))) return;
     clearCart();
     for (const item of order.items) {
       restoreCartItem({ ...item });
@@ -110,7 +126,7 @@ export default function OrdersPage() {
                         </li>
                       ))}
                     </ul>
-                    <p className="order-card__status">{t("orders.statusNew")}</p>
+                    <p className="order-card__status">{orderStatusLabel(order)}</p>
                     <button
                       type="button"
                       className="btn btn--ghost btn--wide"
