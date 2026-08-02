@@ -79,7 +79,7 @@ export default async function Image() {
               lineHeight: 1.35,
             }}
           >
-            Свежие букеты, VIP-композиции и подарки. Поддержка 24/7.
+            Свежие букеты и VIP-композиции. Поддержка 24/7.
           </div>
         </div>
       </div>

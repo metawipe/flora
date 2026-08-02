@@ -3,7 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allProducts, formatPrice, type Product } from "@/data/products";
+import {
+  allProducts,
+  formatPrice,
+  localizeProductName,
+  type Product,
+} from "@/data/products";
+import type { Locale } from "@/i18n/config";
+import { useLocale } from "@/i18n/LocaleProvider";
 
 type SearchOverlayProps = {
   open: boolean;
@@ -73,12 +80,21 @@ function normalize(value: string): string {
   return value.toLowerCase().replace(/ё/g, "е").trim();
 }
 
-function productMatches(product: Product, query: string): boolean {
+function productMatches(
+  product: Product,
+  query: string,
+  locale: Locale,
+): boolean {
   const q = normalize(query);
   if (!q) return false;
-  const name = normalize(product.name);
+  const localized = normalize(localizeProductName(product, locale));
+  const fallback = normalize(product.name);
   const cyr = normalize(translitToCyrillic(query));
-  return name.includes(q) || (cyr !== q && name.includes(cyr));
+  return (
+    localized.includes(q) ||
+    fallback.includes(q) ||
+    (cyr !== q && (localized.includes(cyr) || fallback.includes(cyr)))
+  );
 }
 
 function highlightName(name: string, query: string) {
@@ -86,7 +102,9 @@ function highlightName(name: string, query: string) {
   if (!qRaw) return <>{name}</>;
 
   const variants = Array.from(
-    new Set([qRaw, translitToCyrillic(qRaw)].map((v) => v.trim()).filter(Boolean)),
+    new Set(
+      [qRaw, translitToCyrillic(qRaw)].map((v) => v.trim()).filter(Boolean),
+    ),
   );
 
   const lower = name.toLowerCase().replace(/ё/g, "е");
@@ -125,18 +143,30 @@ function discountPercent(price: number, oldPrice?: number) {
 export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
+  const [catalog, setCatalog] = useState<Product[]>(allProducts);
+  const { locale, t } = useLocale();
 
   useEffect(() => {
     if (!open) return;
     setQuery("");
-    const t = window.setTimeout(() => inputRef.current?.focus(), 30);
+    void fetch("/api/products")
+      .then((r) => r.json())
+      .then((data: { products?: Product[] }) => {
+        if (Array.isArray(data.products) && data.products.length) {
+          setCatalog(data.products);
+        }
+      })
+      .catch(() => {
+        /* keep mock fallback */
+      });
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 30);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
     return () => {
-      window.clearTimeout(t);
+      window.clearTimeout(timer);
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKey);
     };
@@ -145,13 +175,15 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   const results = useMemo(() => {
     const q = query.trim();
     if (q.length < 1) return [];
-    return allProducts.filter((p) => productMatches(p, q)).slice(0, 40);
-  }, [query]);
+    return catalog
+      .filter((p) => productMatches(p, q, locale))
+      .slice(0, 40);
+  }, [query, locale, catalog]);
 
   if (!open) return null;
 
   return (
-    <div className="search-overlay" role="dialog" aria-label="Поиск">
+    <div className="search-overlay" role="dialog" aria-label={t("search.aria")}>
       <div className="search-panel">
         <div className="search-box">
           <input
@@ -159,8 +191,8 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Поиск по сайту"
-            aria-label="Поиск по сайту"
+            placeholder={t("search.placeholder")}
+            aria-label={t("search.placeholder")}
             autoComplete="off"
             autoCorrect="off"
             spellCheck={false}
@@ -169,7 +201,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             <button
               type="button"
               className="search-box__clear"
-              aria-label="Очистить"
+              aria-label={t("search.clear")}
               onClick={() => {
                 setQuery("");
                 inputRef.current?.focus();
@@ -181,7 +213,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
           <button
             type="button"
             className="search-box__close"
-            aria-label="Закрыть"
+            aria-label={t("common.close")}
             onClick={onClose}
           >
             ×
@@ -191,11 +223,15 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
         {query.trim().length > 0 && (
           <div className="search-results">
             {results.length === 0 ? (
-              <p className="search-results__empty">Ничего не найдено</p>
+              <p className="search-results__empty">{t("search.empty")}</p>
             ) : (
               <ul className="search-results__list">
                 {results.map((product) => {
-                  const discount = discountPercent(product.price, product.oldPrice);
+                  const discount = discountPercent(
+                    product.price,
+                    product.oldPrice,
+                  );
+                  const name = localizeProductName(product, locale);
                   return (
                     <li key={product.id}>
                       <Link
@@ -214,12 +250,12 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                         </span>
                         <span className="search-hit__body">
                           <span className="search-hit__name">
-                            {highlightName(product.name, query)}
+                            {highlightName(name, query)}
                           </span>
                           <span className="search-hit__price">
-                            <span>{formatPrice(product.price)}</span>
+                            <span>{formatPrice(product.price, locale)}</span>
                             {product.oldPrice != null && (
-                              <s>{formatPrice(product.oldPrice)}</s>
+                              <s>{formatPrice(product.oldPrice, locale)}</s>
                             )}
                             {discount != null && (
                               <em className="search-hit__sale">-{discount}%</em>

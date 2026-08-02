@@ -2,6 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
+import { useT } from "@/i18n/LocaleProvider";
+import {
+  loadUserProfile,
+  saveUserProfile,
+  USER_KEY,
+  type UserProfile,
+} from "@/lib/userProfile";
 import { Breadcrumbs } from "./Breadcrumbs";
 import {
   ArrowRightIcon,
@@ -13,32 +20,15 @@ import {
 
 type Mode = "login" | "register";
 
-type UserProfile = {
-  login: string;
-  phone: string;
-  name?: string;
-};
-
-const USER_KEY = "loveflowers-user";
-
-function loadUser(): UserProfile | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(USER_KEY);
-    return raw ? (JSON.parse(raw) as UserProfile) : null;
-  } catch {
-    return null;
-  }
-}
-
 export function AccountPage() {
+  const t = useT();
   const [mode, setMode] = useState<Mode>("login");
   const [user, setUser] = useState<UserProfile | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setUser(loadUser());
+    setUser(loadUserProfile());
     setReady(true);
   }, []);
 
@@ -49,11 +39,11 @@ export function AccountPage() {
     const login = String(data.get("login") || "").trim();
     const password = String(data.get("password") || "");
     if (login.length < 3 || password.length < 6) {
-      setError("Логин от 3 символов, пароль от 6");
+      setError(t("auth.errLoginPass"));
       return;
     }
     const next = { login, phone: login.startsWith("+") ? login : "+998" };
-    window.localStorage.setItem(USER_KEY, JSON.stringify(next));
+    saveUserProfile(next);
     setUser(next);
   };
 
@@ -67,19 +57,19 @@ export function AccountPage() {
     const password2 = String(data.get("password2") || "");
 
     if (login.length < 3) {
-      setError("Логин: минимум 3 символа");
+      setError(t("auth.errLoginMin"));
       return;
     }
     if (!/^\+998\d{9}$/.test(phone.replace(/[\s()-]/g, ""))) {
-      setError("Телефон в формате +998XXXXXXXXX");
+      setError(t("auth.errPhone"));
       return;
     }
     if (password.length < 6) {
-      setError("Пароль: минимум 6 символов");
+      setError(t("auth.errPassMin"));
       return;
     }
     if (password !== password2) {
-      setError("Пароли не совпадают");
+      setError(t("auth.errPassMatch"));
       return;
     }
 
@@ -88,7 +78,7 @@ export function AccountPage() {
       phone: phone.replace(/[\s()-]/g, ""),
       name: login,
     };
-    window.localStorage.setItem(USER_KEY, JSON.stringify(next));
+    saveUserProfile(next);
     setUser(next);
   };
 
@@ -106,20 +96,17 @@ export function AccountPage() {
         <div className="container">
           <Breadcrumbs
             items={[
-              { label: "Главная", href: "/" },
-              { label: "Личный кабинет" },
+              { label: t("common.home"), href: "/" },
+              { label: t("account.title") },
             ]}
           />
-          <h1 className="page-title">Личный кабинет</h1>
-          <p className="cabinet-lead">
-            Данные сохранены на этом устройстве. Заказы оформляются через
-            корзину — менеджер свяжется для подтверждения.
-          </p>
+          <h1 className="page-title">{t("account.title")}</h1>
+          <p className="cabinet-lead">{t("account.intro")}</p>
 
           <div className="cabinet-grid">
             <Link href="/account/profile" className="cabinet-card cabinet-card--wide">
               <div className="cabinet-card__top">
-                <span className="cabinet-card__label">Личные данные</span>
+                <span className="cabinet-card__label">{t("account.personal")}</span>
                 <span className="cabinet-card__arrow">
                   <ArrowRightIcon />
                 </span>
@@ -130,7 +117,7 @@ export function AccountPage() {
                   <p>{user.login}</p>
                   <p>{user.phone}</p>
                 </div>
-                <span className="btn btn--ghost btn--xs">Изменить</span>
+                <span className="btn btn--ghost btn--xs">{t("account.edit")}</span>
               </div>
             </Link>
 
@@ -138,38 +125,38 @@ export function AccountPage() {
               <div className="cabinet-tile__icon">
                 <HeartIcon />
               </div>
-              <p className="cabinet-tile__title">Избранное</p>
-              <p className="cabinet-tile__sub">Сохранённые букеты</p>
+              <p className="cabinet-tile__title">{t("account.tileFav")}</p>
+              <p className="cabinet-tile__sub">{t("account.tileFavSub")}</p>
             </Link>
             <Link href="/account/orders" className="cabinet-tile">
               <div className="cabinet-tile__icon">
                 <OrdersIcon />
               </div>
-              <p className="cabinet-tile__title">Заказы</p>
-              <p className="cabinet-tile__sub">Статус после оформления</p>
+              <p className="cabinet-tile__title">{t("account.tileOrders")}</p>
+              <p className="cabinet-tile__sub">{t("account.tileOrdersSub")}</p>
             </Link>
             <Link href="/account/profile" className="cabinet-tile">
               <div className="cabinet-tile__icon">
                 <ProfileEditIcon />
               </div>
-              <p className="cabinet-tile__title">Профиль</p>
-              <p className="cabinet-tile__sub">Имя и контакты</p>
+              <p className="cabinet-tile__title">{t("account.tileProfile")}</p>
+              <p className="cabinet-tile__sub">{t("account.tileProfileSub")}</p>
             </Link>
             <Link href="/faq" className="cabinet-tile">
               <div className="cabinet-tile__icon">
                 <HelpIcon />
               </div>
-              <p className="cabinet-tile__title">Помощь</p>
-              <p className="cabinet-tile__sub">Доставка и оплата</p>
+              <p className="cabinet-tile__title">{t("account.tileHelp")}</p>
+              <p className="cabinet-tile__sub">{t("account.tileHelpSub")}</p>
             </Link>
           </div>
 
           <div className="cabinet-cta">
             <Link href="/catalog/bouquets" className="btn btn--primary">
-              Смотреть букеты
+              {t("common.seeBouquets")}
             </Link>
             <button type="button" className="link-quiet" onClick={logout}>
-              Выйти
+              {t("account.logout")}
             </button>
           </div>
         </div>
@@ -183,12 +170,14 @@ export function AccountPage() {
         <div className="auth-wrap">
           <Breadcrumbs
             items={[
-              { label: "Главная", href: "/" },
-              { label: mode === "login" ? "Авторизация" : "Регистрация" },
+              { label: t("common.home"), href: "/" },
+              {
+                label: mode === "login" ? t("auth.login") : t("auth.register"),
+              },
             ]}
           />
           <h1 className="page-title page-title--center">
-            {mode === "login" ? "Авторизация" : "Регистрация"}
+            {mode === "login" ? t("auth.login") : t("auth.register")}
           </h1>
 
           <div className="auth-tabs">
@@ -200,7 +189,7 @@ export function AccountPage() {
                 setError("");
               }}
             >
-              Войти
+              {t("auth.tabLogin")}
             </button>
             <button
               type="button"
@@ -210,28 +199,28 @@ export function AccountPage() {
                 setError("");
               }}
             >
-              Регистрация
+              {t("auth.tabRegister")}
             </button>
           </div>
 
           {mode === "login" ? (
             <form className="auth-form" onSubmit={onLogin}>
               <label className="field">
-                <span>Логин или телефон *</span>
+                <span>{t("auth.loginOrPhone")}</span>
                 <input
                   name="login"
                   required
-                  placeholder="+998 __ ___ __ __ или логин"
+                  placeholder={t("auth.loginOrPhonePh")}
                   autoComplete="username"
                 />
               </label>
               <label className="field">
-                <span>Пароль *</span>
+                <span>{t("auth.password")}</span>
                 <input
                   name="password"
                   type="password"
                   required
-                  placeholder="Пароль"
+                  placeholder={t("auth.passwordPh")}
                   autoComplete="current-password"
                 />
               </label>
@@ -239,33 +228,33 @@ export function AccountPage() {
               <div className="auth-form__row">
                 <label className="check">
                   <input type="checkbox" defaultChecked />
-                  <span>Запомнить меня</span>
+                  <span>{t("auth.remember")}</span>
                 </label>
                 <button type="button" className="link-quiet">
-                  Забыли пароль?
+                  {t("auth.forgot")}
                 </button>
               </div>
 
               {error && <p className="form-error">{error}</p>}
 
               <button type="submit" className="btn btn--primary btn--wide">
-                Войти
+                {t("auth.submitLogin")}
               </button>
             </form>
           ) : (
             <form className="auth-form" onSubmit={onRegister}>
               <label className="field">
-                <span>Логин *</span>
+                <span>{t("profile.loginReadonly")} *</span>
                 <input
                   name="login"
                   required
                   minLength={3}
-                  placeholder="Придумайте логин"
+                  placeholder={t("auth.loginLabel")}
                   autoComplete="username"
                 />
               </label>
               <label className="field">
-                <span>Номер телефона *</span>
+                <span>{t("auth.phone")}</span>
                 <input
                   name="phone"
                   required
@@ -276,24 +265,24 @@ export function AccountPage() {
                 />
               </label>
               <label className="field">
-                <span>Пароль *</span>
+                <span>{t("auth.password")}</span>
                 <input
                   name="password"
                   type="password"
                   required
                   minLength={6}
-                  placeholder="Минимум 6 символов"
+                  placeholder={t("auth.passwordMinPh")}
                   autoComplete="new-password"
                 />
               </label>
               <label className="field">
-                <span>Повторите пароль *</span>
+                <span>{t("auth.passwordRepeat")}</span>
                 <input
                   name="password2"
                   type="password"
                   required
                   minLength={6}
-                  placeholder="Повторите пароль"
+                  placeholder={t("auth.passwordRepeat")}
                   autoComplete="new-password"
                 />
               </label>
@@ -301,28 +290,29 @@ export function AccountPage() {
               <label className="check" style={{ marginBottom: 16 }}>
                 <input type="checkbox" required defaultChecked />
                 <span>
-                  Согласен с{" "}
-                  <Link href="/offer">офертой</Link> и обработкой данных
+                  {t("auth.agreeBefore")}{" "}
+                  <Link href="/offer">{t("auth.offer")}</Link>{" "}
+                  {t("auth.agreeAfter")}
                 </span>
               </label>
 
               {error && <p className="form-error">{error}</p>}
 
               <button type="submit" className="btn btn--primary btn--wide">
-                Зарегистрироваться
+                {t("auth.submitRegister")}
               </button>
             </form>
           )}
 
           <p className="auth-hint">
-            Вход сохраняет профиль на устройстве, чтобы быстрее оформлять
-            заказы. Также можно сразу{" "}
-            <Link href="/catalog/bouquets">выбрать букет</Link> без регистрации.
+            {t("auth.noteBefore")}{" "}
+            <Link href="/catalog/bouquets">{t("auth.pickBouquet")}</Link>{" "}
+            {t("auth.noteAfter")}
           </p>
 
           <p className="auth-legal">
-            Продолжая, вы соглашаетесь с{" "}
-            <Link href="/privacy">политикой конфиденциальности</Link>
+            {t("auth.privacyBefore")}{" "}
+            <Link href="/privacy">{t("auth.privacy")}</Link>
           </p>
         </div>
       </div>

@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useT } from "@/i18n/LocaleProvider";
 
 const LINKS = [
-  { href: "/account", label: "Мой кабинет" },
-  { href: "/account/profile", label: "Личные данные" },
-  { href: "/account/orders", label: "Заказы" },
-  { href: "/favorites", label: "Избранные товары" },
-  { href: "/faq", label: "Помощь" },
-];
+  { href: "/account", labelKey: "account.navCabinet" },
+  { href: "/account/profile", labelKey: "account.navProfile" },
+  { href: "/account/orders", labelKey: "account.navOrders" },
+  { href: "/favorites", labelKey: "account.navFavorites" },
+  { href: "/faq", labelKey: "account.navHelp" },
+] as const;
 
 export function AccountSidebar() {
   const pathname = usePathname();
+  const t = useT();
 
   return (
     <aside className="account-sidebar">
@@ -27,14 +29,14 @@ export function AccountSidebar() {
                 href={link.href}
                 className={`account-sidebar__link${active ? " is-active" : ""}`}
               >
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             </li>
           );
         })}
         <li>
           <button type="button" className="account-sidebar__link">
-            Выйти
+            {t("account.logout")}
           </button>
         </li>
       </ul>

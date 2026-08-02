@@ -10,7 +10,20 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getProductById, type Product } from "@/data/products";
+import {
+  getProductById,
+  localizeProductName,
+  type Product,
+} from "@/data/products";
+import type { Locale } from "@/i18n/config";
+import { localizePackSize } from "@/i18n/catalog";
+import {
+  loadOrders,
+  saveOrders,
+  type OrderLine,
+  type StoredOrder,
+} from "@/lib/orders";
+import { PROMO_CODES, promoDiscountFor } from "@/lib/promo";
 
 export type CartItem = {
   id: string;
@@ -44,18 +57,36 @@ export type StoreToast =
       item: CartItem;
     };
 
+export type PlaceOrderInput = {
+  name: string;
+  phone: string;
+  address: string;
+  date: string;
+  slot: string;
+  pay: string;
+  comment: string;
+  recipient?: string;
+  cardText?: string;
+};
+
 type StoreContextValue = {
   cart: CartItem[];
   favorites: Set<string>;
   cartCount: number;
   favCount: number;
   cartTotal: number;
+  promoCode: string | null;
+  promoDiscount: number;
+  payableTotal: number;
+  orders: StoredOrder[];
   toasts: StoreToast[];
   addToCart: (product: Product, size?: string, qty?: number) => void;
   removeFromCart: (id: string) => void;
   restoreCartItem: (item: CartItem) => void;
   setQty: (id: string, qty: number) => void;
   clearCart: () => void;
+  setPromoCode: (code: string | null) => void;
+  placeOrder: (input: PlaceOrderInput) => Promise<StoredOrder>;
   toggleFavorite: (id: string) => void;
   isFavorite: (id: string) => boolean;
   dismissToast: (id: string) => void;
@@ -66,6 +97,7 @@ const StoreContext = createContext<StoreContextValue | null>(null);
 
 const CART_KEY = "loveflowers-cart";
 const FAV_KEY = "loveflowers-favorites";
+const PROMO_KEY = "zamin-promo";
 const TOAST_TTL = 5500;
 
 function loadJson<T>(key: string, fallback: T): T {
@@ -78,16 +110,26 @@ function loadJson<T>(key: string, fallback: T): T {
   }
 }
 
-export function cartItemLabel(item: Pick<CartItem, "name" | "size">): string {
-  if (!item.size || item.size === "—" || item.size === "Без упаковки") {
-    return item.name;
+export function cartItemLabel(
+  item: Pick<CartItem, "name" | "size" | "productId">,
+  locale: Locale = "ru",
+): string {
+  const name = item.productId
+    ? localizeProductName({ id: item.productId, name: item.name }, locale)
+    : item.name;
+  const size = localizePackSize(locale, item.size);
+  const none = localizePackSize(locale, "none");
+  if (!size || size === "—" || size === none || size === "Без упаковки") {
+    return name;
   }
-  return `${item.name} - ${item.size}`;
+  return `${name} - ${size}`;
 }
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [promoCode, setPromoCodeState] = useState<string | null>(null);
+  const [orders, setOrders] = useState<StoredOrder[]>([]);
   const [toasts, setToasts] = useState<StoreToast[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const timers = useRef<Map<string, number>>(new Map());
@@ -115,6 +157,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setCart(loadJson<CartItem[]>(CART_KEY, []));
     setFavorites(new Set(loadJson<string[]>(FAV_KEY, [])));
+    const savedPromo = window.localStorage.getItem(PROMO_KEY);
+    if (savedPromo && PROMO_CODES[savedPromo]) {
+      setPromoCodeState(savedPromo);
+    }
+    setOrders(loadOrders());
     setHydrated(true);
   }, []);
 
@@ -127,6 +174,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (!hydrated) return;
     window.localStorage.setItem(FAV_KEY, JSON.stringify([...favorites]));
   }, [favorites, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (promoCode) window.localStorage.setItem(PROMO_KEY, promoCode);
+    else window.localStorage.removeItem(PROMO_KEY);
+  }, [promoCode, hydrated]);
 
   useEffect(() => {
     const map = timers.current;
@@ -163,8 +216,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushToast({
         id: `cart-add-${Date.now()}`,
         type: "cart-add",
-        title: "В корзине",
-        subtitle: cartItemLabel({ name: product.name, size }),
+        title: "cartAdd",
+        subtitle: `${product.id}|${size}`,
         image: product.images[0] || "",
       });
     },
@@ -217,6 +270,65 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => setCart([]), []);
 
+  const setPromoCode = useCallback((code: string | null) => {
+    if (!code) {
+      setPromoCodeState(null);
+      return;
+    }
+    const normalized = code.trim().toUpperCase();
+    setPromoCodeState(PROMO_CODES[normalized] ? normalized : null);
+  }, []);
+
+  const placeOrder = useCallback(
+    async (input: PlaceOrderInput) => {
+      const cartTotal = cart.reduce(
+        (sum, item) => sum + item.price * item.qty,
+        0,
+      );
+      const discount = promoDiscountFor(cartTotal, promoCode);
+      const total = Math.max(0, cartTotal - discount);
+      const items: OrderLine[] = cart.map((item) => ({ ...item }));
+      const payload = {
+        ...input,
+        promoCode,
+        discount,
+        total,
+        items,
+      };
+
+      let order: StoredOrder = {
+        id: `ZG-${Date.now().toString(36).toUpperCase()}`,
+        createdAt: new Date().toISOString(),
+        status: "new",
+        ...payload,
+      };
+
+      try {
+        const res = await fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          const data = (await res.json()) as { order: StoredOrder };
+          if (data.order) order = data.order;
+        }
+      } catch {
+        /* keep local fallback */
+      }
+
+      setOrders((prev) => {
+        const next = [order, ...prev].slice(0, 40);
+        saveOrders(next);
+        return next;
+      });
+      setCart([]);
+      setPromoCodeState(null);
+      return order;
+    },
+    [cart, promoCode],
+  );
+
   const toggleFavorite = useCallback(
     (id: string) => {
       let added = false;
@@ -237,8 +349,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           pushToast({
             id: `fav-add-${Date.now()}`,
             type: "fav-add",
-            title: "В избранном",
-            subtitle: product.name,
+            title: "favAdd",
+            subtitle: product.id,
             image: product.images[0] || "",
           });
         }
@@ -258,18 +370,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       (sum, item) => sum + item.price * item.qty,
       0,
     );
+    const promoDiscount = promoDiscountFor(cartTotal, promoCode);
+    const payableTotal = Math.max(0, cartTotal - promoDiscount);
     return {
       cart,
       favorites,
       cartCount,
       favCount: favorites.size,
       cartTotal,
+      promoCode,
+      promoDiscount,
+      payableTotal,
+      orders,
       toasts,
       addToCart,
       removeFromCart,
       restoreCartItem,
       setQty,
       clearCart,
+      setPromoCode,
+      placeOrder,
       toggleFavorite,
       isFavorite,
       dismissToast,
@@ -278,12 +398,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [
     cart,
     favorites,
+    promoCode,
+    orders,
     toasts,
     addToCart,
     removeFromCart,
     restoreCartItem,
     setQty,
     clearCart,
+    setPromoCode,
+    placeOrder,
     toggleFavorite,
     isFavorite,
     dismissToast,

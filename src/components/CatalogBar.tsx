@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { nav } from "@/data/products";
+import { tNavLabel } from "@/i18n/catalog";
+import { useLocale } from "@/i18n/LocaleProvider";
 
 type CatalogBarProps = {
   className?: string;
@@ -12,6 +14,7 @@ type CatalogBarProps = {
 export function CatalogBar({ className = "" }: CatalogBarProps) {
   const pathname = usePathname();
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const { locale, t } = useLocale();
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -26,7 +29,7 @@ export function CatalogBar({ className = "" }: CatalogBarProps) {
   return (
     <nav
       className={`catalog-bar${className ? ` ${className}` : ""}`}
-      aria-label="Каталог"
+      aria-label={t("catalogBar.aria")}
     >
       <div className="catalog-bar__scroller" ref={scrollerRef}>
         <div className="catalog-bar__inner">
@@ -41,7 +44,7 @@ export function CatalogBar({ className = "" }: CatalogBarProps) {
                 href={item.href}
                 className={`catalog-bar__link${active ? " is-active" : ""}`}
               >
-                {item.label}
+                {tNavLabel(locale, item.href, item.label)}
               </Link>
             );
           })}

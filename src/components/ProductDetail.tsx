@@ -2,96 +2,89 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type UIEvent } from "react";
 import { useStore } from "@/context/StoreContext";
 import {
-  PACKAGING_OPTIONS,
   categoryLabel,
   categoryPath,
   formatPrice,
   getProductDetails,
   getRelated,
   isFlowerProduct,
+  localizeProductName,
   nearestDeliveryText,
+  packagingOptions,
   productCategories,
   type Product,
 } from "@/data/products";
-import { Breadcrumbs } from "./Breadcrumbs";
-import { HeartIcon } from "./Icons";
+import type { Locale } from "@/i18n/config";
+import { useLocale } from "@/i18n/LocaleProvider";
+import { sampleBottomLuma, toneFromLuma } from "@/lib/imageLuma";
+import { AppBackBar } from "./AppBackBar";
+import { ChevronLeftIcon, HeartIcon } from "./Icons";
 import { ProductCard } from "./ProductCard";
+import { StickyBar } from "./StickyBar";
 
-function getInfoSections(now?: Date) {
+function getInfoSections(
+  t: (key: string, vars?: Record<string, string | number>) => string,
+  locale: Locale,
+  now?: Date,
+) {
   return [
     {
       id: "delivery",
-      title: "Доставка",
+      title: t("pdp.delivery"),
       blocks: [
         {
-          title: "Регионы доставки",
+          title: t("pdp.regions"),
+          items: [t("pdp.regions1"), t("pdp.regions2")],
+        },
+        {
+          title: t("pdp.nearest"),
           items: [
-            "Адрес магазина: Доставка со склада в Ташкенте",
-            "Доставка возможна по всем районам Ташкента: в любой район города.",
+            now ? nearestDeliveryText(now, locale) : t("pdp.nearestFallback"),
           ],
         },
         {
-          title: "Ближайшее время доставки",
-          items: [
-            now
-              ? nearestDeliveryText(now)
-              : "сегодня в течение 2х-3х часов.",
-          ],
-        },
-        {
-          title: "Условия доставки",
-          items: [
-            "мы осуществляем доставку круглосуточно и без выходных,",
-            "мы можем выполнить доставку в срочном порядке: время доставки – менее 1.5 часа.",
-          ],
+          title: t("pdp.terms"),
+          items: [t("pdp.terms1"), t("pdp.terms2")],
         },
       ],
-      more: { label: "Подробнее о доставке", href: "/faq#delivery" },
+      more: { label: t("pdp.moreDelivery"), href: "/faq#delivery" },
     },
     {
       id: "payment",
-      title: "Оплата",
+      title: t("pdp.payment"),
       blocks: [
         {
           title: "",
-          items: [
-            "Карты Uzcard и Humo",
-            "Visa и Mastercard",
-            "Payme и Click",
-            "Наличными курьеру при получении",
-          ],
+          items: [t("pdp.pay1"), t("pdp.pay2"), t("pdp.pay3"), t("pdp.pay4")],
         },
       ],
-      more: { label: "Подробнее об оплате", href: "/faq#payment" },
+      more: { label: t("pdp.morePayment"), href: "/faq#payment" },
     },
     {
       id: "bonuses",
-      title: "Бонусы",
+      title: t("pdp.bonuses"),
       blocks: [
         {
           title: "",
           items: [
-            "Бесплатное фото букета до отправки (по запросу)",
-            "Бесплатное фото получателя (с согласия получателя)",
-            "Бесплатная записка с букетом",
-            "Возможность приложить открытку к заказу",
+            t("pdp.bonus1"),
+            t("pdp.bonus2"),
+            t("pdp.bonus3"),
+            t("pdp.bonus4"),
           ],
         },
       ],
     },
     {
       id: "return",
-      title: "Правила возврата",
+      title: t("pdp.returnTitle"),
       blocks: [
         {
           title: "",
-          items: [
-            "Вы можете бесплатно отменить заказ до начала сборки букета. Деньги вернутся вам в полном размере. Для отмены заказа свяжитесь с менеджером по телефону или через WhatsApp.",
-          ],
+          items: [t("pdp.returnBody")],
         },
       ],
     },
@@ -99,44 +92,74 @@ function getInfoSections(now?: Date) {
 }
 
 export function ProductDetail({ product }: { product: Product }) {
-  const router = useRouter();
   const { addToCart, toggleFavorite, isFavorite } = useStore();
+  const { locale, t } = useLocale();
   const flower = isFlowerProduct(product);
   const [packId, setPackId] = useState<string>("none");
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
+  const [dotTone, setDotTone] = useState<"light" | "dark">("light");
   const [added, setAdded] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>("delivery");
-  const [infoSections, setInfoSections] = useState(() => getInfoSections());
+  const [infoSections, setInfoSections] = useState(() =>
+    getInfoSections(t, locale),
+  );
   const albumRef = useRef<HTMLDivElement>(null);
-  const details = getProductDetails(product);
+  const name = localizeProductName(product, locale);
+  const details = getProductDetails(product, locale);
   const related = getRelated(product);
-  const categories = productCategories(product);
-  const packaging = PACKAGING_OPTIONS.find((p) => p.id === packId) ?? PACKAGING_OPTIONS[0];
+  const categories = productCategories(product, locale);
+  const packs = packagingOptions(locale);
+  const packaging = packs.find((p) => p.id === packId) ?? packs[0];
+  const images = product.images.length ? product.images : [""];
+  const gallery = images.length >= 2 ? images : [images[0], images[0]];
 
   useEffect(() => {
-    setInfoSections(getInfoSections(new Date()));
-  }, []);
+    setInfoSections(getInfoSections(t, locale, new Date()));
+  }, [t, locale]);
 
+  useEffect(() => {
+    const album = albumRef.current;
+    if (!album) return;
+
+    let cancelled = false;
+    const shot = album.children[activeImg] as HTMLElement | undefined;
+    const img = shot?.querySelector("img");
+    if (!img) return;
+
+    const analyze = () => {
+      if (cancelled || !img.naturalWidth) return;
+      try {
+        setDotTone(toneFromLuma(sampleBottomLuma(img)));
+      } catch {
+        // Tainted canvas / decode race — prefer dark dots on light pages
+        if (!cancelled) setDotTone("light");
+      }
+    };
+
+    if (img.complete) analyze();
+    else img.addEventListener("load", analyze);
+
+    return () => {
+      cancelled = true;
+      img.removeEventListener("load", analyze);
+    };
+  }, [activeImg, product.id, gallery]);
+
+  const unavailable = product.available === false;
   const unitPrice = useMemo(
     () => product.price + (flower ? packaging.price : 0),
     [product.price, flower, packaging.price],
   );
   const totalPrice = unitPrice * qty;
   const favorited = isFavorite(product.id);
-  const images = product.images.length ? product.images : [""];
-  const gallery = images.length >= 2 ? images : [images[0], images[0]];
   const optionKey = flower ? packaging.label : "—";
 
   const onAdd = () => {
+    if (unavailable) return;
     addToCart({ ...product, price: unitPrice }, optionKey, qty);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
-  };
-
-  const onBuyOneClick = () => {
-    addToCart({ ...product, price: unitPrice }, optionKey, qty);
-    router.push("/checkout");
   };
 
   const onAlbumScroll = (e: UIEvent<HTMLDivElement>) => {
@@ -153,63 +176,88 @@ export function ProductDetail({ product }: { product: Product }) {
     el.scrollTo({ left: index * el.clientWidth, behavior: "smooth" });
   };
 
+  const backHref = categoryPath(product.category);
+  const backTitle = categoryLabel(product.category, locale);
+
   return (
-    <main className="page-main">
-      <div className="container">
-        <Breadcrumbs
-          items={[
-            { label: "Главная", href: "/" },
-            { label: "Магазин", href: "/catalog/shop" },
-            {
-              label: categoryLabel(product.category),
-              href: categoryPath(product.category),
-            },
-            { label: product.name },
-          ]}
-        />
+    <main className="page-main page-main--pdp">
+      <div className="container pdp-container">
+        <div className="pdp-desk-back">
+          <AppBackBar
+            href={backHref}
+            title={backTitle}
+            backLabel={t("common.shop")}
+          />
+        </div>
 
         <div className="pdp">
-          <div className="pdp__gallery">
-            <div className="pdp__album" ref={albumRef} onScroll={onAlbumScroll}>
-              {gallery.map((src, i) => (
-                <button
-                  key={`${src}-${i}`}
-                  type="button"
-                  className={`pdp__shot${activeImg === i ? " is-active" : ""}`}
-                  onClick={() => goToSlide(i)}
-                >
-                  <Image
-                    src={src}
-                    alt={`${product.name} ${i + 1}`}
-                    fill
-                    className="pdp__img"
-                    sizes="(max-width: 900px) 100vw, 55vw"
-                    priority={i === 0}
+          <div className="pdp-bleed">
+            <div className="pdp__gallery">
+              <div
+                className="pdp__album"
+                ref={albumRef}
+                onScroll={onAlbumScroll}
+              >
+                {gallery.map((src, i) => (
+                  <button
+                    key={`${src}-${i}`}
+                    type="button"
+                    className={`pdp__shot${activeImg === i ? " is-active" : ""}`}
+                    onClick={() => goToSlide(i)}
+                  >
+                    <span className="img-skeleton pdp__skeleton" aria-hidden />
+                    <Image
+                      src={src}
+                      alt={`${name} ${i + 1}`}
+                      fill
+                      className="pdp__img"
+                      sizes="(max-width: 900px) 100vw, 55vw"
+                      priority={i === 0}
+                    />
+                  </button>
+                ))}
+              </div>
+              <Link
+                href={backHref}
+                className="pdp-bleed__back"
+                aria-label={backTitle}
+              >
+                <ChevronLeftIcon />
+              </Link>
+              <button
+                type="button"
+                className={`pdp-bleed__fav${favorited ? " is-active" : ""}`}
+                aria-label={favorited ? t("pdp.favorited") : t("pdp.favorite")}
+                onClick={() => toggleFavorite(product.id)}
+              >
+                <HeartIcon filled={favorited} />
+              </button>
+              <div
+                className={`pdp__album-dots is-on-${dotTone}`}
+                data-tone={dotTone}
+                aria-hidden={gallery.length < 2}
+              >
+                {gallery.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`pdp__album-dot${activeImg === i ? " is-active" : ""}`}
+                    aria-label={t("pdp.photoN", { n: i + 1 })}
+                    onClick={() => goToSlide(i)}
                   />
-                </button>
-              ))}
-            </div>
-            <div className="pdp__album-dots" aria-hidden={gallery.length < 2}>
-              {gallery.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`pdp__album-dot${activeImg === i ? " is-active" : ""}`}
-                  aria-label={`Фото ${i + 1}`}
-                  onClick={() => goToSlide(i)}
-                />
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
           <aside className="pdp__panel">
             <div className="pdp__panel-inner">
               <div className="pdp__head">
-                <h1 className="pdp__title">{product.name}</h1>
+                <h1 className="pdp__title">{name}</h1>
                 <button
                   type="button"
-                  className={`pdp__fav${favorited ? " is-active" : ""}`}
-                  aria-label="В избранное"
+                  className={`pdp__fav pdp__fav--desk${favorited ? " is-active" : ""}`}
+                  aria-label={favorited ? t("pdp.favorited") : t("pdp.favorite")}
                   onClick={() => toggleFavorite(product.id)}
                 >
                   <HeartIcon filled={favorited} />
@@ -217,24 +265,31 @@ export function ProductDetail({ product }: { product: Product }) {
               </div>
 
               <div className="pdp__price-row">
-                <p className="pdp__price">{formatPrice(totalPrice)}</p>
+                <p className="pdp__price">{formatPrice(totalPrice, locale)}</p>
                 {product.oldPrice != null && (
-                  <p className="pdp__old">{formatPrice(product.oldPrice)}</p>
+                  <p className="pdp__old">
+                    {formatPrice(product.oldPrice, locale)}
+                  </p>
                 )}
               </div>
+              {unavailable && (
+                <p className="pdp__notice">{t("badge.outOfStock")}</p>
+              )}
               {flower && packaging.price > 0 && (
                 <p className="pdp__price-note">
-                  товар {formatPrice(product.price)} + упаковка{" "}
-                  {formatPrice(packaging.price)}
+                  {t("pdp.priceNote", {
+                    price: formatPrice(product.price, locale),
+                    pack: formatPrice(packaging.price, locale),
+                  })}
                   {qty > 1 ? ` × ${qty}` : ""}
                 </p>
               )}
 
               {flower && (
                 <>
-                  <p className="pdp__label">Выберите упаковку:</p>
+                  <p className="pdp__label">{t("pdp.choosePack")}</p>
                   <div className="pdp__packs">
-                    {PACKAGING_OPTIONS.map((pack) => (
+                    {packs.map((pack) => (
                       <label
                         key={pack.id}
                         className={`pdp__pack${packId === pack.id ? " is-active" : ""}`}
@@ -247,7 +302,9 @@ export function ProductDetail({ product }: { product: Product }) {
                         />
                         <span>
                           {pack.label}
-                          {pack.price > 0 ? ` (${formatPrice(pack.price)})` : ""}
+                          {pack.price > 0
+                            ? ` (${formatPrice(pack.price, locale)})`
+                            : ""}
                         </span>
                       </label>
                     ))}
@@ -255,11 +312,11 @@ export function ProductDetail({ product }: { product: Product }) {
                 </>
               )}
 
-              <p className="pdp__label">Кол-во:</p>
+              <p className="pdp__label">{t("pdp.qty")}</p>
               <div className="pdp__qty">
                 <button
                   type="button"
-                  aria-label="Меньше"
+                  aria-label={t("pdp.less")}
                   onClick={() => setQty((v) => Math.max(1, v - 1))}
                 >
                   −
@@ -274,32 +331,30 @@ export function ProductDetail({ product }: { product: Product }) {
                 />
                 <button
                   type="button"
-                  aria-label="Больше"
+                  aria-label={t("pdp.more")}
                   onClick={() => setQty((v) => v + 1)}
                 >
                   +
                 </button>
               </div>
 
-              <div className="pdp__actions">
+              <div className="pdp__actions pdp__actions--inline">
                 <button
                   type="button"
                   className="btn btn--primary btn--wide"
                   onClick={onAdd}
+                  disabled={unavailable}
                 >
-                  {added ? "Добавлено" : "В корзину"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn--ghost btn--wide"
-                  onClick={onBuyOneClick}
-                >
-                  Купить в 1 клик
+                  {unavailable
+                    ? t("badge.outOfStock")
+                    : added
+                      ? t("pdp.added")
+                      : t("pdp.add")}
                 </button>
               </div>
 
               <p className="pdp__cats">
-                Категории:{" "}
+                {t("pdp.categories")}{" "}
                 {categories.map((cat, i) => (
                   <span key={`${cat.href}-${cat.label}`}>
                     {i > 0 && ", "}
@@ -309,8 +364,10 @@ export function ProductDetail({ product }: { product: Product }) {
               </p>
 
               <div className="pdp__desc">
-                <h2>Описание / Состав</h2>
-                {details.notice && <p className="pdp__notice">{details.notice}</p>}
+                <h2>{t("pdp.description")}</h2>
+                {details.notice && (
+                  <p className="pdp__notice">{details.notice}</p>
+                )}
                 <p className="pdp__desc-text">{details.description}</p>
               </div>
 
@@ -345,7 +402,10 @@ export function ProductDetail({ product }: { product: Product }) {
                             </div>
                           ))}
                           {"more" in section && section.more ? (
-                            <Link href={section.more.href} className="pdp__acc-more">
+                            <Link
+                              href={section.more.href}
+                              className="pdp__acc-more"
+                            >
                               {section.more.label}
                             </Link>
                           ) : null}
@@ -362,7 +422,7 @@ export function ProductDetail({ product }: { product: Product }) {
         {related.length > 0 && (
           <section className="section">
             <div className="section__head">
-              <h2 className="section__title">С этим товаром покупают</h2>
+              <h2 className="section__title">{t("pdp.related")}</h2>
             </div>
             <div className="product-grid">
               {related.map((item) => (
@@ -372,6 +432,27 @@ export function ProductDetail({ product }: { product: Product }) {
           </section>
         )}
       </div>
+
+      <StickyBar className="pdp-sticky">
+        <div className="app-sticky-bar__meta">
+          <span className="app-sticky-bar__label">{t("header.total")}</span>
+          <strong className="app-sticky-bar__price">
+            {formatPrice(totalPrice, locale)}
+          </strong>
+        </div>
+        <button
+          type="button"
+          className="btn btn--primary"
+          onClick={onAdd}
+          disabled={unavailable}
+        >
+          {unavailable
+            ? t("badge.outOfStock")
+            : added
+              ? t("pdp.added")
+              : t("pdp.add")}
+        </button>
+      </StickyBar>
     </main>
   );
 }

@@ -17,11 +17,11 @@ export function Preloader() {
 
     const tick = () => {
       frame += 1;
-      const target = frame < 42 ? 92 : 100;
-      value += (target - value) * 0.08;
+      const target = frame < 18 ? 94 : 100;
+      value += (target - value) * 0.22;
       setProgress(Math.min(100, value));
 
-      if (value < 99.5) {
+      if (value < 99.2) {
         raf = window.requestAnimationFrame(tick);
       } else {
         setProgress(100);
@@ -30,16 +30,13 @@ export function Preloader() {
           document.documentElement.classList.remove("is-booting");
           document.documentElement.classList.add("app-ready");
           setPhase("done");
-        }, 520);
+        }, 220);
       }
     };
 
-    const start = window.setTimeout(() => {
-      raf = window.requestAnimationFrame(tick);
-    }, 120);
+    raf = window.requestAnimationFrame(tick);
 
     return () => {
-      window.clearTimeout(start);
       window.cancelAnimationFrame(raf);
       document.documentElement.classList.remove("is-booting");
     };

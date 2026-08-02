@@ -1,1153 +1,919 @@
 {
-    "site":  {
-                 "name":  "Zamin Gullari",
-                 "tagline":  "Доставка цветов в Ташкенте",
-                 "phone":  "+998 70 060 55 77",
-                 "phoneHref":  "tel:+998700605577",
-                 "email":  "info@zamingullari.uz",
-                 "address":  "Chilonzor tumani, Chilonzor dahasi, 9-mavze, 2/5",
-                 "addressMapHref":  "https://yandex.uz/maps/-/CTCu4QZ0",
-                 "hours":  "круглосуточно",
-                 "supportNote":  "круглосуточно, 24/7",
-                 "about":  "Zamin Gullari — служба доставки цветов в Ташкенте. Авторские букеты, розы, корзины, коробки и подарки. Бесплатная доставка по городу, работаем круглосуточно.",
-                 "socials":  [
-                                 {
-                                     "name":  "Telegram",
-                                     "href":  "https://t.me/zamin_gullarii"
-                                 },
-                                 {
-                                     "name":  "WhatsApp",
-                                     "href":  "https://wa.me/998700605577"
-                                 },
-                                 {
-                                     "name":  "Instagram",
-                                     "href":  "https://www.instagram.com/zamingullari.uz/"
-                                 },
-                                 {
-                                     "name":  "Карта",
-                                     "href":  "https://yandex.uz/maps/-/CTCu4QZ0"
-                                 }
-                             ]
-             },
-    "nav":  [
-                {
-                    "label":  "Главная",
-                    "href":  "/"
-                },
-                {
-                    "label":  "Популярное",
-                    "href":  "/catalog/popular"
-                },
-                {
-                    "label":  "Розы",
-                    "href":  "/catalog/roses"
-                },
-                {
-                    "label":  "Тюльпаны",
-                    "href":  "/catalog/tulips"
-                },
-                {
-                    "label":  "Букеты",
-                    "href":  "/catalog/bouquets"
-                },
-                {
-                    "label":  "Цветы разные",
-                    "href":  "/catalog/mixed"
-                },
-                {
-                    "label":  "Цветы в коробке",
-                    "href":  "/catalog/boxes"
-                },
-                {
-                    "label":  "Корзины с цветами",
-                    "href":  "/catalog/baskets"
-                },
-                {
-                    "label":  "Подарки",
-                    "href":  "/catalog/gifts"
-                }
+    "site": {
+        "name": "Zamin Gullari",
+        "tagline": "Доставка цветов в Ташкенте",
+        "phone": "+998 70 060 55 77",
+        "phoneHref": "tel:+998700605577",
+        "email": "info@zamingullari.uz",
+        "address": "Chilonzor tumani, Chilonzor dahasi, 9-mavze, 2/5",
+        "addressMapHref": "https://yandex.uz/maps/-/CTCu4QZ0",
+        "hours": "круглосуточно",
+        "supportNote": "круглосуточно, 24/7",
+        "about": "Zamin Gullari — служба доставки цветов в Ташкенте. Авторские букеты, розы, корзины и коробки. Бесплатная доставка по городу, работаем круглосуточно.",
+        "socials": [
+            {
+                "name": "Telegram",
+                "href": "https://t.me/zamin_gullarii"
+            },
+            {
+                "name": "WhatsApp",
+                "href": "https://wa.me/998700605577"
+            },
+            {
+                "name": "Instagram",
+                "href": "https://www.instagram.com/zamingullari.uz/"
+            },
+            {
+                "name": "Карта",
+                "href": "https://yandex.uz/maps/-/CTCu4QZ0"
+            }
+        ]
+    },
+    "nav": [
+        {
+            "label": "Главная",
+            "href": "/"
+        },
+        {
+            "label": "Популярное",
+            "href": "/catalog/popular"
+        },
+        {
+            "label": "Розы",
+            "href": "/catalog/roses"
+        },
+        {
+            "label": "Тюльпаны",
+            "href": "/catalog/tulips"
+        },
+        {
+            "label": "Букеты",
+            "href": "/catalog/bouquets"
+        },
+        {
+            "label": "Цветы разные",
+            "href": "/catalog/mixed"
+        },
+        {
+            "label": "Цветы в коробке",
+            "href": "/catalog/boxes"
+        },
+        {
+            "label": "Корзины с цветами",
+            "href": "/catalog/baskets"
+        }
+    ],
+    "ticker": [
+        "Бесплатная доставка по Ташкенту",
+        "Работаем круглосуточно",
+        "Свежие букеты",
+        "+998 70 060 55 77"
+    ],
+    "hero": [
+        {
+            "id": "h1",
+            "title": "АКЦИЯ · РОЗЫ МИКС 101",
+            "image": "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-rossiya-miks-101.jpg",
+            "href": "/catalog/roses"
+        },
+        {
+            "id": "h2",
+            "title": "БУКЕТЫ С ДОСТАВКОЙ",
+            "image": "/hero/seasonal.jpg",
+            "href": "/catalog/bouquets"
+        },
+        {
+            "id": "h3",
+            "title": "ЦВЕТЫ В КОРЗИНЕ",
+            "image": "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-obyatiya-lyubimoy.jpg",
+            "href": "/catalog/baskets"
+        },
+        {
+            "id": "h4",
+            "title": "КРАСНЫЕ РОЗЫ",
+            "image": "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-krasnye-101.jpg",
+            "href": "/catalog/roses"
+        }
+    ],
+    "categories": [
+        {
+            "id": "c1",
+            "name": "Розы",
+            "image": "https://loveflowers.uz/wp-content/uploads/2017/07/buket-iz-krasnyh-roz-ekvador.jpg",
+            "href": "/catalog/roses"
+        },
+        {
+            "id": "c2",
+            "name": "Тюльпаны",
+            "image": "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-miks-1.jpg",
+            "href": "/catalog/tulips"
+        },
+        {
+            "id": "c3",
+            "name": "Букеты",
+            "image": "https://loveflowers.uz/wp-content/uploads/2021/04/buket-blesk.jpg",
+            "href": "/catalog/bouquets"
+        },
+        {
+            "id": "c4",
+            "name": "Цветы разные",
+            "image": "https://loveflowers.uz/wp-content/uploads/2018/04/hrizantemy-miks-1.jpg",
+            "href": "/catalog/mixed"
+        },
+        {
+            "id": "c5",
+            "name": "Цветы в коробке",
+            "image": "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-simfoniya.jpg",
+            "href": "/catalog/boxes"
+        },
+        {
+            "id": "c6",
+            "name": "Корзины с цветами",
+            "image": "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-kompliment.jpg",
+            "href": "/catalog/baskets"
+        },
+        {
+            "id": "c8",
+            "name": "Популярное",
+            "image": "/hero/seasonal.jpg",
+            "href": "/catalog/popular"
+        },
+        {
+            "id": "c9",
+            "name": "Акции",
+            "image": "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-krasnye-51.jpg",
+            "href": "/catalog/sale"
+        }
+    ],
+    "bouquets": [
+        {
+            "id": "lf-kremovyy-shik",
+            "name": "Букет «Кремовый шик»",
+            "price": 550000,
+            "badge": "HIT",
+            "images": [
+                "/hero/seasonal.jpg"
             ],
-    "ticker":  [
-                   "Бесплатная доставка по Ташкенту",
-                   "Работаем круглосуточно",
-                   "Свежие букеты",
-                   "+998 70 060 55 77"
-               ],
-    "hero":  [
-                 {
-                     "id":  "h1",
-                     "title":  "АКЦИЯ · РОЗЫ МИКС 101",
-                     "image":  "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-rossiya-miks-101.jpg",
-                     "href":  "/catalog/roses"
-                 },
-                 {
-                     "id":  "h2",
-                     "title":  "БУКЕТЫ С ДОСТАВКОЙ",
-                     "image":  "/hero/seasonal.jpg",
-                     "href":  "/catalog/bouquets"
-                 },
-                 {
-                     "id":  "h3",
-                     "title":  "ЦВЕТЫ В КОРЗИНЕ",
-                     "image":  "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-obyatiya-lyubimoy.jpg",
-                     "href":  "/catalog/baskets"
-                 },
-                 {
-                     "id":  "h4",
-                     "title":  "КРАСНЫЕ РОЗЫ",
-                     "image":  "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-krasnye-101.jpg",
-                     "href":  "/catalog/roses"
-                 }
-             ],
-    "categories":  [
-                       {
-                           "id":  "c1",
-                           "name":  "Розы",
-                           "image":  "https://loveflowers.uz/wp-content/uploads/2017/07/buket-iz-krasnyh-roz-ekvador.jpg",
-                           "href":  "/catalog/roses"
-                       },
-                       {
-                           "id":  "c2",
-                           "name":  "Тюльпаны",
-                           "image":  "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-miks-1.jpg",
-                           "href":  "/catalog/tulips"
-                       },
-                       {
-                           "id":  "c3",
-                           "name":  "Букеты",
-                           "image":  "https://loveflowers.uz/wp-content/uploads/2021/04/buket-blesk.jpg",
-                           "href":  "/catalog/bouquets"
-                       },
-                       {
-                           "id":  "c4",
-                           "name":  "Цветы разные",
-                           "image":  "https://loveflowers.uz/wp-content/uploads/2018/04/hrizantemy-miks-1.jpg",
-                           "href":  "/catalog/mixed"
-                       },
-                       {
-                           "id":  "c5",
-                           "name":  "Цветы в коробке",
-                           "image":  "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-simfoniya.jpg",
-                           "href":  "/catalog/boxes"
-                       },
-                       {
-                           "id":  "c6",
-                           "name":  "Корзины с цветами",
-                           "image":  "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-kompliment.jpg",
-                           "href":  "/catalog/baskets"
-                       },
-                       {
-                           "id":  "c7",
-                           "name":  "Подарки",
-                           "image":  "https://loveflowers.uz/wp-content/uploads/2018/04/yaytso-kinder-syurpriz.jpg",
-                           "href":  "/catalog/gifts"
-                       },
-                       {
-                           "id":  "c8",
-                           "name":  "Популярное",
-                           "image":  "/hero/seasonal.jpg",
-                           "href":  "/catalog/popular"
-                       },
-                       {
-                           "id":  "c9",
-                           "name":  "Акции",
-                           "image":  "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-krasnye-51.jpg",
-                           "href":  "/catalog/sale"
-                       }
-                   ],
-    "bouquets":  [
-                     {
-                         "id":  "lf-kremovyy-shik",
-                         "name":  "Букет «Кремовый шик»",
-                         "price":  550000,
-                         "badge":  "HIT",
-                         "images":  [
-                                        "/hero/seasonal.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-venetsiya",
-                         "name":  "Букет «Венеция»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-venetsiya.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-angel",
-                         "name":  "Букет «Ангел»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-angel.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-blesk",
-                         "name":  "Букет «Блеск»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-blesk.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-belyy-angel",
-                         "name":  "Букет «Белый ангел»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-belyy-angel.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-romashki",
-                         "name":  "Букет «Ромашки»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-radostnyy-den.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-liziantusy",
-                         "name":  "Букет «Лизиантусы»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-golubaya-nezhnost.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-orhidei",
-                         "name":  "Букет «Орхидеи»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-sozvezdie-angela.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-iskrennyaya-blagodarnost",
-                         "name":  "Букет «Искренняя благодарность»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-iskrennyaya-blagodarnost.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-karamel",
-                         "name":  "Букет «Карамель»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-rozovye-mechty.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-karnaval",
-                         "name":  "Букет «Карнавал»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-igrivaya-ulybka.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-eyforiya",
-                         "name":  "Букет «Эйфория»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-rubinovoe-siyanie.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-zhenskiy-sekret",
-                         "name":  "Букет «Женский секрет»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-zhenskiy-sekret.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-klyuch-k-serdtsu",
-                         "name":  "Букет «Ключ к сердцу»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-klyuch-k-serdtsu.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-malinovyy-svet",
-                         "name":  "Букет «Малиновый свет»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-malinovyy-svet.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-nezhnoe-priznanie",
-                         "name":  "Букет «Нежное признание»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-nezhnoe-priznanie.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-letnee-nebo",
-                         "name":  "Букет «Летнее небо»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-letnee-nebo.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-dary",
-                         "name":  "Букет «Дары природы»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-kraski-vesny.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-dobrye-slova",
-                         "name":  "Букет «Добрые слова»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-dobrye-slova.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-nezhnost",
-                         "name":  "Букет «Нежное признание»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-iskrennyaya-lyubov.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-golubye-ogonki",
-                         "name":  "Букет «Голубые огоньки»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-goluby-ogonki.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-dushistoe",
-                         "name":  "Букет «Душистое утро»",
-                         "price":  550000,
-                         "badge":  "NEW",
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-legkoe-probuzhdenie.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "buket-nezhnoe-obyatie",
-                         "name":  "Букет «Нежное объятие»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-nezhnoe-obyatie.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     },
-                     {
-                         "id":  "lf-blesk",
-                         "name":  "Букет «Блеск»",
-                         "price":  550000,
-                         "images":  [
-                                        "https://loveflowers.uz/wp-content/uploads/2021/04/buket-blesk.jpg"
-                                    ],
-                         "category":  "bouquets"
-                     }
-                 ],
-    "gifts":  [
-                  {
-                      "id":  "tort-yagodno-tvorozhnyy",
-                      "name":  "Торт Ягодно-творожный",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/photo_2025-09-07-01.03.45.jpeg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "tort-praga",
-                      "name":  "Торт Прага",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/img_7955.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "tort-shokoladno-bananovyy",
-                      "name":  "Торт шоколадно-банановый",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/image-2025-09-07-005710.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "tort-tiramisu",
-                      "name":  "Торт Тирамису",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/img_7935.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "tort-rafaelka",
-                      "name":  "Торт Рафаелка",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/img_7932.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "tort-milki-milk",
-                      "name":  "Торт Милки-милк",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/img_7930.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "tort-lesnoy-oreh",
-                      "name":  "Торт Лесной орех",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/img_7928.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "tort-kofeynyy",
-                      "name":  "Торт Кофейный",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/img_7926.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "yagodnyy-tort",
-                      "name":  "Ягодный торт",
-                      "price":  280000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2025/09/img_7925.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "gelievye-shary-s-nadpisyu",
-                      "name":  "Гелиевые шары с надписью",
-                      "price":  32000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2022/11/vozdushyne-shary-s-nadpisyu.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "konfety-merci",
-                      "name":  "Конфеты «Merci»",
-                      "price":  95000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2019/11/konfety-merci.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "konfety-korkunov",
-                      "name":  "Конфеты «Коркунов»",
-                      "price":  95000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2019/11/konfety-korkunov.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "plyushevyy-kot",
-                      "name":  "Плюшевый кот",
-                      "price":  180000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/plyushevyy-kot.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "plyushevyy-mishka-bolshoy",
-                      "name":  "Плюшевый мишка большой",
-                      "price":  180000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/plyushevyy-mishka-bolshoy.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "plyushevyy-mishka-sredniy",
-                      "name":  "Плюшевый мишка средний",
-                      "price":  180000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/plyushevyy-mishka-sredniy.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "plyushevyy-mishka-malyy",
-                      "name":  "Плюшевый мишка малый",
-                      "price":  180000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/plyushevyy-mishka-malyy.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "orange-toys",
-                      "name":  "Orange Toys",
-                      "price":  180000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2017/12/igrushka-panda.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "zayki-mi",
-                      "name":  "Зайки Ми",
-                      "price":  180000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/zayki-mi.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "konfety-ferrero-rocher",
-                      "name":  "Конфеты «Ferrero Rocher»",
-                      "price":  95000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/ferrero-rocher.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "yaytso-kinder-syurpriz",
-                      "name":  "Яйцо «Киндер Сюрприз»",
-                      "price":  95000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/yaytso-kinder-syurpriz.jpg"
-                                 ],
-                      "category":  "gifts",
-                      "badge":  "HIT"
-                  },
-                  {
-                      "id":  "shokoladka-kinder-8-sht",
-                      "name":  "Шоколадка «Киндер» 8 шт.",
-                      "price":  95000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/shokoladka-kinder-8.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "konfety-raffaello-150-g",
-                      "name":  "Конфеты «Raffaello» 150 г.",
-                      "price":  95000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/rafaello-150.jpg"
-                                 ],
-                      "category":  "gifts",
-                      "badge":  "HIT"
-                  },
-                  {
-                      "id":  "gelievye-shary-tsifry",
-                      "name":  "Гелиевые шары цифры",
-                      "price":  155000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/shary-tsifry.jpg"
-                                 ],
-                      "category":  "gifts"
-                  },
-                  {
-                      "id":  "gelievye-shary",
-                      "name":  "Гелиевые шары (шт)",
-                      "price":  32000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2018/04/vozdushnye-shary.jpg"
-                                 ],
-                      "category":  "gifts"
-                  }
-              ],
-    "plants":  [
-                   {
-                       "id":  "lf-orh-miks3",
-                       "name":  "Орхидея микс 3",
-                       "price":  450000,
-                       "badge":  "HIT",
-                       "images":  [
-                                      "https://loveflowers.uz/wp-content/uploads/2021/10/Orhideya-miks-3.jpg"
-                                  ],
-                       "category":  "plants"
-                   },
-                   {
-                       "id":  "lf-orh-angel",
-                       "name":  "Орхидея в корзине «Ангел»",
-                       "price":  500000,
-                       "images":  [
-                                      "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-angel.jpg"
-                                  ],
-                       "category":  "plants"
-                   },
-                   {
-                       "id":  "lf-tyulpan-mix",
-                       "name":  "Тюльпаны микс",
-                       "price":  280000,
-                       "images":  [
-                                      "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-miks-1.jpg"
-                                  ],
-                       "category":  "plants"
-                   },
-                   {
-                       "id":  "lf-tyulpan-pink",
-                       "name":  "Тюльпаны розовые",
-                       "price":  280000,
-                       "images":  [
-                                      "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-rozovye.jpg"
-                                  ],
-                       "category":  "plants"
-                   },
-                   {
-                       "id":  "lf-tyulpan-red",
-                       "name":  "Тюльпаны красные",
-                       "price":  280000,
-                       "images":  [
-                                      "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-krasnye.jpg"
-                                  ],
-                       "category":  "plants"
-                   },
-                   {
-                       "id":  "lf-tyulpan-white",
-                       "name":  "Тюльпаны белые",
-                       "price":  280000,
-                       "images":  [
-                                      "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-belye.jpg"
-                                  ],
-                       "category":  "plants"
-                   },
-                   {
-                       "id":  "lf-hriza",
-                       "name":  "Хризантемы микс",
-                       "price":  220000,
-                       "images":  [
-                                      "https://loveflowers.uz/wp-content/uploads/2018/04/hrizantemy-miks-1.jpg"
-                                  ],
-                       "category":  "plants"
-                   },
-                   {
-                       "id":  "lf-korzina-nezhnost",
-                       "name":  "Корзина «Нежность»",
-                       "price":  500000,
-                       "images":  [
-                                      "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-sladkoe-probuzhdenie.jpg"
-                                  ],
-                       "category":  "plants"
-                   }
-               ],
-    "vip":  [
-                {
-                    "id":  "lf-sale-mix-101",
-                    "name":  "Акция! Розы Микс 101 шт.",
-                    "price":  2200000,
-                    "oldPrice":  3400000,
-                    "badge":  "SALE",
-                    "images":  [
-                                   "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-rossiya-miks-101.jpg"
-                               ],
-                    "category":  "roses"
-                },
-                {
-                    "id":  "lf-sale-mix-51",
-                    "name":  "Акция! Розы Микс 51 шт.",
-                    "price":  1300000,
-                    "oldPrice":  1700000,
-                    "badge":  "SALE",
-                    "images":  [
-                                   "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-rossiya-miks-51.jpg"
-                               ],
-                    "category":  "roses"
-                },
-                {
-                    "id":  "lf-sale-red-101",
-                    "name":  "Акция! Розы Красные 101 шт.",
-                    "price":  2500000,
-                    "oldPrice":  3300000,
-                    "badge":  "SALE",
-                    "images":  [
-                                   "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-krasnye-101.jpg"
-                               ],
-                    "category":  "roses"
-                },
-                {
-                    "id":  "lf-sale-red-51",
-                    "name":  "Акция! Розы Красные 51 шт.",
-                    "price":  1500000,
-                    "oldPrice":  1750000,
-                    "badge":  "SALE",
-                    "images":  [
-                                   "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-krasnye-51.jpg"
-                               ],
-                    "category":  "roses"
-                },
-                {
-                    "id":  "lf-ekvador-red",
-                    "name":  "Розы Эквадор красные",
-                    "price":  900000,
-                    "badge":  "VIP",
-                    "images":  [
-                                   "https://loveflowers.uz/wp-content/uploads/2017/07/buket-iz-krasnyh-roz-ekvador.jpg"
-                               ],
-                    "category":  "roses"
-                },
-                {
-                    "id":  "lf-krasnoe-serdce",
-                    "name":  "Букет «Красное сердце»",
-                    "price":  1200000,
-                    "badge":  "VIP",
-                    "images":  [
-                                   "https://loveflowers.uz/wp-content/uploads/2021/03/buket-krasnoe-serdtse.jpg"
-                               ],
-                    "category":  "roses"
-                },
-                {
-                    "id":  "lf-sokrovishche",
-                    "name":  "Букет «Подлинное сокровище»",
-                    "price":  1400000,
-                    "badge":  "VIP",
-                    "images":  [
-                                   "https://loveflowers.uz/wp-content/uploads/2021/03/buket-podlinnoe-sokrovische.jpg"
-                               ],
-                    "category":  "roses"
-                },
-                {
-                    "id":  "lf-gollandiya",
-                    "name":  "Розы Голландия красные",
-                    "price":  1100000,
-                    "badge":  "VIP",
-                    "images":  [
-                                   "https://loveflowers.uz/wp-content/uploads/2018/05/rozy-gollandiya-krasnye.jpg"
-                               ],
-                    "category":  "roses"
-                }
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-venetsiya",
+            "name": "Букет «Венеция»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-venetsiya.jpg"
             ],
-    "footer":  {
-                   "categories":  [
-                                      {
-                                          "label":  "Популярное",
-                                          "href":  "/catalog/popular"
-                                      },
-                                      {
-                                          "label":  "Розы",
-                                          "href":  "/catalog/roses"
-                                      },
-                                      {
-                                          "label":  "Тюльпаны",
-                                          "href":  "/catalog/tulips"
-                                      },
-                                      {
-                                          "label":  "Букеты",
-                                          "href":  "/catalog/bouquets"
-                                      },
-                                      {
-                                          "label":  "Цветы разные",
-                                          "href":  "/catalog/mixed"
-                                      },
-                                      {
-                                          "label":  "Цветы в коробке",
-                                          "href":  "/catalog/boxes"
-                                      },
-                                      {
-                                          "label":  "Корзины с цветами",
-                                          "href":  "/catalog/baskets"
-                                      },
-                                      {
-                                          "label":  "Подарки",
-                                          "href":  "/catalog/gifts"
-                                      }
-                                  ],
-                   "pages":  [
-                                 {
-                                     "label":  "О нас",
-                                     "href":  "/faq#general"
-                                 },
-                                 {
-                                     "label":  "Доставка и оплата",
-                                     "href":  "/faq#delivery"
-                                 },
-                                 {
-                                     "label":  "Контакты",
-                                     "href":  "#contacts"
-                                 },
-                                 {
-                                     "label":  "Вопросы и ответы",
-                                     "href":  "/faq"
-                                 },
-                                 {
-                                     "label":  "Оферта",
-                                     "href":  "/offer"
-                                 },
-                                 {
-                                     "label":  "Конфиденциальность",
-                                     "href":  "/privacy"
-                                 },
-                                 {
-                                     "label":  "Мой аккаунт",
-                                     "href":  "/account"
-                                 }
-                             ]
-               },
-    "boxes":  [
-                  {
-                      "id":  "tsvety-v-korobke-rozovyy-miks",
-                      "name":  "Цветы в коробке «Розовый микс»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-rozovyy-miks.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-ofeliya",
-                      "name":  "Цветы в коробке «Офелия»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-ofeliya.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-vesenniy",
-                      "name":  "Цветы в коробке «Весенний»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-vesenniy.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-laskovaya-mechta",
-                      "name":  "Цветы в коробке «Ласковая мечта»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-laskovaya-mechta.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-korona",
-                      "name":  "Цветы в коробке «Корона»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-korona.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-dolche-vita",
-                      "name":  "Цветы в коробке «Дольче вита»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-dolche-vita.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-gloriya",
-                      "name":  "Цветы в коробке «Глория»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-gloriya.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-volshebnaya-skazka",
-                      "name":  "Цветы в коробке «Волшебная сказка»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-volshebnaya-skazka.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-balerina",
-                      "name":  "Цветы в коробке «Балерина»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-balerina.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-strela-amura",
-                      "name":  "Цветы в коробке «Стрела амура»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-strela-amura.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-tanets-babochek",
-                      "name":  "Цветы в коробке «Танец бабочек»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-tanets-babochek.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-zefir",
-                      "name":  "Цветы в коробке «Зефир»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-zefir.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-oranzhevyy-zakat",
-                      "name":  "Цветы в коробке «Оранжевый закат»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-oranzhevyy-zakat.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-roskosh",
-                      "name":  "Цветы в коробке «Роскошь»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-roskosh.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-tsvetnik",
-                      "name":  "Цветы в коробке «Цветник»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-tsvetnik.jpg"
-                                 ],
-                      "category":  "boxes"
-                  },
-                  {
-                      "id":  "tsvety-v-korobke-naslazhdenie",
-                      "name":  "Цветы в коробке «Наслаждение»",
-                      "price":  480000,
-                      "images":  [
-                                     "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-naslazhdenie.jpg"
-                                 ],
-                      "category":  "boxes"
-                  }
-              ],
-    "baskets":  [
-                    {
-                        "id":  "tsvety-v-korzinke-simpatiya",
-                        "name":  "Цветы в корзинке «Симпатия»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-simpatiya.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-svidanie",
-                        "name":  "Цветы в корзинке «Свидание»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-svidanie.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-den-radosti",
-                        "name":  "Цветы в корзинке «День радости»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-den-radosti.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-angel",
-                        "name":  "Цветы в корзинке «Ангел»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-angel.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-duet",
-                        "name":  "Цветы в корзинке «Дуэт»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-duet.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-kompliment",
-                        "name":  "Цветы в корзинке «Комплимент»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-kompliment.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-vdohnovenie",
-                        "name":  "Цветы в корзинке «Вдохновение»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-vdohnovenie.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-nezhnoe-priznanie",
-                        "name":  "Цветы в корзинке «Нежное признание»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-nezhnoe-priznanie.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-iskusstvo-lyubvi",
-                        "name":  "Цветы в корзинке «Искусство любви»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-iskusstvo-lyubvi.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-zavetnaya-mechta",
-                        "name":  "Цветы в корзинке «Заветная мечта»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-zavetnaya-mechta.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-dyhanie-buduschego",
-                        "name":  "Цветы в корзинке «Дыхание будущего»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-dyhanie-buduschego.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-vostorg",
-                        "name":  "Цветы в корзинке «Восторг»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-vostorg.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-vesennee-nastroenie",
-                        "name":  "Цветы в корзинке «Весеннее настроение»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-vesennee-nastroenie.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-garmoniya",
-                        "name":  "Цветы в корзинке «Гармония»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-garmoniya.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-vpechatlenie",
-                        "name":  "Цветы в корзинке «Впечатление»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-vpechatlenie.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-golubye-ogonki",
-                        "name":  "Цветы в корзинке «Голубые огоньки»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-golubye-ogonki.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "tsvety-v-korzinke-akvarel",
-                        "name":  "Цветы в корзинке «Акварель»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-akvarel.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "korzina-s-tsvetami-privetstvie-leta",
-                        "name":  "Корзина с цветами «Приветствие лета»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/korzina-s-tsvetami-privetstvie-leta.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "korzina-s-tsvetami-tsvetochnaya-mozaika",
-                        "name":  "Корзина с цветами «Цветочная мозаика»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/korzina-s-tsvetami-tsvetochnaya-mozaika.jpg"
-                                   ],
-                        "category":  "baskets"
-                    },
-                    {
-                        "id":  "korzina-s-tsvetami-akvarel",
-                        "name":  "Корзина с цветами «Акварель»",
-                        "price":  500000,
-                        "images":  [
-                                       "https://loveflowers.uz/wp-content/uploads/2021/04/korzina-s-tsvetami-akvarel.jpg"
-                                   ],
-                        "category":  "baskets"
-                    }
-                ]
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-angel",
+            "name": "Букет «Ангел»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-angel.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-blesk",
+            "name": "Букет «Блеск»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-blesk.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-belyy-angel",
+            "name": "Букет «Белый ангел»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-belyy-angel.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-romashki",
+            "name": "Букет «Ромашки»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-radostnyy-den.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-liziantusy",
+            "name": "Букет «Лизиантусы»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-golubaya-nezhnost.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-orhidei",
+            "name": "Букет «Орхидеи»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-sozvezdie-angela.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-iskrennyaya-blagodarnost",
+            "name": "Букет «Искренняя благодарность»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-iskrennyaya-blagodarnost.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-karamel",
+            "name": "Букет «Карамель»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-rozovye-mechty.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-karnaval",
+            "name": "Букет «Карнавал»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-igrivaya-ulybka.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-eyforiya",
+            "name": "Букет «Эйфория»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-rubinovoe-siyanie.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-zhenskiy-sekret",
+            "name": "Букет «Женский секрет»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-zhenskiy-sekret.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-klyuch-k-serdtsu",
+            "name": "Букет «Ключ к сердцу»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-klyuch-k-serdtsu.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-malinovyy-svet",
+            "name": "Букет «Малиновый свет»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-malinovyy-svet.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-nezhnoe-priznanie",
+            "name": "Букет «Нежное признание»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-nezhnoe-priznanie.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-letnee-nebo",
+            "name": "Букет «Летнее небо»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-letnee-nebo.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-dary",
+            "name": "Букет «Дары природы»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-kraski-vesny.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-dobrye-slova",
+            "name": "Букет «Добрые слова»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-dobrye-slova.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-nezhnost",
+            "name": "Букет «Нежное признание»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-iskrennyaya-lyubov.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-golubye-ogonki",
+            "name": "Букет «Голубые огоньки»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-goluby-ogonki.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-dushistoe",
+            "name": "Букет «Душистое утро»",
+            "price": 550000,
+            "badge": "NEW",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-legkoe-probuzhdenie.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "buket-nezhnoe-obyatie",
+            "name": "Букет «Нежное объятие»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-nezhnoe-obyatie.jpg"
+            ],
+            "category": "bouquets"
+        },
+        {
+            "id": "lf-blesk",
+            "name": "Букет «Блеск»",
+            "price": 550000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/buket-blesk.jpg"
+            ],
+            "category": "bouquets"
+        }
+    ],
+    "plants": [
+        {
+            "id": "lf-orh-miks3",
+            "name": "Орхидея микс 3",
+            "price": 450000,
+            "badge": "HIT",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/10/Orhideya-miks-3.jpg"
+            ],
+            "category": "plants"
+        },
+        {
+            "id": "lf-orh-angel",
+            "name": "Орхидея в корзине «Ангел»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-angel.jpg"
+            ],
+            "category": "plants"
+        },
+        {
+            "id": "lf-tyulpan-mix",
+            "name": "Тюльпаны микс",
+            "price": 280000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-miks-1.jpg"
+            ],
+            "category": "plants"
+        },
+        {
+            "id": "lf-tyulpan-pink",
+            "name": "Тюльпаны розовые",
+            "price": 280000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-rozovye.jpg"
+            ],
+            "category": "plants"
+        },
+        {
+            "id": "lf-tyulpan-red",
+            "name": "Тюльпаны красные",
+            "price": 280000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-krasnye.jpg"
+            ],
+            "category": "plants"
+        },
+        {
+            "id": "lf-tyulpan-white",
+            "name": "Тюльпаны белые",
+            "price": 280000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2018/04/tyulpany-belye.jpg"
+            ],
+            "category": "plants"
+        },
+        {
+            "id": "lf-hriza",
+            "name": "Хризантемы микс",
+            "price": 220000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2018/04/hrizantemy-miks-1.jpg"
+            ],
+            "category": "plants"
+        },
+        {
+            "id": "lf-korzina-nezhnost",
+            "name": "Корзина «Нежность»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-sladkoe-probuzhdenie.jpg"
+            ],
+            "category": "plants"
+        }
+    ],
+    "vip": [
+        {
+            "id": "lf-sale-mix-101",
+            "name": "Акция! Розы Микс 101 шт.",
+            "price": 2200000,
+            "oldPrice": 3400000,
+            "badge": "SALE",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-rossiya-miks-101.jpg"
+            ],
+            "category": "roses"
+        },
+        {
+            "id": "lf-sale-mix-51",
+            "name": "Акция! Розы Микс 51 шт.",
+            "price": 1300000,
+            "oldPrice": 1700000,
+            "badge": "SALE",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-rossiya-miks-51.jpg"
+            ],
+            "category": "roses"
+        },
+        {
+            "id": "lf-sale-red-101",
+            "name": "Акция! Розы Красные 101 шт.",
+            "price": 2500000,
+            "oldPrice": 3300000,
+            "badge": "SALE",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-krasnye-101.jpg"
+            ],
+            "category": "roses"
+        },
+        {
+            "id": "lf-sale-red-51",
+            "name": "Акция! Розы Красные 51 шт.",
+            "price": 1500000,
+            "oldPrice": 1750000,
+            "badge": "SALE",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2020/11/rozy-krasnye-51.jpg"
+            ],
+            "category": "roses"
+        },
+        {
+            "id": "lf-ekvador-red",
+            "name": "Розы Эквадор красные",
+            "price": 900000,
+            "badge": "VIP",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2017/07/buket-iz-krasnyh-roz-ekvador.jpg"
+            ],
+            "category": "roses"
+        },
+        {
+            "id": "lf-krasnoe-serdce",
+            "name": "Букет «Красное сердце»",
+            "price": 1200000,
+            "badge": "VIP",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/03/buket-krasnoe-serdtse.jpg"
+            ],
+            "category": "roses"
+        },
+        {
+            "id": "lf-sokrovishche",
+            "name": "Букет «Подлинное сокровище»",
+            "price": 1400000,
+            "badge": "VIP",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/03/buket-podlinnoe-sokrovische.jpg"
+            ],
+            "category": "roses"
+        },
+        {
+            "id": "lf-gollandiya",
+            "name": "Розы Голландия красные",
+            "price": 1100000,
+            "badge": "VIP",
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2018/05/rozy-gollandiya-krasnye.jpg"
+            ],
+            "category": "roses"
+        }
+    ],
+    "footer": {
+        "categories": [
+            {
+                "label": "Популярное",
+                "href": "/catalog/popular"
+            },
+            {
+                "label": "Розы",
+                "href": "/catalog/roses"
+            },
+            {
+                "label": "Тюльпаны",
+                "href": "/catalog/tulips"
+            },
+            {
+                "label": "Букеты",
+                "href": "/catalog/bouquets"
+            },
+            {
+                "label": "Цветы разные",
+                "href": "/catalog/mixed"
+            },
+            {
+                "label": "Цветы в коробке",
+                "href": "/catalog/boxes"
+            },
+            {
+                "label": "Корзины с цветами",
+                "href": "/catalog/baskets"
+            }
+        ],
+        "pages": [
+            {
+                "label": "О нас",
+                "href": "/faq#general"
+            },
+            {
+                "label": "Доставка и оплата",
+                "href": "/faq#delivery"
+            },
+            {
+                "label": "Контакты",
+                "href": "#contacts"
+            },
+            {
+                "label": "Вопросы и ответы",
+                "href": "/faq"
+            },
+            {
+                "label": "Оферта",
+                "href": "/offer"
+            },
+            {
+                "label": "Конфиденциальность",
+                "href": "/privacy"
+            },
+            {
+                "label": "Мой аккаунт",
+                "href": "/account"
+            }
+        ]
+    },
+    "boxes": [
+        {
+            "id": "tsvety-v-korobke-rozovyy-miks",
+            "name": "Цветы в коробке «Розовый микс»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-rozovyy-miks.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-ofeliya",
+            "name": "Цветы в коробке «Офелия»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-ofeliya.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-vesenniy",
+            "name": "Цветы в коробке «Весенний»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-vesenniy.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-laskovaya-mechta",
+            "name": "Цветы в коробке «Ласковая мечта»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-laskovaya-mechta.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-korona",
+            "name": "Цветы в коробке «Корона»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-korona.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-dolche-vita",
+            "name": "Цветы в коробке «Дольче вита»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-dolche-vita.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-gloriya",
+            "name": "Цветы в коробке «Глория»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-gloriya.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-volshebnaya-skazka",
+            "name": "Цветы в коробке «Волшебная сказка»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-volshebnaya-skazka.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-balerina",
+            "name": "Цветы в коробке «Балерина»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-balerina.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-strela-amura",
+            "name": "Цветы в коробке «Стрела амура»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-strela-amura.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-tanets-babochek",
+            "name": "Цветы в коробке «Танец бабочек»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-tanets-babochek.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-zefir",
+            "name": "Цветы в коробке «Зефир»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-zefir.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-oranzhevyy-zakat",
+            "name": "Цветы в коробке «Оранжевый закат»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-oranzhevyy-zakat.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-roskosh",
+            "name": "Цветы в коробке «Роскошь»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-roskosh.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-tsvetnik",
+            "name": "Цветы в коробке «Цветник»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-tsvetnik.jpg"
+            ],
+            "category": "boxes"
+        },
+        {
+            "id": "tsvety-v-korobke-naslazhdenie",
+            "name": "Цветы в коробке «Наслаждение»",
+            "price": 480000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korobke-naslazhdenie.jpg"
+            ],
+            "category": "boxes"
+        }
+    ],
+    "baskets": [
+        {
+            "id": "tsvety-v-korzinke-simpatiya",
+            "name": "Цветы в корзинке «Симпатия»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-simpatiya.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-svidanie",
+            "name": "Цветы в корзинке «Свидание»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-svidanie.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-den-radosti",
+            "name": "Цветы в корзинке «День радости»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-den-radosti.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-angel",
+            "name": "Цветы в корзинке «Ангел»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-angel.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-duet",
+            "name": "Цветы в корзинке «Дуэт»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-duet.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-kompliment",
+            "name": "Цветы в корзинке «Комплимент»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-kompliment.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-vdohnovenie",
+            "name": "Цветы в корзинке «Вдохновение»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-vdohnovenie.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-nezhnoe-priznanie",
+            "name": "Цветы в корзинке «Нежное признание»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-nezhnoe-priznanie.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-iskusstvo-lyubvi",
+            "name": "Цветы в корзинке «Искусство любви»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-iskusstvo-lyubvi.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-zavetnaya-mechta",
+            "name": "Цветы в корзинке «Заветная мечта»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-zavetnaya-mechta.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-dyhanie-buduschego",
+            "name": "Цветы в корзинке «Дыхание будущего»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-dyhanie-buduschego.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-vostorg",
+            "name": "Цветы в корзинке «Восторг»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-vostorg.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-vesennee-nastroenie",
+            "name": "Цветы в корзинке «Весеннее настроение»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-vesennee-nastroenie.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-garmoniya",
+            "name": "Цветы в корзинке «Гармония»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-garmoniya.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-vpechatlenie",
+            "name": "Цветы в корзинке «Впечатление»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-vpechatlenie.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-golubye-ogonki",
+            "name": "Цветы в корзинке «Голубые огоньки»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-golubye-ogonki.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "tsvety-v-korzinke-akvarel",
+            "name": "Цветы в корзинке «Акварель»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/tsvety-v-korzinke-akvarel.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "korzina-s-tsvetami-privetstvie-leta",
+            "name": "Корзина с цветами «Приветствие лета»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/korzina-s-tsvetami-privetstvie-leta.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "korzina-s-tsvetami-tsvetochnaya-mozaika",
+            "name": "Корзина с цветами «Цветочная мозаика»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/korzina-s-tsvetami-tsvetochnaya-mozaika.jpg"
+            ],
+            "category": "baskets"
+        },
+        {
+            "id": "korzina-s-tsvetami-akvarel",
+            "name": "Корзина с цветами «Акварель»",
+            "price": 500000,
+            "images": [
+                "https://loveflowers.uz/wp-content/uploads/2021/04/korzina-s-tsvetami-akvarel.jpg"
+            ],
+            "category": "baskets"
+        }
+    ]
 }

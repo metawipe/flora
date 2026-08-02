@@ -1,14 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { seasonalHero, site } from "@/data/products";
+import { useT } from "@/i18n/LocaleProvider";
 
 export function Hero() {
+  const t = useT();
+
   return (
     <section className="hero hero-enter">
       <div className="hero__media">
         <Image
           src={seasonalHero.image}
-          alt={seasonalHero.alt}
+          alt={t("hero.seasonalAlt")}
           fill
           priority
           loading="eager"
@@ -36,7 +41,7 @@ export function Hero() {
         </div>
 
         <h1 className="hero__title hero-rise hero-rise--2">
-          {seasonalHero.line}
+          {t("hero.seasonalLine")}
         </h1>
         <a
           href={site.phoneHref}
@@ -45,14 +50,14 @@ export function Hero() {
           {site.phone}
         </a>
         <p className="hero__sub hero-rise hero-rise--3">
-          {seasonalHero.note}
+          {t("hero.seasonalNote")}
         </p>
         <div className="hero__actions hero-rise hero-rise--3">
           <Link href={seasonalHero.ctaHref} className="btn btn--brand">
-            {seasonalHero.ctaLabel}
+            {t("hero.seasonalCta")}
           </Link>
           <Link href={seasonalHero.productHref} className="btn btn--ghost-light">
-            Этот букет
+            {t("hero.thisBouquet")}
           </Link>
         </div>
       </div>

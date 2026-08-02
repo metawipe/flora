@@ -17,32 +17,16 @@ export function scrollToTopInstant() {
   html.style.scrollBehavior = prevBehavior;
 }
 
-/** Resets scroll to top on every route change (and after paint). */
+/** Manual scroll restoration; route scroll is handled in PageTransition. */
 export function ScrollToTop() {
-  const pathname = usePathname();
-
   useEffect(() => {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
   }, []);
 
-  useEffect(() => {
-    scrollToTopInstant();
-
-    const raf = window.requestAnimationFrame(() => {
-      scrollToTopInstant();
-    });
-    // Catch late layout after images / client content swap
-    const t1 = window.setTimeout(scrollToTopInstant, 50);
-    const t2 = window.setTimeout(scrollToTopInstant, 200);
-
-    return () => {
-      window.cancelAnimationFrame(raf);
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-    };
-  }, [pathname]);
+  // Keep pathname subscription so Next still treats this as route-aware chrome
+  usePathname();
 
   return null;
 }

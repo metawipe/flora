@@ -1,55 +1,81 @@
+"use client";
+
 import Link from "next/link";
 import { footerLinks, site } from "@/data/products";
+import { tCategoryByHref, tFooterPage } from "@/i18n/catalog";
+import { useLocale } from "@/i18n/LocaleProvider";
 
-export function Footer() {
+export function Footer({ compact = false }: { compact?: boolean }) {
+  const { locale, t } = useLocale();
+
+  if (compact) {
+    return (
+      <footer className="footer footer--compact">
+        <div className="container footer__compact">
+          <a href={site.phoneHref} className="footer__compact-phone">
+            {site.phone}
+          </a>
+          <p className="footer__copy">
+            {t("footer.copyright", { year: new Date().getFullYear() })}
+          </p>
+          <div className="footer__compact-links">
+            <Link href="/faq">{t("footer.faq")}</Link>
+            <Link href="/offer">{t("footer.offer")}</Link>
+            <Link href="/privacy">{t("footer.privacy")}</Link>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer__grid">
           <div>
-            <p className="footer__label">Вопросы о заказах</p>
+            <p className="footer__label">{t("footer.orderQuestions")}</p>
             <a
               href={site.socials[0]?.href}
               target="_blank"
               rel="noreferrer"
               className="footer__write"
             >
-              Написать
+              {t("footer.write")}
             </a>
-            <p className="footer__hours">{site.supportNote}</p>
+            <p className="footer__hours">{t("site.supportNote")}</p>
             <a href={site.phoneHref} className="footer__mail">
               {site.phone}
             </a>
             <a href={`mailto:${site.email}`} className="footer__mail">
               {site.email}
             </a>
-            <p className="footer__about">{site.about}</p>
+            <p className="footer__about">{t("site.about")}</p>
           </div>
 
           <div>
-            <p className="footer__title">Категории</p>
+            <p className="footer__title">{t("footer.categories")}</p>
             <div className="footer__links">
               {footerLinks.categories.map((item) => (
                 <Link key={item.href} href={item.href}>
-                  {item.label}
+                  {tCategoryByHref(locale, item.href, item.label)}
                 </Link>
               ))}
             </div>
           </div>
 
           <div>
-            <p className="footer__title">Страницы</p>
+            <p className="footer__title">{t("footer.pages")}</p>
             <div className="footer__links">
               {footerLinks.pages.map((item) => (
                 <Link key={`${item.label}-${item.href}`} href={item.href}>
-                  {item.label}
+                  {tFooterPage(locale, item.href, item.label)}
                 </Link>
               ))}
             </div>
           </div>
 
           <div>
-            <p className="footer__title">Мы в соцсетях</p>
+            <p className="footer__title">{t("footer.socials")}</p>
             <div className="footer__links">
               {site.socials.map((item) => (
                 <a
@@ -58,7 +84,11 @@ export function Footer() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {item.name}
+                  {item.name === "Карта" ||
+                  item.name === "Map" ||
+                  item.name === "Xarita"
+                    ? t("site.map")
+                    : item.name}
                 </a>
               ))}
             </div>
@@ -67,10 +97,10 @@ export function Footer() {
 
         <div className="footer__info">
           <div className="footer__contacts" id="contacts">
-            <p className="footer__title">Наши контакты</p>
+            <p className="footer__title">{t("footer.contacts")}</p>
             <ul className="footer__contacts-list">
               <li>
-                <span>Адрес:</span>{" "}
+                <span>{t("footer.address")}</span>{" "}
                 <a
                   href={site.addressMapHref}
                   target="_blank"
@@ -80,15 +110,15 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <span>Телефон:</span>{" "}
+                <span>{t("footer.phone")}</span>{" "}
                 <a href={site.phoneHref}>{site.phone}</a>
               </li>
               <li>
-                <span>E-mail:</span>{" "}
+                <span>{t("footer.email")}</span>{" "}
                 <a href={`mailto:${site.email}`}>{site.email}</a>
               </li>
               <li>
-                <span>Время работы:</span> {site.hours}
+                <span>{t("footer.hours")}</span> {t("site.hours")}
               </li>
             </ul>
           </div>
@@ -97,10 +127,9 @@ export function Footer() {
         <div className="footer__bottom">
           <div>
             <p className="footer__legal">{site.name}</p>
-            <p className="footer__legal">{site.tagline}</p>
+            <p className="footer__legal">{t("site.tagline")}</p>
             <p className="footer__copy">
-              © {new Date().getFullYear()} Служба доставки цветов «Zamin Gullari»
-              в Ташкенте
+              {t("footer.copyright", { year: new Date().getFullYear() })}
             </p>
           </div>
           <div className="footer__socials">
@@ -111,7 +140,11 @@ export function Footer() {
                 target="_blank"
                 rel="noreferrer"
               >
-                {item.name}
+                {item.name === "Карта" ||
+                item.name === "Map" ||
+                item.name === "Xarita"
+                  ? t("site.map")
+                  : item.name}
               </a>
             ))}
           </div>
