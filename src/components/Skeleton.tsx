@@ -166,12 +166,21 @@ export function CartSkeleton() {
   return (
     <main className="page-main page-main--cart" aria-busy="true">
       <div className="container cart-page">
-        <Skeleton className="skel--line skel--w30 skel--h22" />
-        <div className="cart-layout" style={{ marginTop: 16 }}>
-          <div className="cart-list">
-            <BasketItemSkeleton />
-            <BasketItemSkeleton />
+        <div className="cart-layout">
+          <div className="cart-panel">
+            <Skeleton className="skel--line skel--w30 skel--h22" />
+            <div className="cart-list" style={{ marginTop: 16 }}>
+              <BasketItemSkeleton />
+              <BasketItemSkeleton />
+            </div>
           </div>
+          <aside className="cart-summary">
+            <div className="cart-summary__inner">
+              <Skeleton className="skel--line skel--w60" />
+              <Skeleton className="skel--line skel--w45 skel--mt" />
+              <Skeleton className="skel--line skel--w70 skel--mt" />
+            </div>
+          </aside>
         </div>
       </div>
     </main>
