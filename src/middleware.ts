@@ -5,15 +5,17 @@ import {
   LOCALE_MAX_AGE,
   isLocale,
 } from "@/i18n/config";
+import { updateSession } from "@/lib/supabase/middleware";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  const response = await updateSession(request);
+
   const existing = request.cookies.get(LOCALE_COOKIE)?.value;
   if (isLocale(existing)) {
-    return NextResponse.next();
+    return response;
   }
 
   const locale = detectLocale(request.headers.get("accept-language"));
-  const response = NextResponse.next();
   response.cookies.set(LOCALE_COOKIE, locale, {
     path: "/",
     maxAge: LOCALE_MAX_AGE,

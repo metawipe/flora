@@ -1,5 +1,5 @@
-import { CatalogSkeleton } from "@/components/Skeleton";
+import { FavoritesSkeleton } from "@/components/Skeleton";
 
 export default function Loading() {
-  return <CatalogSkeleton />;
+  return <FavoritesSkeleton />;
 }

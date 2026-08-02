@@ -3,21 +3,25 @@
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { useT } from "@/i18n/LocaleProvider";
+import { isAdminLogin } from "@/lib/adminAccess";
 import {
-  clearUserSession,
   loadUserProfile,
   loginAccount,
+  logoutAccount,
+  refreshSessionProfile,
   registerAccount,
   type UserProfile,
 } from "@/lib/userProfile";
 import { Breadcrumbs } from "./Breadcrumbs";
 import {
+  AdminIcon,
   ArrowRightIcon,
   HeartIcon,
   HelpIcon,
   OrdersIcon,
   ProfileEditIcon,
 } from "./Icons";
+import { AccountSkeleton } from "./Skeleton";
 
 type Mode = "login" | "register";
 
@@ -29,9 +33,15 @@ export function AccountPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setUser(loadUserProfile());
-    setReady(true);
+    void (async () => {
+      const profile = (await refreshSessionProfile()) ?? loadUserProfile();
+      setUser(profile);
+      setReady(true);
+    })();
   }, []);
+
+  const canOpenAdmin =
+    user?.role === "admin" || isAdminLogin(user?.login);
 
   const onLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -94,20 +104,14 @@ export function AccountPage() {
     setUser(loadUserProfile());
   };
 
-  const logout = () => {
-    clearUserSession();
+  const logout = async () => {
+    await logoutAccount();
     setUser(null);
     setMode("login");
   };
 
   if (!ready) {
-    return (
-      <main className="page-main">
-        <div className="container">
-          <div className="skel skel--line skel--w40" style={{ height: 28 }} />
-        </div>
-      </main>
-    );
+    return <AccountSkeleton />;
   }
 
   if (user) {
@@ -169,6 +173,15 @@ export function AccountPage() {
               <p className="cabinet-tile__title">{t("account.tileHelp")}</p>
               <p className="cabinet-tile__sub">{t("account.tileHelpSub")}</p>
             </Link>
+            {canOpenAdmin ? (
+              <Link href="/admin" className="cabinet-tile">
+                <div className="cabinet-tile__icon">
+                  <AdminIcon />
+                </div>
+                <p className="cabinet-tile__title">{t("account.tileAdmin")}</p>
+                <p className="cabinet-tile__sub">{t("account.tileAdminSub")}</p>
+              </Link>
+            ) : null}
           </div>
 
           <div className="cabinet-cta">

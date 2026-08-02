@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useT } from "@/i18n/LocaleProvider";
+import { isAdminLogin } from "@/lib/adminAccess";
+import {
+  loadUserProfile,
+  logoutAccount,
+  refreshSessionProfile,
+} from "@/lib/userProfile";
 
 const LINKS = [
   { href: "/account", labelKey: "account.navCabinet" },
@@ -15,6 +22,16 @@ const LINKS = [
 export function AccountSidebar() {
   const pathname = usePathname();
   const t = useT();
+  const [showAdmin, setShowAdmin] = useState(false);
+
+  useEffect(() => {
+    void (async () => {
+      const profile = (await refreshSessionProfile()) ?? loadUserProfile();
+      setShowAdmin(
+        profile?.role === "admin" || isAdminLogin(profile?.login),
+      );
+    })();
+  }, []);
 
   return (
     <aside className="account-sidebar">
@@ -34,8 +51,28 @@ export function AccountSidebar() {
             </li>
           );
         })}
+        {showAdmin ? (
+          <li>
+            <Link
+              href="/admin"
+              className={`account-sidebar__link${
+                pathname.startsWith("/admin") ? " is-active" : ""
+              }`}
+            >
+              {t("account.navAdmin")}
+            </Link>
+          </li>
+        ) : null}
         <li>
-          <button type="button" className="account-sidebar__link">
+          <button
+            type="button"
+            className="account-sidebar__link"
+            onClick={() => {
+              void logoutAccount().then(() => {
+                window.location.href = "/account";
+              });
+            }}
+          >
             {t("account.logout")}
           </button>
         </li>

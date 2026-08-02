@@ -13,7 +13,6 @@ import {
 } from "@/lib/phone";
 import { loadUserProfile, saveUserProfile } from "@/lib/userProfile";
 import type { StoredOrder } from "@/lib/orders";
-import { ChevronLeftIcon } from "./Icons";
 import { scrollToTopInstant } from "./ScrollToTop";
 import { StickyBar } from "./StickyBar";
 
@@ -128,6 +127,7 @@ export function CheckoutPage() {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [comment, setComment] = useState("");
   const minDate = useMemo(() => new Date().toISOString().slice(0, 10), []);
   const tg = socialHref("telegram");
   const wa = socialHref("whatsapp");
@@ -138,6 +138,15 @@ export function CheckoutPage() {
     if (user.name) setName(user.name);
     if (user.phone) setPhone(formatUzPhone(user.phone));
     if (user.address) setAddress(user.address);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const saved = window.sessionStorage.getItem("zamin-cart-comment");
+      if (saved) setComment(saved);
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   useEffect(() => {
@@ -225,7 +234,6 @@ export function CheckoutPage() {
       pay: String(data.get("pay") || "cash"),
       comment: String(data.get("comment") || "").trim(),
       recipient: String(data.get("recipient") || "").trim() || undefined,
-      cardText: String(data.get("cardText") || "").trim() || undefined,
     };
 
     setSubmitting(true);
@@ -257,10 +265,6 @@ export function CheckoutPage() {
   return (
     <main className="page-main page-main--checkout">
       <div className="container">
-        <Link href="/cart" className="cart-back">
-          <ChevronLeftIcon />
-          {t("checkout.backToCart")}
-        </Link>
         <h1 className="page-title">{t("checkout.title")}</h1>
 
         <div className="checkout-layout">
@@ -304,18 +308,12 @@ export function CheckoutPage() {
                 />
               </label>
               <label className="field">
-                <span>{t("checkout.cardText")}</span>
-                <textarea
-                  name="cardText"
-                  rows={2}
-                  placeholder={t("checkout.cardTextPh")}
-                />
-              </label>
-              <label className="field">
                 <span>{t("checkout.comment")}</span>
                 <textarea
                   name="comment"
                   rows={3}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
                   placeholder={t("checkout.commentPh")}
                 />
               </label>

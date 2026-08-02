@@ -15,18 +15,8 @@ import { SearchOverlay } from "./SearchOverlay";
 import { ToastStack } from "./ToastStack";
 import { Ticker } from "./Ticker";
 
-function footerModeFor(pathname: string): "full" | "compact" | "hidden" {
-  if (
-    pathname.startsWith("/cart") ||
-    pathname.startsWith("/checkout") ||
-    pathname.startsWith("/product/") ||
-    pathname.startsWith("/account") ||
-    pathname.startsWith("/favorites")
-  ) {
-    return "compact";
-  }
-  if (pathname.startsWith("/catalog")) return "compact";
-  return "full";
+function footerModeFor(pathname: string): "full" | "hidden" {
+  return pathname === "/" ? "full" : "hidden";
 }
 
 function showCatalogBar(pathname: string): boolean {
@@ -100,9 +90,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
       >
         <PageTransition>{children}</PageTransition>
       </div>
-      <div className="shell-rise shell-rise--late">
-        <Footer compact={footerMode === "compact"} />
-      </div>
+      {footerMode !== "hidden" ? (
+        <div className="shell-rise shell-rise--late">
+          <Footer />
+        </div>
+      ) : null}
       <BottomChrome
         cartCount={hydrated ? cartCount : 0}
         favCount={favs}

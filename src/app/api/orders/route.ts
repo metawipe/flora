@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getSessionProfile } from "@/lib/auth/session";
 import { createOrder } from "@/lib/store/ordersDb";
 import type { StoreOrderLine } from "@/lib/store/types";
 import { notifyOrderTelegram } from "@/lib/telegram";
@@ -35,21 +36,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid order" }, { status: 400 });
     }
 
-    const order = createOrder({
-      name: String(body.name).trim(),
-      phone: String(body.phone).trim(),
-      address: String(body.address).trim(),
-      date: String(body.date),
-      slot: String(body.slot || "slotDay"),
-      pay: String(body.pay || "online"),
-      comment: String(body.comment || ""),
-      recipient: body.recipient ? String(body.recipient) : undefined,
-      cardText: body.cardText ? String(body.cardText) : undefined,
-      promoCode: body.promoCode ?? null,
-      discount: Number(body.discount || 0),
-      total: Number(body.total || 0),
-      items: body.items,
-    });
+    const session = await getSessionProfile();
+    const order = await createOrder(
+      {
+        name: String(body.name).trim(),
+        phone: String(body.phone).trim(),
+        address: String(body.address).trim(),
+        date: String(body.date),
+        slot: String(body.slot || "slotDay"),
+        pay: String(body.pay || "online"),
+        comment: String(body.comment || ""),
+        recipient: body.recipient ? String(body.recipient) : undefined,
+        cardText: body.cardText ? String(body.cardText) : undefined,
+        promoCode: body.promoCode ?? null,
+        discount: Number(body.discount || 0),
+        total: Number(body.total || 0),
+        items: body.items,
+      },
+      session?.id ?? null,
+    );
 
     const notify = await notifyOrderTelegram(order).catch(() => ({
       ok: false,

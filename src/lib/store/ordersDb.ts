@@ -1,4 +1,11 @@
 import fs from "fs";
+import { createServiceClient, hasServiceRole } from "@/lib/supabase/admin";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import {
+  fromStoreOrder,
+  toStoreOrder,
+  type DbOrder,
+} from "@/lib/supabase/mappers";
 import { ORDERS_FILE, STORE_DIR } from "./paths";
 import type { OrdersFile, StoreOrder, StoreOrderStatus } from "./types";
 
@@ -8,7 +15,7 @@ function ensureDir() {
   }
 }
 
-export function readOrdersFile(): OrdersFile {
+function readOrdersFs(): OrdersFile {
   ensureDir();
   if (!fs.existsSync(ORDERS_FILE)) {
     const empty: OrdersFile = {
@@ -21,7 +28,7 @@ export function readOrdersFile(): OrdersFile {
   return JSON.parse(fs.readFileSync(ORDERS_FILE, "utf8")) as OrdersFile;
 }
 
-export function writeOrdersFile(orders: StoreOrder[]) {
+function writeOrdersFs(orders: StoreOrder[]) {
   ensureDir();
   const file: OrdersFile = {
     orders,
@@ -31,32 +38,70 @@ export function writeOrdersFile(orders: StoreOrder[]) {
   return file;
 }
 
-export function listOrders() {
-  return readOrdersFile().orders;
+function useSupabase() {
+  return isSupabaseConfigured() && hasServiceRole();
 }
 
-export function createOrder(
+export async function listOrders() {
+  if (useSupabase()) {
+    const sb = createServiceClient();
+    const { data, error } = await sb
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw error;
+    return (data as DbOrder[]).map(toStoreOrder);
+  }
+  return readOrdersFs().orders;
+}
+
+export async function createOrder(
   order: Omit<StoreOrder, "id" | "createdAt" | "status"> & {
     status?: StoreOrderStatus;
   },
+  userId?: string | null,
 ) {
-  const file = readOrdersFile();
   const full: StoreOrder = {
     ...order,
     id: `ZG-${Date.now().toString(36).toUpperCase()}`,
     createdAt: new Date().toISOString(),
     status: order.status ?? "new",
   };
+
+  if (useSupabase()) {
+    const sb = createServiceClient();
+    const { data, error } = await sb
+      .from("orders")
+      .insert(fromStoreOrder(full, userId))
+      .select("*")
+      .single();
+    if (error) throw error;
+    return toStoreOrder(data as DbOrder);
+  }
+
+  const file = readOrdersFs();
   const next = [full, ...file.orders].slice(0, 200);
-  writeOrdersFile(next);
+  writeOrdersFs(next);
   return full;
 }
 
-export function updateOrderStatus(id: string, status: StoreOrderStatus) {
-  const file = readOrdersFile();
+export async function updateOrderStatus(id: string, status: StoreOrderStatus) {
+  if (useSupabase()) {
+    const sb = createServiceClient();
+    const { data, error } = await sb
+      .from("orders")
+      .update({ status })
+      .eq("id", id)
+      .select("*")
+      .maybeSingle();
+    if (error) throw error;
+    return data ? toStoreOrder(data as DbOrder) : null;
+  }
+  const file = readOrdersFs();
   const idx = file.orders.findIndex((o) => o.id === id);
   if (idx < 0) return null;
   file.orders[idx] = { ...file.orders[idx], status };
-  writeOrdersFile(file.orders);
+  writeOrdersFs(file.orders);
   return file.orders[idx];
 }

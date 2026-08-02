@@ -9,6 +9,7 @@ import { AccountSidebar } from "./AccountSidebar";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { HeartIcon } from "./Icons";
 import { ProductCard } from "./ProductCard";
+import { ProductGridSkeleton } from "./Skeleton";
 
 export function FavoritesPage() {
   const { favorites, hydrated } = useStore();
@@ -51,23 +52,7 @@ export function FavoritesPage() {
           </div>
           <div className="account-content">
             {!hydrated ? (
-              <div className="product-grid" aria-busy="true">
-                {Array.from({ length: 4 }, (_, i) => (
-                  <article
-                    key={i}
-                    className="product-card product-card--skel"
-                    aria-hidden
-                  >
-                    <div className="product-card__media">
-                      <span className="skel skel--fill skel--media" />
-                    </div>
-                    <div className="product-card__info">
-                      <span className="skel skel--line skel--w80" />
-                      <span className="skel skel--line skel--w45 skel--mt" />
-                    </div>
-                  </article>
-                ))}
-              </div>
+              <ProductGridSkeleton count={4} />
             ) : items.length === 0 ? (
               <div className="empty-state empty-state--alive empty-state--compact">
                 <div className="empty-state__icon" aria-hidden>

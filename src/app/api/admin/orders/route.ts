@@ -9,7 +9,7 @@ export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  return NextResponse.json({ orders: listOrders() });
+  return NextResponse.json({ orders: await listOrders() });
 }
 
 export async function PATCH(req: Request) {
@@ -18,9 +18,12 @@ export async function PATCH(req: Request) {
   }
   const body = (await req.json()) as { id?: string; status?: StoreOrderStatus };
   if (!body.id || !body.status) {
-    return NextResponse.json({ error: "id and status required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "id and status required" },
+      { status: 400 },
+    );
   }
-  const order = updateOrderStatus(body.id, body.status);
+  const order = await updateOrderStatus(body.id, body.status);
   if (!order) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
