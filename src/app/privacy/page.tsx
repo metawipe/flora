@@ -1,4 +1,4 @@
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PrivacyContent } from "@/components/PrivacyContent";
 import { site } from "@/data/products";
 
 export const metadata = {
@@ -8,65 +8,5 @@ export const metadata = {
 };
 
 export default function PrivacyPage() {
-  return (
-    <main className="page-main">
-      <div className="container legal">
-        <Breadcrumbs
-          items={[
-            { label: "Главная", href: "/" },
-            { label: "Политика конфиденциальности" },
-          ]}
-        />
-        <h1 className="page-title">Политика конфиденциальности</h1>
-        <p className="legal__lead">
-          Эта политика объясняет, какие данные собирает сервис «{site.name}» и
-          для чего они нужны при заказе и доставке цветов по Ташкенту.
-        </p>
-
-        <section className="legal__section">
-          <h2>Какие данные мы получаем</h2>
-          <p>
-            При оформлении заказа — имя и телефон отправителя, имя и телефон
-            получателя, адрес доставки, текст открытки (если указан), а также
-            сведения об оплате в объёме, необходимом платёжному сервису.
-          </p>
-          <p>
-            При обращении в поддержку могут сохраняться переписка и номер
-            телефона, с которого вы пишете.
-          </p>
-        </section>
-
-        <section className="legal__section">
-          <h2>Зачем данные нужны</h2>
-          <ul>
-            <li>подтверждение и сборка заказа;</li>
-            <li>связь с отправителем и получателем;</li>
-            <li>доставка по адресу;</li>
-            <li>оплата и бухгалтерский учёт;</li>
-            <li>разбор претензий по качеству.</li>
-          </ul>
-        </section>
-
-        <section className="legal__section">
-          <h2>Кому передаём</h2>
-          <p>
-            Данные могут получать курьер, платёжные сервисы и инструменты
-            связи (телефон, мессенджеры), только в объёме, нужном для выполнения
-            заказа. Мы не продаём контакты третьим лицам для рекламы.
-          </p>
-        </section>
-
-        <section className="legal__section">
-          <h2>Срок хранения и ваши права</h2>
-          <p>
-            Данные заказа хранятся столько, сколько нужно для исполнения
-            договора и требований учёта. Чтобы уточнить, исправить или удалить
-            данные (если это не мешает уже выполненному заказу), напишите на{" "}
-            <a href={`mailto:${site.email}`}>{site.email}</a> или позвоните{" "}
-            <a href={site.phoneHref}>{site.phone}</a>.
-          </p>
-        </section>
-      </div>
-    </main>
-  );
+  return <PrivacyContent />;
 }

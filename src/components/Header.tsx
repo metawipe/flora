@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useStore } from "@/context/StoreContext";
+import { cartItemLabel, useStore } from "@/context/StoreContext";
 import { formatPrice, site } from "@/data/products";
+import { useLocale } from "@/i18n/LocaleProvider";
 import { BagIcon, HeartIcon, SearchIcon, UserIcon } from "./Icons";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Logo } from "./Logo";
 import { ToastStack } from "./ToastStack";
 
@@ -19,6 +21,7 @@ type HeaderProps = {
 export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
   const pathname = usePathname();
   const { cart, cartTotal, hydrated } = useStore();
+  const { locale, t } = useLocale();
   const [miniOpen, setMiniOpen] = useState(false);
   const onCartPage = pathname === "/cart" || pathname.startsWith("/cart/");
   const showMini = hydrated && cartCount > 0 && !onCartPage;
@@ -41,6 +44,7 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
         <Logo priority />
 
         <div className="header__actions">
+          <LanguageSwitcher />
           <a
             href={site.phoneHref}
             className="header__phone"
@@ -48,17 +52,25 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
           >
             {site.phone}
           </a>
-          <button className="icon-btn" aria-label="Поиск" onClick={onSearch}>
+          <button
+            className="icon-btn"
+            aria-label={t("header.search")}
+            onClick={onSearch}
+          >
             <SearchIcon />
           </button>
           <Link
             href="/account"
             className="icon-btn header__account"
-            aria-label="Войти"
+            aria-label={t("header.login")}
           >
             <UserIcon />
           </Link>
-          <Link href="/favorites" className="icon-btn" aria-label="Избранное">
+          <Link
+            href="/favorites"
+            className="icon-btn"
+            aria-label={t("header.favorites")}
+          >
             <HeartIcon />
             {favCount > 0 && (
               <span className="icon-btn__count">{favCount}</span>
@@ -76,7 +88,7 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
               <Link
                 href="/cart"
                 className="icon-btn header__cart"
-                aria-label="Корзина"
+                aria-label={t("header.cart")}
                 aria-expanded={miniOpen && showMini}
               >
                 <BagIcon />
@@ -86,7 +98,11 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
               </Link>
 
               {showMini && (
-                <div className="mini-cart" role="dialog" aria-label="Мини-корзина">
+                <div
+                  className="mini-cart"
+                  role="dialog"
+                  aria-label={t("header.miniCart")}
+                >
                   <ul className="mini-cart__list">
                     {cart.map((item) => (
                       <li key={item.id} className="mini-cart__item">
@@ -103,18 +119,13 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
                         </Link>
                         <div className="mini-cart__meta">
                           <p className="mini-cart__price">
-                            {formatPrice(item.price * item.qty)}
+                            {formatPrice(item.price * item.qty, locale)}
                           </p>
                           <Link
                             href={`/product/${item.productId}`}
                             className="mini-cart__name"
                           >
-                            {item.name}
-                            {item.size &&
-                            item.size !== "—" &&
-                            item.size !== "Без упаковки"
-                              ? ` - ${item.size}`
-                              : ""}
+                            {cartItemLabel(item, locale)}
                             {item.qty > 1 ? ` × ${item.qty}` : ""}
                           </Link>
                         </div>
@@ -122,11 +133,11 @@ export function Header({ onSearch, cartCount = 0, favCount = 0 }: HeaderProps) {
                     ))}
                   </ul>
                   <div className="mini-cart__total">
-                    <span>Итого</span>
-                    <strong>{formatPrice(cartTotal)}</strong>
+                    <span>{t("header.total")}</span>
+                    <strong>{formatPrice(cartTotal, locale)}</strong>
                   </div>
                   <Link href="/cart" className="btn btn--primary btn--wide">
-                    Перейти в корзину
+                    {t("header.goToCart")}
                   </Link>
                 </div>
               )}

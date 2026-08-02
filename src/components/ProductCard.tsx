@@ -4,7 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useStore } from "@/context/StoreContext";
-import { formatPrice, type Product } from "@/data/products";
+import {
+  formatPrice,
+  localizeProductName,
+  type Product,
+} from "@/data/products";
+import { useLocale } from "@/i18n/LocaleProvider";
 import { HeartIcon } from "./Icons";
 
 type ProductCardProps = {
@@ -13,9 +18,11 @@ type ProductCardProps = {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { isFavorite, toggleFavorite } = useStore();
+  const { locale, t } = useLocale();
   const [imgIndex, setImgIndex] = useState(0);
   const images = product.images.length ? product.images : [""];
   const favorited = isFavorite(product.id);
+  const name = localizeProductName(product, locale);
 
   return (
     <article className="product-card product-card--motion">
@@ -23,7 +30,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <Link href={`/product/${product.id}`} className="product-card__link">
           <Image
             src={images[imgIndex]}
-            alt={product.name}
+            alt={name}
             fill
             className="product-card__img"
             sizes="(max-width: 700px) 50vw, 25vw"
@@ -37,7 +44,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <button
           type="button"
           className={`product-card__fav${favorited ? " is-active" : ""}`}
-          aria-label={favorited ? "В избранном" : "В избранное"}
+          aria-label={favorited ? t("pdp.favorited") : t("pdp.favorite")}
           onClick={(e) => {
             e.preventDefault();
             toggleFavorite(product.id);
@@ -53,7 +60,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 key={i}
                 type="button"
                 className={`product-card__dot${i === imgIndex ? " is-active" : ""}`}
-                aria-label={`Фото ${i + 1}`}
+                aria-label={t("pdp.photoN", { n: i + 1 })}
                 onMouseEnter={() => setImgIndex(i)}
                 onClick={() => setImgIndex(i)}
               />
@@ -64,13 +71,13 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <div className="product-card__info">
         <Link href={`/product/${product.id}`} className="product-card__name">
-          {product.name}
+          {name}
         </Link>
         <div className="product-card__price">
-          {formatPrice(product.price)}
+          {formatPrice(product.price, locale)}
           {product.oldPrice != null && (
             <span className="product-card__old">
-              {formatPrice(product.oldPrice)}
+              {formatPrice(product.oldPrice, locale)}
             </span>
           )}
         </div>

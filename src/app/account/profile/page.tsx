@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { AccountSidebar } from "@/components/AccountSidebar";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useT } from "@/i18n/LocaleProvider";
 
 type Profile = {
   login: string;
@@ -16,6 +17,7 @@ type Profile = {
 const USER_KEY = "loveflowers-user";
 
 export default function ProfilePage() {
+  const t = useT();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [ready, setReady] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -38,22 +40,22 @@ export default function ProfilePage() {
         <div className="container">
           <Breadcrumbs
             items={[
-              { label: "Главная", href: "/" },
-              { label: "Личный кабинет", href: "/account" },
-              { label: "Личные данные" },
+              { label: t("common.home"), href: "/" },
+              { label: t("account.title"), href: "/account" },
+              { label: t("profile.title") },
             ]}
           />
-          <h1 className="page-title">Личные данные</h1>
+          <h1 className="page-title">{t("profile.title")}</h1>
           <div className="account-layout">
             <div className="account-sidebar-desktop">
               <AccountSidebar />
             </div>
             <div className="form-block">
               <p style={{ marginBottom: 16, color: "#777" }}>
-                Войдите в аккаунт, чтобы редактировать профиль.
+                {t("profile.needLogin")}
               </p>
               <Link href="/account" className="btn btn--primary">
-                Войти
+                {t("auth.tabLogin")}
               </Link>
             </div>
           </div>
@@ -83,12 +85,12 @@ export default function ProfilePage() {
       <div className="container">
         <Breadcrumbs
           items={[
-            { label: "Главная", href: "/" },
-            { label: "Личный кабинет", href: "/account" },
-            { label: "Личные данные" },
+            { label: t("common.home"), href: "/" },
+            { label: t("account.title"), href: "/account" },
+            { label: t("profile.title") },
           ]}
         />
-        <h1 className="page-title">Личные данные</h1>
+        <h1 className="page-title">{t("profile.title")}</h1>
         <div className="account-layout">
           <div className="account-sidebar-desktop">
             <AccountSidebar />
@@ -97,30 +99,30 @@ export default function ProfilePage() {
             <form className="profile-form" onSubmit={onSave}>
               <div className="profile-form__grid">
                 <label className="field">
-                  <span>Имя *</span>
+                  <span>{t("profile.firstName")}</span>
                   <input
                     name="name"
                     required
                     defaultValue={profile.name || ""}
-                    placeholder="Имя"
+                    placeholder={t("profile.firstNamePh")}
                   />
                 </label>
                 <label className="field">
-                  <span>Фамилия *</span>
+                  <span>{t("profile.lastName")}</span>
                   <input
                     name="lastName"
                     required
                     defaultValue={profile.lastName || ""}
-                    placeholder="Фамилия"
+                    placeholder={t("profile.lastNamePh")}
                   />
                 </label>
               </div>
               <label className="field">
-                <span>Логин</span>
+                <span>{t("profile.loginReadonly")}</span>
                 <input value={profile.login} disabled readOnly />
               </label>
               <label className="field">
-                <span>Почта</span>
+                <span>{t("profile.email")}</span>
                 <input
                   name="email"
                   type="email"
@@ -129,7 +131,7 @@ export default function ProfilePage() {
                 />
               </label>
               <label className="field">
-                <span>Контактный номер *</span>
+                <span>{t("profile.phone")}</span>
                 <input
                   name="phone"
                   required
@@ -138,9 +140,9 @@ export default function ProfilePage() {
                   placeholder="+998901234567"
                 />
               </label>
-              {saved && <p className="form-success">Данные сохранены</p>}
+              {saved && <p className="form-success">{t("profile.saved")}</p>}
               <button type="submit" className="btn btn--primary btn--wide">
-                Сохранить
+                {t("profile.save")}
               </button>
             </form>
           </div>

@@ -10,7 +10,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getProductById, type Product } from "@/data/products";
+import {
+  getProductById,
+  localizeProductName,
+  type Product,
+} from "@/data/products";
+import type { Locale } from "@/i18n/config";
+import { localizePackSize } from "@/i18n/catalog";
 
 export type CartItem = {
   id: string;
@@ -78,11 +84,19 @@ function loadJson<T>(key: string, fallback: T): T {
   }
 }
 
-export function cartItemLabel(item: Pick<CartItem, "name" | "size">): string {
-  if (!item.size || item.size === "—" || item.size === "Без упаковки") {
-    return item.name;
+export function cartItemLabel(
+  item: Pick<CartItem, "name" | "size" | "productId">,
+  locale: Locale = "ru",
+): string {
+  const name = item.productId
+    ? localizeProductName({ id: item.productId, name: item.name }, locale)
+    : item.name;
+  const size = localizePackSize(locale, item.size);
+  const none = localizePackSize(locale, "none");
+  if (!size || size === "—" || size === none || size === "Без упаковки") {
+    return name;
   }
-  return `${item.name} - ${item.size}`;
+  return `${name} - ${size}`;
 }
 
 export function StoreProvider({ children }: { children: ReactNode }) {
@@ -163,8 +177,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pushToast({
         id: `cart-add-${Date.now()}`,
         type: "cart-add",
-        title: "В корзине",
-        subtitle: cartItemLabel({ name: product.name, size }),
+        title: "cartAdd",
+        subtitle: `${product.id}|${size}`,
         image: product.images[0] || "",
       });
     },
@@ -237,8 +251,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           pushToast({
             id: `fav-add-${Date.now()}`,
             type: "fav-add",
-            title: "В избранном",
-            subtitle: product.name,
+            title: "favAdd",
+            subtitle: product.id,
             image: product.images[0] || "",
           });
         }

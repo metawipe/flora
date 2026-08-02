@@ -1,88 +1,66 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { site } from "@/data/products";
+import { useT } from "@/i18n/LocaleProvider";
 
-const TABS = [
-  {
-    id: "general",
-    label: "Общие вопросы",
-    items: [
-      {
-        q: "Как оформить заказ на сайте Zamin Gullari?",
-        a: "Выберите понравившийся букет и нажмите «В корзину». Затем перейдите к оформлению, укажите данные отправителя и получателя, адрес в Ташкенте и удобное время доставки.",
-      },
-      {
-        q: "Можно ли заказать букет без регистрации?",
-        a: "Да. Для оформления достаточно имени и номера телефона. Регистрация нужна, чтобы сохранять избранное и историю заказов.",
-      },
-      {
-        q: "Какие цветы вы доставляете?",
-        a: "Розы, тюльпаны, орхидеи, хризантемы, авторские букеты, корзины, коробки с цветами, шары и сладкие дополнения — всё из актуального каталога Zamin Gullari.",
-      },
-      {
-        q: "Как связаться с Zamin Gullari?",
-        a: `Телефон ${site.phone}, email ${site.email}. Также пишите в Telegram и WhatsApp — отвечаем круглосуточно.`,
-      },
-    ],
-  },
-  {
-    id: "delivery",
-    label: "Доставка",
-    items: [
-      {
-        q: "Есть ли доставка в день заказа?",
-        a: "Да. Работаем круглосуточно. Минимальный интервал доставки — около 2 часов. Точный диапазон можно согласовать с менеджером.",
-      },
-      {
-        q: "Доставляете ли вы за пределы Ташкента?",
-        a: `Основная доставка — Ташкент и Ташкентская область. По удалённым адресам уточняйте у менеджера: ${site.phone}.`,
-      },
-      {
-        q: "Сколько стоит доставка?",
-        a: "По городу Ташкент доставка бесплатная от 120 000 сум. В область стоимость зависит от удалённости — лучше уточнить при согласовании заказа.",
-      },
-      {
-        q: "Можно ли доставить анонимно?",
-        a: "Да. Получатель узнает имя отправителя только если вы укажете его в открытке.",
-      },
-    ],
-  },
-  {
-    id: "payment",
-    label: "Оплата",
-    items: [
-      {
-        q: "Какими способами можно оплатить?",
-        a: "Банковской картой Visa, Mastercard, Uzcard, Humo, а также Payme и Click. Для юр. лиц — безналичный расчёт через менеджера.",
-      },
-      {
-        q: "Можно ли оплатить наличными?",
-        a: "Да, доступна оплата наличными курьеру при получении.",
-      },
-    ],
-  },
-  {
-    id: "return",
-    label: "Возврат",
-    items: [
-      {
-        q: "Что делать, если букет пришёл несвежим?",
-        a: "Напишите в поддержку как можно скорее и пришлите фото. Мы заменим букет или вернём деньги.",
-      },
-      {
-        q: "Можно ли отменить заказ?",
-        a: "Да, если курьер ещё не выехал. Свяжитесь с нами по телефону, в Telegram или WhatsApp как можно скорее.",
-      },
-    ],
-  },
-];
+const TAB_IDS = ["general", "delivery", "payment", "return"] as const;
 
 export default function FaqPage() {
-  const [tab, setTab] = useState(TABS[0].id);
+  const t = useT();
+  const [tab, setTab] = useState<(typeof TAB_IDS)[number]>("general");
   const [open, setOpen] = useState<string | null>(null);
-  const current = TABS.find((t) => t.id === tab) || TABS[0];
+
+  const tabs = useMemo(
+    () => [
+      {
+        id: "general" as const,
+        label: t("faq.tabGeneral"),
+        items: [
+          { q: t("faq.g1q"), a: t("faq.g1a") },
+          { q: t("faq.g2q"), a: t("faq.g2a") },
+          { q: t("faq.g3q"), a: t("faq.g3a") },
+          {
+            q: t("faq.g4q"),
+            a: t("faq.g4a", { phone: site.phone, email: site.email }),
+          },
+        ],
+      },
+      {
+        id: "delivery" as const,
+        label: t("faq.tabDelivery"),
+        items: [
+          { q: t("faq.d1q"), a: t("faq.d1a") },
+          {
+            q: t("faq.d2q"),
+            a: t("faq.d2a", { phone: site.phone }),
+          },
+          { q: t("faq.d3q"), a: t("faq.d3a") },
+          { q: t("faq.d4q"), a: t("faq.d4a") },
+        ],
+      },
+      {
+        id: "payment" as const,
+        label: t("faq.tabPayment"),
+        items: [
+          { q: t("faq.p1q"), a: t("faq.p1a") },
+          { q: t("faq.p2q"), a: t("faq.p2a") },
+        ],
+      },
+      {
+        id: "return" as const,
+        label: t("faq.tabReturn"),
+        items: [
+          { q: t("faq.r1q"), a: t("faq.r1a") },
+          { q: t("faq.r2q"), a: t("faq.r2a") },
+        ],
+      },
+    ],
+    [t],
+  );
+
+  const current = tabs.find((item) => item.id === tab) || tabs[0];
 
   useEffect(() => {
     const hash = window.location.hash.replace("#", "");
@@ -90,8 +68,8 @@ export default function FaqPage() {
       setTab("general");
       return;
     }
-    if (TABS.some((t) => t.id === hash)) {
-      setTab(hash);
+    if ((TAB_IDS as readonly string[]).includes(hash)) {
+      setTab(hash as (typeof TAB_IDS)[number]);
     }
   }, []);
 
@@ -100,24 +78,24 @@ export default function FaqPage() {
       <div className="container">
         <Breadcrumbs
           items={[
-            { label: "Главная", href: "/" },
-            { label: "Вопросы и ответы" },
+            { label: t("common.home"), href: "/" },
+            { label: t("faq.title") },
           ]}
         />
-        <h1 className="page-title">Вопросы и ответы</h1>
+        <h1 className="page-title">{t("faq.title")}</h1>
 
         <div className="faq-tabs">
-          {TABS.map((t) => (
+          {tabs.map((item) => (
             <button
-              key={t.id}
+              key={item.id}
               type="button"
-              className={`faq-tabs__btn${tab === t.id ? " is-active" : ""}`}
+              className={`faq-tabs__btn${tab === item.id ? " is-active" : ""}`}
               onClick={() => {
-                setTab(t.id);
+                setTab(item.id);
                 setOpen(null);
               }}
             >
-              {t.label}
+              {item.label}
             </button>
           ))}
         </div>

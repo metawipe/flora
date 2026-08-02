@@ -6,14 +6,12 @@ export function generateStaticParams() {
     "catalog",
     "popular",
     "bouquets",
-    "gifts",
     "plants",
     "mixed",
     "roses",
     "tulips",
     "boxes",
     "baskets",
-    "balloons",
     "sale",
   ].map((slug) => ({ slug }));
 }

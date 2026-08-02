@@ -1,7 +1,13 @@
-import { tickerItems } from "@/data/products";
+"use client";
+
+import { site } from "@/data/products";
+import { tTickerItems } from "@/i18n/catalog";
+import { useLocale } from "@/i18n/LocaleProvider";
 
 export function Ticker() {
-  const doubled = [...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems];
+  const { locale } = useLocale();
+  const items = tTickerItems(locale, site.phone);
+  const doubled = [...items, ...items, ...items, ...items];
 
   return (
     <div className="ticker" aria-hidden="true">

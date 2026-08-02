@@ -1,33 +1,34 @@
+"use client";
+
 import Link from "next/link";
 import { AccountSidebar } from "@/components/AccountSidebar";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useT } from "@/i18n/LocaleProvider";
 
 export default function OrdersPage() {
+  const t = useT();
+
   return (
     <main className="page-main">
       <div className="container">
         <Breadcrumbs
           items={[
-            { label: "Главная", href: "/" },
-            { label: "Личный кабинет", href: "/account" },
-            { label: "Заказы" },
+            { label: t("common.home"), href: "/" },
+            { label: t("account.title"), href: "/account" },
+            { label: t("orders.title") },
           ]}
         />
-        <h1 className="page-title">Заказы</h1>
+        <h1 className="page-title">{t("orders.title")}</h1>
         <div className="account-layout">
           <div className="account-sidebar-desktop">
             <AccountSidebar />
           </div>
           <div className="account-content">
             <div className="empty-state empty-state--compact">
-              <p className="empty-state__title">Пока нет заказов</p>
-              <p className="empty-state__desc">
-                Оформите букет в корзине — менеджер подтвердит заказ по телефону
-                или в мессенджере. История на сайте появится после подключения
-                личного кабинета к системе заказов.
-              </p>
+              <p className="empty-state__title">{t("orders.empty")}</p>
+              <p className="empty-state__desc">{t("orders.emptyHint")}</p>
               <Link href="/catalog/bouquets" className="btn btn--primary">
-                Смотреть букеты
+                {t("common.seeBouquets")}
               </Link>
             </div>
           </div>

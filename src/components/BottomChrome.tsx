@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useT } from "@/i18n/LocaleProvider";
 import { CatalogBar } from "./CatalogBar";
 import { BagIcon, CatalogIcon, SearchIcon, UserIcon } from "./Icons";
 
@@ -17,6 +18,7 @@ export function BottomChrome({
   onSearch,
 }: BottomChromeProps) {
   const pathname = usePathname();
+  const t = useT();
   const onCatalog =
     pathname === "/catalog/shop" || pathname.startsWith("/catalog/shop/");
   const onCart = pathname === "/cart" || pathname.startsWith("/cart/");
@@ -30,7 +32,7 @@ export function BottomChrome({
       {...(!visible ? { inert: true } : {})}
     >
       <CatalogBar className="catalog-bar--dock" />
-      <nav className="bottom-nav" aria-label="Быстрая навигация">
+      <nav className="bottom-nav" aria-label={t("bottomNav.aria")}>
         <Link
           href="/catalog/shop"
           className={`bottom-nav__tab${onCatalog ? " is-active" : ""}`}
@@ -38,7 +40,7 @@ export function BottomChrome({
           <span className="bottom-nav__icon">
             <CatalogIcon />
           </span>
-          <span className="bottom-nav__label">Каталог</span>
+          <span className="bottom-nav__label">{t("bottomNav.catalog")}</span>
         </Link>
 
         <Link
@@ -51,7 +53,7 @@ export function BottomChrome({
               <span className="bottom-nav__count">{cartCount}</span>
             )}
           </span>
-          <span className="bottom-nav__label">Корзина</span>
+          <span className="bottom-nav__label">{t("bottomNav.cart")}</span>
         </Link>
 
         <button
@@ -62,7 +64,7 @@ export function BottomChrome({
           <span className="bottom-nav__icon">
             <SearchIcon />
           </span>
-          <span className="bottom-nav__label">Поиск</span>
+          <span className="bottom-nav__label">{t("bottomNav.search")}</span>
         </button>
 
         <Link
@@ -72,7 +74,7 @@ export function BottomChrome({
           <span className="bottom-nav__icon">
             <UserIcon />
           </span>
-          <span className="bottom-nav__label">Профиль</span>
+          <span className="bottom-nav__label">{t("bottomNav.profile")}</span>
         </Link>
       </nav>
     </div>
