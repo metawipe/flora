@@ -10,16 +10,38 @@ const golos = Golos_Text({
   display: "swap",
 });
 
+const siteTitle = "Цветы и букеты с доставкой в Ташкенте | Zamin Gullari";
+const siteDescription =
+  "Заказать свежие букеты, VIP-композиции, подарки и комнатные растения с доставкой по Ташкенту. Zamin Gullari — поддержка 24/7.";
+
 export const metadata: Metadata = {
-  title: "Доставка цветов в Ташкенте | Zamin Gullari",
-  description:
-    "Заказать свежие букеты, розы, корзины, коробки и подарки с круглосуточной доставкой по Ташкенту. Zamin Gullari — бесплатная доставка, работаем 24/7.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : "https://flora-weld.vercel.app"),
+  ),
+  title: siteTitle,
+  description: siteDescription,
+  applicationName: "Zamin Gullari",
   icons: {
     icon: [
       { url: "/favicon.png", sizes: "48x48", type: "image/png" },
       { url: "/icon.png", sizes: "32x32", type: "image/png" },
     ],
     apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    siteName: "Zamin Gullari",
+    title: siteTitle,
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
   },
   appleWebApp: {
     capable: true,
